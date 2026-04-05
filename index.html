@@ -64,12 +64,12 @@
     import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "FIREBASE_API_KEY",
-      authDomain: "FIREBASE_AUTH_DOMAIN",
-      projectId: "FIREBASE_PROJECT_ID",
-      storageBucket: "FIREBASE_STORAGE_BUCKET",
-      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-      appId: "FIREBASE_APP_ID"
+      apiKey: "AIzaSyAxGso9FM5aEoRbOn6GEV2al-toZ6xnSE4",
+      authDomain: "parking-michal-klos.firebaseapp.com",
+      projectId: "parking-michal-klos",
+      storageBucket: "parking-michal-klos.firebasestorage.app",
+      messagingSenderId: "1050182298060",
+      appId: "1:1050182298060:web:4df2d1427c2a23b1c5d569"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -82,15 +82,21 @@
         window.dispatchEvent(new CustomEvent('parking-status', { detail: { brakMiejsc } }));
       }
     });
+
+    const komunikatRef = doc(db, "komunikaty", "aktywny");
+    onSnapshot(komunikatRef, (docSnap) => {
+      const data = docSnap.exists() ? docSnap.data() : { aktywny: false };
+      window.dispatchEvent(new CustomEvent('komunikat-update', { detail: data }));
+    });
   </script>
 
   <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDXGCSBJQ3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
+    gtag('config', 'G-QDXGCSBJQ3');
   </script>
 
   <!-- Google Fonts -->
@@ -143,6 +149,29 @@
   </div>
 </div>
 
+<!-- ===== KOMUNIKAT BANNER ===== -->
+<div x-show="komunikat.visible"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     style="z-index:45"
+     class="fixed top-0 left-0 right-0 bg-amber-400 text-navy shadow-lg">
+  <div class="max-w-5xl mx-auto px-4 py-2 flex items-center gap-3">
+    <img src="assets/images/logo2026.png" alt="" class="h-8 w-8 rounded-full shrink-0" />
+    <div class="flex-1 min-w-0">
+      <span class="font-extrabold text-sm" x-text="komunikat.tytul"></span>
+      <span class="text-sm ml-2 hidden sm:inline" x-text="komunikat.tresc"></span>
+      <p class="text-xs sm:hidden leading-snug mt-0.5" x-text="komunikat.tresc"></p>
+      <span x-show="komunikat.zakres" class="text-xs opacity-60 ml-2" x-text="komunikat.zakres"></span>
+    </div>
+    <button @click="komunikat.visible = false"
+            class="text-navy opacity-50 hover:opacity-100 font-bold text-xl shrink-0 ml-2 leading-none">✕</button>
+  </div>
+</div>
+
 <!-- ===== COOKIE BANNER ===== -->
 <div id="cookie-banner"
      x-show="showCookie"
@@ -156,7 +185,8 @@
 </div>
 
 <!-- ===== NAVBAR ===== -->
-<nav class="navbar-blur fixed top-0 left-0 right-0 z-30 text-white shadow-lg">
+<nav class="navbar-blur fixed left-0 right-0 z-30 text-white shadow-lg transition-all duration-300"
+     :style="komunikat.visible ? 'top:48px' : 'top:0'">
   <div class="max-w-6xl mx-auto px-4 py-1 flex items-center justify-between">
     <!-- Logo -->
     <a href="#hero" class="flex items-center gap-2">
@@ -526,7 +556,7 @@ function app() {
     mobileMenu: false,
     showCookie: !localStorage.getItem('cookieAccepted'),
     brakMiejsc: false,
-
+    komunikat: { visible: false, tytul: '', tresc: '', zakres: '' },
     faq: [
       { qKey: 'faq1q', aKey: 'faq1a', open: false },
       { qKey: 'faq2q', aKey: 'faq2a', open: false },
@@ -796,6 +826,27 @@ function app() {
       // Listen for Firebase parking status updates
       window.addEventListener('parking-status', (e) => {
         this.brakMiejsc = e.detail.brakMiejsc;
+      });
+
+      // Listen for komunikat updates
+      window.addEventListener('komunikat-update', (e) => {
+        const d = e.detail;
+        if (!d.aktywny) { this.komunikat.visible = false; return; }
+        const now = new Date();
+        const od  = d.od  ? new Date(d.od)  : null;
+        const doo = d.do  ? new Date(d.do)  : null;
+        const inRange = (!od || now >= od) && (!doo || now <= doo);
+        if (inRange) {
+          this.komunikat.tytul = d.tytul || '';
+          this.komunikat.tresc = d.tresc || '';
+          const fmt = dt => dt.toLocaleString('pl-PL', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+          const odStr  = od  ? fmt(od)  : '';
+          const doStr  = doo ? fmt(doo) : '';
+          this.komunikat.zakres = (odStr && doStr) ? `🕐 ${odStr} – ${doStr}` : '';
+          this.komunikat.visible = true;
+        } else {
+          this.komunikat.visible = false;
+        }
       });
 
       // Fade-in on scroll observer
