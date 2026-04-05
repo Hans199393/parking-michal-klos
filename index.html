@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pl" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking Michał Kłos – Wyspa Sobieszewska, Gdańsk</title>
+  <meta name="description" content="Parking płatny niestrzeżony Michał Kłos – Gdańsk, Wyspa Sobieszewska, ul. Turystyczna 69. Blisko plaży, 20 zł/dobę. Czynny w sezonie letnim." />
+  <meta name="keywords" content="parking Wyspa Sobieszewska, parking plaża Gdańsk, parking Turystyczna, parking Sobieszewska, parking nad morzem Gdańsk" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Parking Michał Kłos – Wyspa Sobieszewska" />
+  <meta property="og:description" content="Parking przy plaży, Gdańsk Wyspa Sobieszewska. 20 zł/dobę, wejście na plażę nr 10." />
+  <meta property="og:image" content="assets/images/IMG_7749.jpeg" />
+  <meta property="og:type" content="website" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ParkingFacility",
+    "name": "Parking płatny niestrzeżony Michał Kłos",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ul. Turystyczna 69",
+      "addressLocality": "Gdańsk",
+      "addressRegion": "Wyspa Sobieszewska",
+      "addressCountry": "PL"
+    },
+    "telephone": "+48784828748",
+    "openingHours": "Fr,Sa,Su 08:00-19:00",
+    "priceRange": "20-25 PLN"
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo2026.png" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:   '#1a2d4a',
+            teal:   '#4dbfbf',
+            sunset: '#e8622a',
+            golden: '#f5c842',
+            cream:  '#f0e8d0',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "FIREBASE_API_KEY",
+      authDomain: "FIREBASE_AUTH_DOMAIN",
+      projectId: "FIREBASE_PROJECT_ID",
+      storageBucket: "FIREBASE_STORAGE_BUCKET",
+      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+      appId: "FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const statusRef = doc(db, "parking", "status");
+    onSnapshot(statusRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const brakMiejsc = docSnap.data().brakMiejsc;
+        window.dispatchEvent(new CustomEvent('parking-status', { detail: { brakMiejsc } }));
+      }
+    });
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'GA_MEASUREMENT_ID');
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* Fade-in on scroll */
+    .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* Hero overlay */
+    .hero-overlay { background: linear-gradient(to bottom, rgba(26,45,74,0.55) 0%, rgba(26,45,74,0.75) 100%); }
+
+    /* Navbar blur */
+    .navbar-blur { backdrop-filter: blur(12px); background: rgba(26,45,74,0.92); }
+
+    /* Cookie banner */
+    #cookie-banner { transition: transform 0.4s ease; }
+
+    /* Brak miejsc banner */
+    #brak-miejsc-banner { animation: pulse-banner 2s infinite; }
+    @keyframes pulse-banner {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    /* Language flags */
+    .flag-btn { transition: transform 0.2s; }
+    .flag-btn:hover { transform: scale(1.15); }
+    .flag-btn.active { outline: 2px solid #f5c842; border-radius: 4px; }
+
+    /* Messenger float */
+    #messenger-float { transition: transform 0.3s; }
+    #messenger-float:hover { transform: scale(1.1); }
+  </style>
+</head>
+
+<body class="font-sans bg-cream text-navy" x-cloak>
+
+<!-- ===== BRAK MIEJSC BANNER ===== -->
+<div id="brak-miejsc-banner"
+     x-show="brakMiejsc"
+     x-transition
+     class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+  <div class="bg-red-600 text-white text-3xl md:text-5xl font-extrabold px-10 py-6 rounded-2xl shadow-2xl text-center pointer-events-auto">
+    🚫 <span x-text="t('brakMiejsc')"></span>
+  </div>
+</div>
+
+<!-- ===== COOKIE BANNER ===== -->
+<div id="cookie-banner"
+     x-show="showCookie"
+     x-transition
+     class="fixed bottom-0 left-0 right-0 z-40 bg-navy text-cream px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
+  <p class="text-sm text-center md:text-left" x-text="t('cookieText')"></p>
+  <button @click="acceptCookie()"
+          class="shrink-0 bg-golden text-navy font-bold px-6 py-2 rounded-full hover:bg-sunset hover:text-white transition">
+    <span x-text="t('cookieAccept')"></span>
+  </button>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar-blur fixed top-0 left-0 right-0 z-30 text-white shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 py-1 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-2">
+      <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" style="height:60px;width:auto;" />
+      <span class="font-bold text-sm md:text-base leading-tight hidden sm:block">Parking<br><span class="text-golden">Michał Kłos</span></span>
+    </a>
+
+    <!-- Desktop Menu -->
+    <ul class="hidden md:flex gap-6 text-sm font-semibold">
+      <li><a href="#onas" class="hover:text-golden transition" x-text="t('nav_onas')"></a></li>
+      <li><a href="#cennik" class="hover:text-golden transition" x-text="t('nav_cennik')"></a></li>
+      <li><a href="#dojazd" class="hover:text-golden transition" x-text="t('nav_dojazd')"></a></li>
+      <li><a href="#galeria" class="hover:text-golden transition" x-text="t('nav_galeria')"></a></li>
+      <li><a href="#opinie" class="hover:text-golden transition" x-text="t('nav_opinie')"></a></li>
+      <li><a href="#faq" class="hover:text-golden transition">FAQ</a></li>
+      <li><a href="#kontakt" class="hover:text-golden transition" x-text="t('nav_kontakt')"></a></li>
+    </ul>
+
+    <!-- Right: Language + CTA + Hamburger -->
+    <div class="flex items-center gap-2 md:gap-3">
+      <!-- Language flags -->
+      <div class="flex gap-1 items-center">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'active' : ''" class="flag-btn text-lg" title="Polski">🇵🇱</button>
+        <button @click="setLang('en')" :class="lang==='en' ? 'active' : ''" class="flag-btn text-lg" title="English">🇬🇧</button>
+        <button @click="setLang('ua')" :class="lang==='ua' ? 'active' : ''" class="flag-btn text-lg" title="Українська">🇺🇦</button>
+        <button @click="setLang('de')" :class="lang==='de' ? 'active' : ''" class="flag-btn text-lg" title="Deutsch">🇩🇪</button>
+      </div>
+
+      <!-- CTA Zarezerwuj -->
+      <a href="https://www.facebook.com/profile.php?id=61575778705898"
+         target="_blank" rel="noopener noreferrer"
+         class="hidden sm:inline-block bg-golden text-navy font-bold text-sm px-4 py-2 rounded-full hover:bg-sunset hover:text-white transition"
+         x-text="t('rezerwuj')"></a>
+
+      <!-- Hamburger mobile -->
+      <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path x-show="!mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path x-show="mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div x-show="mobileMenu" x-transition class="md:hidden bg-navy/95 px-6 pb-4">
+    <ul class="flex flex-col gap-3 text-sm font-semibold">
+      <li><a href="#onas" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_onas')"></a></li>
+      <li><a href="#cennik" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_cennik')"></a></li>
+      <li><a href="#dojazd" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_dojazd')"></a></li>
+      <li><a href="#galeria" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_galeria')"></a></li>
+      <li><a href="#opinie" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_opinie')"></a></li>
+      <li><a href="#faq" @click="mobileMenu=false" class="block py-1 hover:text-golden">FAQ</a></li>
+      <li><a href="#kontakt" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_kontakt')"></a></li>
+      <li>
+        <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
+           class="inline-block mt-1 bg-golden text-navy font-bold px-5 py-2 rounded-full"
+           x-text="t('rezerwuj')"></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center">
+  <div class="absolute inset-0">
+    <img src="assets/images/IMG_7749.jpeg" alt="Parking Michał Kłos" class="w-full h-full object-cover" />
+    <div class="hero-overlay absolute inset-0"></div>
+  </div>
+  <div class="relative z-10 text-center text-white px-6 py-20 mt-16">
+    <img src="assets/images/logo2026.png" alt="Logo" class="h-44 md:h-56 mx-auto mb-6 drop-shadow-xl" />
+    <h1 class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg">Parking Michał Kłos</h1>
+    <p class="text-lg md:text-xl text-golden font-semibold mb-2">Gdańsk · Wyspa Sobieszewska</p>
+    <p class="text-base md:text-xl text-cream/90 mb-8 max-w-2xl mx-auto leading-relaxed" x-text="t('hero_sub')"></p>
+    <a href="https://www.facebook.com/profile.php?id=61575778705898"
+       target="_blank" rel="noopener noreferrer"
+       class="inline-block bg-golden text-navy font-extrabold text-lg px-8 py-4 rounded-full shadow-xl hover:bg-sunset hover:text-white transition transform hover:-translate-y-1"
+       x-text="t('rezerwuj')"></a>
+  </div>
+</section>
+
+<!-- ===== O NAS ===== -->
+<section id="onas" class="relative py-24 bg-white overflow-hidden">
+  <!-- dekoracyjne tło -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-teal/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-golden/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative max-w-5xl mx-auto px-6 fade-in">
+    <!-- Nagłówek z akcentem -->
+    <div class="text-center mb-14">
+      <span class="inline-block bg-teal/15 text-teal font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4" x-text="t('onas_tag')"></span>
+      <h2 class="text-4xl md:text-5xl font-extrabold text-navy leading-tight" x-text="t('onas_title')"></h2>
+    </div>
+
+    <!-- Tekst główny z ozdobną kreską -->
+    <div class="relative max-w-3xl mx-auto mb-16">
+      <div class="absolute left-0 top-1 bottom-1 w-1 bg-gradient-to-b from-teal via-golden to-sunset rounded-full hidden md:block"></div>
+      <p class="md:pl-8 text-xl text-gray-700 leading-loose font-light" x-text="t('onas_text')"></p>
+    </div>
+
+    <!-- Karty atutów -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="group relative bg-cream hover:bg-navy transition-all duration-300 rounded-3xl p-8 shadow-md hover:shadow-2xl text-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-teal/0 to-teal/10 group-hover:from-teal/20 group-hover:to-navy/0 transition-all duration-300 rounded-3xl"></div>
+        <div class="relative">
+          <div class="text-5xl mb-4">🏖️</div>
+          <h3 class="font-extrabold text-navy group-hover:text-golden text-lg mb-2 transition-colors duration-300" x-text="t('feat1_title')"></h3>
+          <p class="text-gray-500 group-hover:text-cream/80 text-sm leading-relaxed transition-colors duration-300" x-text="t('feat1_text')"></p>
+        </div>
+      </div>
+      <div class="group relative bg-cream hover:bg-navy transition-all duration-300 rounded-3xl p-8 shadow-md hover:shadow-2xl text-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-golden/0 to-golden/10 group-hover:from-golden/20 group-hover:to-navy/0 transition-all duration-300 rounded-3xl"></div>
+        <div class="relative">
+          <div class="text-5xl mb-4">💰</div>
+          <h3 class="font-extrabold text-navy group-hover:text-golden text-lg mb-2 transition-colors duration-300" x-text="t('feat2_title')"></h3>
+          <p class="text-gray-500 group-hover:text-cream/80 text-sm leading-relaxed transition-colors duration-300" x-text="t('feat2_text')"></p>
+        </div>
+      </div>
+      <div class="group relative bg-cream hover:bg-navy transition-all duration-300 rounded-3xl p-8 shadow-md hover:shadow-2xl text-center overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-sunset/0 to-sunset/10 group-hover:from-sunset/20 group-hover:to-navy/0 transition-all duration-300 rounded-3xl"></div>
+        <div class="relative">
+          <div class="text-5xl mb-4">👷</div>
+          <h3 class="font-extrabold text-navy group-hover:text-golden text-lg mb-2 transition-colors duration-300" x-text="t('feat3_title')"></h3>
+          <p class="text-gray-500 group-hover:text-cream/80 text-sm leading-relaxed transition-colors duration-300" x-text="t('feat3_text')"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CENNIK ===== -->
+<section id="cennik" class="py-20 bg-navy text-white">
+  <div class="max-w-3xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-10 text-center" x-text="t('cennik_title')"></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <!-- Bez rezerwacji -->
+      <div class="bg-white/10 rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition">
+        <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('bez_rez')"></p>
+        <p class="text-6xl font-extrabold text-white mb-1">20<span class="text-2xl">zł</span></p>
+        <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
+      </div>
+      <!-- Z rezerwacją -->
+      <div class="bg-golden/20 rounded-2xl p-8 text-center border-2 border-golden hover:bg-golden/30 transition relative">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-golden text-navy text-xs font-bold px-3 py-1 rounded-full" x-text="t('polecamy')"></span>
+        <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('z_rez')"></p>
+        <p class="text-6xl font-extrabold text-white mb-1">25<span class="text-2xl">zł</span></p>
+        <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
+        <p class="text-cream/60 text-xs mt-2" x-text="t('rez_info')"></p>
+      </div>
+    </div>
+
+    <!-- Godziny -->
+    <div class="bg-white/10 rounded-2xl p-6 text-center mb-8 border border-white/20">
+      <p class="text-golden font-semibold mb-1" x-text="t('godziny_title')"></p>
+      <p class="text-xl font-bold" x-text="t('godziny_val')"></p>
+      <p class="text-cream/70 text-sm mt-1" x-text="t('sezon')"></p>
+    </div>
+
+    <!-- Płatności -->
+    <div class="text-center">
+      <p class="text-golden font-semibold mb-6" x-text="t('platnosci')"></p>
+      <div class="flex flex-wrap justify-center items-center gap-4">
+
+        <!-- Gotówka -->
+        <div class="bg-white rounded-2xl px-5 py-3 flex items-center gap-2 shadow-md">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
+          <span class="font-bold text-gray-700 text-sm" x-text="t('gotowka')"></span>
+        </div>
+
+        <!-- BLIK -->
+        <div class="bg-white rounded-2xl px-5 py-3 flex items-center shadow-md">
+          <svg viewBox="0 0 80 28" class="h-7 w-auto" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="28" rx="4" fill="#E30613"/>
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial Black,Arial" font-weight="900" font-size="14" letter-spacing="1">BLIK</text>
+          </svg>
+        </div>
+
+        <!-- Visa -->
+        <div class="bg-white rounded-2xl px-5 py-3 flex items-center shadow-md">
+          <svg viewBox="0 0 80 28" class="h-7 w-auto" xmlns="http://www.w3.org/2000/svg">
+            <rect width="80" height="28" rx="4" fill="#1A1F71"/>
+            <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-weight="900" font-size="15" letter-spacing="2">VISA</text>
+          </svg>
+        </div>
+
+        <!-- Mastercard -->
+        <div class="bg-white rounded-2xl px-4 py-3 flex items-center gap-1 shadow-md">
+          <svg viewBox="0 0 50 30" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="15" r="12" fill="#EB001B"/>
+            <circle cx="32" cy="15" r="12" fill="#F79E1B"/>
+            <path d="M25 6.27A12 12 0 0 1 30.73 15 12 12 0 0 1 25 23.73 12 12 0 0 1 19.27 15 12 12 0 0 1 25 6.27z" fill="#FF5F00"/>
+          </svg>
+          <span class="font-bold text-gray-600 text-xs">Mastercard</span>
+        </div>
+
+        <!-- Google Pay -->
+        <div class="bg-white rounded-2xl px-4 py-3 flex items-center gap-2 shadow-md">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span class="font-bold text-gray-700 text-sm">Google Pay</span>
+        </div>
+
+        <!-- Apple Pay -->
+        <div class="bg-white rounded-2xl px-4 py-3 flex items-center gap-2 shadow-md">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="black" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          <span class="font-bold text-gray-700 text-sm">Apple Pay</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== JAK DOJECHAĆ ===== -->
+<section id="dojazd" class="py-20 bg-cream">
+  <div class="max-w-4xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-4 text-center" x-text="t('dojazd_title')"></h2>
+    <p class="text-center text-gray-600 mb-8">📍 ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
+    <div class="rounded-2xl overflow-hidden shadow-xl">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d793.5!2d18.8864555!3d54.3406681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fd6d9054d24689%3A0x3d66f59ee339a135!2sParking%20p%C5%82atny%20niestrzez%C4%87ony%20%22Micha%C5%82%20K%C5%82os%22!5e0!3m2!1spl!2spl!4v1712345678901"
+        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Mapa dojazdu do Parkingu Michał Kłos">
+      </iframe>
+    </div>
+    <div class="text-center mt-6">
+      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
+         class="inline-block bg-navy text-white font-bold px-6 py-3 rounded-full hover:bg-teal transition"
+         x-text="t('nawiguj')"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALERIA ===== -->
+<section id="galeria" class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-10 text-center" x-text="t('galeria_title')"></h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <img src="assets/images/IMG_7749.jpeg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+      <img src="assets/images/IMG_7747.jpeg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+      <img src="assets/images/IMG_7748.jpeg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+      <img src="assets/images/IMG_7749 (1).jpeg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+      <img src="assets/images/IMG_7753.jpeg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+      <img src="assets/images/20250429_192814.jpg" alt="Parking Michał Kłos" class="rounded-xl object-cover w-full h-48 md:h-56 hover:scale-105 transition duration-300 shadow" />
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPINIE GOOGLE ===== -->
+<section id="opinie" class="py-20 bg-cream">
+  <div class="max-w-4xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 text-center" x-text="t('opinie_title')"></h2>
+    <p class="text-center text-gray-600 mb-8" x-text="t('opinie_sub')"></p>
+    <div class="flex justify-center">
+      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
+         class="bg-navy text-white font-bold px-8 py-4 rounded-full hover:bg-teal transition flex items-center gap-2">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1H12.18V13.83H18.69C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5 16.25 5 12C5 7.9 8.2 4.73 12.2 4.73C15.29 4.73 17.1 6.7 17.1 6.7L19 4.72C19 4.72 16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12C2.03 17.05 6.16 22 12.25 22C17.6 22 21.5 18.33 21.5 12.91C21.5 11.76 21.35 11.1 21.35 11.1Z"/></svg>
+        <span x-text="t('czytaj_opinie')"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" class="py-20 bg-white">
+  <div class="max-w-3xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-10 text-center">FAQ</h2>
+    <div class="space-y-4">
+      <template x-for="(item, i) in faq" :key="i">
+        <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <button
+            @click="item.open = !item.open"
+            class="w-full text-left px-6 py-4 bg-cream hover:bg-golden/20 transition flex justify-between items-center font-semibold text-navy">
+            <span x-text="t(item.qKey)"></span>
+            <span x-text="item.open ? '−' : '+'" class="text-xl font-bold text-teal"></span>
+          </button>
+          <div x-show="item.open" x-transition class="px-6 py-4 text-gray-700 text-sm leading-relaxed bg-white">
+            <span x-text="t(item.aKey)"></span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KONTAKT ===== -->
+<section id="kontakt" class="py-20 bg-navy text-white">
+  <div class="max-w-3xl mx-auto px-6 fade-in text-center">
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-10" x-text="t('kontakt_title')"></h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+      <a href="tel:+48784828748" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
+        <span class="text-4xl">📞</span>
+        <span class="font-bold text-golden">784 828 748</span>
+        <span class="text-sm text-cream/70" x-text="t('zadzwon')"></span>
+      </a>
+      <a href="mailto:klosekmichal@gmail.com" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
+        <span class="text-4xl">✉️</span>
+        <span class="font-bold text-golden text-sm">klosekmichal@gmail.com</span>
+        <span class="text-sm text-cream/70" x-text="t('napisz')"></span>
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
+         class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
+        <span class="text-4xl">💬</span>
+        <span class="font-bold text-golden">Facebook</span>
+        <span class="text-sm text-cream/70" x-text="t('messenger')"></span>
+      </a>
+    </div>
+    <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
+       class="inline-block text-cream/60 text-sm underline hover:text-golden transition"
+       x-text="t('regulamin')"></a>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="bg-navy/95 text-cream/70 py-10">
+  <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <img src="assets/images/logo2026.png" alt="Logo" class="h-12 w-12 object-contain rounded-full" />
+      <div>
+        <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
+        <p class="text-xs">ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
+      </div>
+    </div>
+    <div class="flex flex-col items-center gap-1 text-sm">
+      <a href="tel:+48784828748" class="hover:text-golden transition">📞 784 828 748</a>
+      <a href="mailto:klosekmichal@gmail.com" class="hover:text-golden transition">✉️ klosekmichal@gmail.com</a>
+    </div>
+    <div class="flex gap-4 items-center">
+      <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
+         class="hover:text-golden transition" aria-label="Facebook">
+        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.896V12h2.542V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="text-center text-xs mt-6 text-cream/40">
+    © <span x-text="new Date().getFullYear()"></span> Parking Michał Kłos. <span x-text="t('rights')"></span>
+  </div>
+</footer>
+
+<!-- ===== FLOATING MESSENGER BUTTON ===== -->
+<a id="messenger-float"
+   href="https://m.me/61575778705898"
+   target="_blank" rel="noopener noreferrer"
+   class="fixed bottom-6 right-6 z-30 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl"
+   aria-label="Napisz na Messengerze">
+  <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.91 1.395 5.514 3.584 7.236V22l3.27-1.799c.874.242 1.8.372 2.746.372 5.523 0 10-4.144 10-9.243C22 6.145 17.523 2 12 2zm1.02 12.44l-2.55-2.72-4.98 2.72 5.48-5.82 2.61 2.72 4.92-2.72-5.48 5.82z"/>
+  </svg>
+</a>
+
+<!-- ===== ALPINE.JS APP SCRIPT ===== -->
+<script>
+function app() {
+  return {
+    lang: localStorage.getItem('lang') || 'pl',
+    mobileMenu: false,
+    showCookie: !localStorage.getItem('cookieAccepted'),
+    brakMiejsc: false,
+
+    faq: [
+      { qKey: 'faq1q', aKey: 'faq1a', open: false },
+      { qKey: 'faq2q', aKey: 'faq2a', open: false },
+      { qKey: 'faq3q', aKey: 'faq3a', open: false },
+      { qKey: 'faq4q', aKey: 'faq4a', open: false },
+      { qKey: 'faq5q', aKey: 'faq5a', open: false },
+      { qKey: 'faq6q', aKey: 'faq6a', open: false },
+    ],
+
+    translations: {
+      pl: {
+        nav_onas: 'O nas',
+        nav_cennik: 'Cennik',
+        nav_dojazd: 'Jak dojechać',
+        nav_galeria: 'Galeria',
+        nav_opinie: 'Opinie',
+        nav_kontakt: 'Kontakt',
+        rezerwuj: 'Zarezerwuj miejsce',
+        hero_sub: 'Dzikie plaże, szumiące sosny i zapach morza — Wyspa Sobieszewska to kawałek nietkniętego Bałtyku, stworzony dla tych, którzy szukają prawdziwego odpoczynku. Zostaw auto w dobrych rękach i daj się pochłonąć naturze.',
+
+        onas_title: 'O nas',
+        onas_tag: 'Kim jesteśmy',
+        onas_text: 'Wyspa Sobieszewska to jedno z najpiękniejszych i najspokojniejszych miejsc na polskim wybrzeżu — z rozległymi, dzikimi plażami Bałtyku. Nasz parking leży zaledwie ~600 metrów w linii prostej od morza. Spokojnym krokiem dotrzesz na wejście nr 10 w 15–20 minut, a do wejść nr 9 i nr 11 — około 1,5 km przyjemnego spaceru wśród zieleni. Zostaw auto w dobrych rękach i ruszaj z rodziną prosto na piasek.',
+        feat1_title: 'Blisko plaży',
+        feat1_text: 'Wejście nr 10 — ~600 m · Wejścia nr 9 i 11 — ~1,5 km',
+        feat2_title: 'Atrakcyjna cena',
+        feat2_text: 'Już od 20 zł za całą dobę',
+        feat3_title: 'Obsługa na miejscu',
+        feat3_text: 'Pracownik obecny przez cały czas otwarcia',
+        cennik_title: 'Cennik',
+        bez_rez: 'Bez rezerwacji',
+        z_rez: 'Z rezerwacją',
+        za_dobe: 'za dobę',
+        polecamy: 'Polecamy',
+        rez_info: 'Rezerwacja przez Facebook · max 10 miejsc',
+        godziny_title: 'Godziny otwarcia',
+        godziny_val: 'Piątek – Niedziela, 8:00 – 19:00',
+        sezon: 'Czerwiec · Lipiec · Sierpień',
+        platnosci: 'Akceptowane formy płatności',
+        gotowka: 'Gotówka',
+        karta: 'Karta',
+        dojazd_title: 'Jak dojechać',
+        nawiguj: '🗺️ Nawiguj do parkingu',
+        galeria_title: 'Galeria',
+        opinie_title: 'Opinie klientów',
+        opinie_sub: 'Sprawdź co mówią nasi klienci na Google',
+        czytaj_opinie: 'Czytaj opinie na Google',
+        faq1q: 'Czy trzeba rezerwować miejsce?',
+        faq1a: 'Rezerwacja nie jest obowiązkowa. Możesz przyjechać bez rezerwacji i zaparkować za 20 zł/dobę. Rezerwacja (25 zł/dobę) gwarantuje Ci miejsce – dokonasz jej przez Facebook.',
+        faq2q: 'Jak mogę zarezerwować miejsce?',
+        faq2a: 'Rezerwacji dokonujesz przez naszą stronę na Facebooku. Kliknij przycisk "Zarezerwuj miejsce" lub napisz do nas przez Messenger.',
+        faq3q: 'Czy mogę zapłacić kartą lub BLIKIEM?',
+        faq3a: 'Tak! Przyjmujemy gotówkę, BLIK, kartę płatniczą, Google Pay oraz Apple Pay.',
+        faq4q: 'Czy parking jest strzeżony?',
+        faq4a: 'Parking jest niestrzeżony, jednak przez cały czas otwarcia (8:00–19:00) jest na nim obecny pracownik obsługi.',
+        faq5q: 'Kiedy parking jest czynny?',
+        faq5a: 'Parking czynny jest w sezonie letnim: czerwiec, lipiec i sierpień – wyłącznie w piątki, soboty i niedziele, w godzinach 8:00–19:00.',
+        faq6q: 'Gdzie dokładnie jest parking?',
+        faq6a: 'Parking znajduje się przy ul. Turystycznej 69 na Wyspie Sobieszewskiej w Gdańsku, około 600 metrów od wejścia na plażę nr 10.',
+        kontakt_title: 'Kontakt',
+        zadzwon: 'Zadzwoń do nas',
+        napisz: 'Napisz do nas',
+        messenger: 'Napisz przez Messengera',
+        regulamin: 'Regulamin parkingu (Facebook)',
+        rights: 'Wszelkie prawa zastrzeżone.',
+        brakMiejsc: 'BRAK WOLNYCH MIEJSC',
+        cookieText: 'Ta strona używa plików cookie (Google Maps, Firebase, Analytics). Korzystając ze strony, akceptujesz ich użycie.',
+        cookieAccept: 'Akceptuję',
+      },
+      en: {
+        nav_onas: 'About',
+        nav_cennik: 'Pricing',
+        nav_dojazd: 'How to get here',
+        nav_galeria: 'Gallery',
+        nav_opinie: 'Reviews',
+        nav_kontakt: 'Contact',
+        rezerwuj: 'Reserve a spot',
+        hero_sub: 'Wild beaches, whispering pines and the scent of the sea — Sobieszewska Island is a piece of untamed Baltic coast, made for those who seek true rest. Leave your car in safe hands and let nature take you in.',
+
+        onas_title: 'About us',
+        onas_tag: 'Who we are',
+        onas_text: 'Sobieszewska Island is one of the most beautiful and serene spots on the Polish coast — home to vast, unspoiled Baltic beaches. Our parking is just ~600 metres as the crow flies from the sea. A gentle stroll will bring you to entrance no. 10 in 15–20 minutes, while entrances no. 9 and no. 11 are around 1.5 km of pleasant, green-lined walking. Leave your car in safe hands and take the family straight to the sand.',
+        feat1_title: 'Close to the beach',
+        feat1_text: 'Entrance no. 10 — ~600 m · Entrances no. 9 & 11 — ~1.5 km',
+        feat2_title: 'Great price',
+        feat2_text: 'From just 20 PLN per day',
+        feat3_title: 'Staff on site',
+        feat3_text: 'Attendant present during all opening hours',
+        cennik_title: 'Pricing',
+        bez_rez: 'Without reservation',
+        z_rez: 'With reservation',
+        za_dobe: 'per day',
+        polecamy: 'Recommended',
+        rez_info: 'Reservation via Facebook · max 10 spots',
+        godziny_title: 'Opening hours',
+        godziny_val: 'Friday – Sunday, 8:00 AM – 7:00 PM',
+        sezon: 'June · July · August',
+        platnosci: 'Accepted payment methods',
+        gotowka: 'Cash',
+        karta: 'Card',
+        dojazd_title: 'How to get here',
+        nawiguj: '🗺️ Navigate to parking',
+        galeria_title: 'Gallery',
+        opinie_title: 'Customer reviews',
+        opinie_sub: 'See what our customers say on Google',
+        czytaj_opinie: 'Read reviews on Google',
+        faq1q: 'Is a reservation required?',
+        faq1a: 'No reservation is required. You can arrive without a reservation and park for 20 PLN/day. A reservation (25 PLN/day) guarantees your spot – book via Facebook.',
+        faq2q: 'How do I make a reservation?',
+        faq2a: 'Make a reservation through our Facebook page. Click the "Reserve a spot" button or message us via Messenger.',
+        faq3q: 'Can I pay by card or BLIK?',
+        faq3a: 'Yes! We accept cash, BLIK, debit/credit card, Google Pay, and Apple Pay.',
+        faq4q: 'Is the parking lot guarded?',
+        faq4a: 'The parking is unguarded, however an attendant is present throughout all opening hours (8:00–19:00).',
+        faq5q: 'When is the parking open?',
+        faq5a: 'The parking is open during summer season: June, July, and August – only on Fridays, Saturdays, and Sundays, from 8:00 AM to 7:00 PM.',
+        faq6q: 'Where exactly is the parking?',
+        faq6a: 'The parking is located at ul. Turystyczna 69 on Sobieszewska Island in Gdańsk, approximately 600 meters from beach entrance no. 10.',
+        kontakt_title: 'Contact',
+        zadzwon: 'Call us',
+        napisz: 'Email us',
+        messenger: 'Message us on Messenger',
+        regulamin: 'Parking regulations (Facebook)',
+        rights: 'All rights reserved.',
+        brakMiejsc: 'NO SPOTS AVAILABLE',
+        cookieText: 'This site uses cookies (Google Maps, Firebase, Analytics). By using this site, you agree to their use.',
+        cookieAccept: 'Accept',
+      },
+      ua: {
+        nav_onas: 'Про нас',
+        nav_cennik: 'Ціни',
+        nav_dojazd: 'Як дістатися',
+        nav_galeria: 'Галерея',
+        nav_opinie: 'Відгуки',
+        nav_kontakt: 'Контакт',
+        rezerwuj: 'Забронювати місце',
+        hero_sub: 'Дикі пляжі, шелест сосен і запах моря — острів Собєшевська — це куточок незайманого Балтійського узбережжя, створений для тих, хто шукає справжнього відпочинку. Залиште авто в надійних руках і поринь у природу.',
+
+        onas_title: 'Про нас',
+        onas_tag: 'Хто ми',
+        onas_text: 'Острів Собєшевська — одне з найкрасивіших і найспокійніших місць на польському узбережжі, з розлогими, дикими пляжами Балтійського моря. Наш паркінг знаходиться лише ~600 метрів по прямій від моря. Неспішна прогулянка приведе вас до входу № 10 за 15–20 хвилин, а до входів № 9 та № 11 — близько 1,5 км приємного шляху серед зелені. Залиште авто у надійних руках і вирушайте з родиною просто на пісок.',
+        feat1_title: 'Поруч з пляжем',
+        feat1_text: 'Вхід № 10 — ~600 м · Входи № 9 та 11 — ~1,5 км',
+        feat2_title: 'Вигідна ціна',
+        feat2_text: 'Від 20 злотих на добу',
+        feat3_title: 'Персонал на місці',
+        feat3_text: 'Охоронець присутній весь час роботи',
+        cennik_title: 'Ціни',
+        bez_rez: 'Без бронювання',
+        z_rez: 'З бронюванням',
+        za_dobe: 'на добу',
+        polecamy: 'Рекомендуємо',
+        rez_info: 'Бронювання через Facebook · макс. 10 місць',
+        godziny_title: 'Години роботи',
+        godziny_val: 'Пʼятниця – Неділя, 8:00 – 19:00',
+        sezon: 'Червень · Липень · Серпень',
+        platnosci: 'Способи оплати',
+        gotowka: 'Готівка',
+        karta: 'Картка',
+        dojazd_title: 'Як дістатися',
+        nawiguj: '🗺️ Прокласти маршрут',
+        galeria_title: 'Галерея',
+        opinie_title: 'Відгуки клієнтів',
+        opinie_sub: 'Перегляньте відгуки наших клієнтів у Google',
+        czytaj_opinie: 'Читати відгуки у Google',
+        faq1q: 'Чи потрібно бронювати місце?',
+        faq1a: 'Бронювання не обовʼязкове. Можна приїхати без бронювання і запаркуватись за 20 злотих/добу. Бронювання (25 злотих/добу) гарантує ваше місце – оформлюється через Facebook.',
+        faq2q: 'Як забронювати місце?',
+        faq2a: 'Бронювання здійснюється через нашу сторінку у Facebook. Натисніть кнопку "Забронювати місце" або напишіть нам через Messenger.',
+        faq3q: 'Чи можна оплатити карткою або BLIK?',
+        faq3a: 'Так! Ми приймаємо готівку, BLIK, платіжну картку, Google Pay та Apple Pay.',
+        faq4q: 'Чи охороняється паркінг?',
+        faq4a: 'Паркінг є неохоронюваним, однак протягом усіх годин роботи (8:00–19:00) на місці присутній співробітник.',
+        faq5q: 'Коли відкритий паркінг?',
+        faq5a: 'Паркінг працює в літній сезон: червень, липень та серпень – виключно у пʼятницю, суботу та неділю, з 8:00 до 19:00.',
+        faq6q: 'Де знаходиться паркінг?',
+        faq6a: 'Паркінг знаходиться за адресою вул. Туристична 69 на острові Собєшевська у Гданську, приблизно 600 метрів від входу на пляж № 10.',
+        kontakt_title: 'Контакт',
+        zadzwon: 'Зателефонуйте нам',
+        napisz: 'Напишіть нам',
+        messenger: 'Написати через Messenger',
+        regulamin: 'Правила паркінгу (Facebook)',
+        rights: 'Усі права захищені.',
+        brakMiejsc: 'ВІЛЬНИХ МІСЦЬ НЕМАЄ',
+        cookieText: 'Цей сайт використовує файли cookie (Google Maps, Firebase, Analytics). Користуючись сайтом, ви погоджуєтесь на їх використання.',
+        cookieAccept: 'Прийняти',
+      },
+      de: {
+        nav_onas: 'Über uns',
+        nav_cennik: 'Preise',
+        nav_dojazd: 'Anfahrt',
+        nav_galeria: 'Galerie',
+        nav_opinie: 'Bewertungen',
+        nav_kontakt: 'Kontakt',
+        rezerwuj: 'Platz reservieren',
+        hero_sub: 'Wilde Strände, rauschende Kiefern und der Duft des Meeres — die Insel Sobieszewo ist ein Stück unberührte Ostseeküste, geschaffen für alle, die echte Erholung suchen. Lassen Sie Ihr Auto in sicheren Händen und tauchen Sie in die Natur ein.',
+
+        onas_title: 'Über uns',
+        onas_tag: 'Wer wir sind',
+        onas_text: 'Die Insel Sobieszewo ist einer der schönsten und ruhigsten Orte an der polnischen Küste — mit weitläufigen, unberührten Ostseestränden. Unser Parkplatz liegt nur ~600 Meter Luftlinie vom Meer entfernt. Ein gemütlicher Spaziergang bringt Sie in 15–20 Minuten zum Strandeingang Nr. 10, während die Eingänge Nr. 9 und Nr. 11 etwa 1,5 km angenehmen Weges durch die Natur entfernt sind. Lassen Sie Ihr Auto in guten Händen und genießen Sie den Tag mit der Familie am Strand.',
+        feat1_title: 'Strandnah',
+        feat1_text: 'Eingang Nr. 10 — ~600 m · Eingänge Nr. 9 & 11 — ~1,5 km',
+        feat2_title: 'Günstiger Preis',
+        feat2_text: 'Ab nur 20 PLN pro Tag',
+        feat3_title: 'Personal vor Ort',
+        feat3_text: 'Betreuer während der gesamten Öffnungszeiten',
+        cennik_title: 'Preise',
+        bez_rez: 'Ohne Reservierung',
+        z_rez: 'Mit Reservierung',
+        za_dobe: 'pro Tag',
+        polecamy: 'Empfohlen',
+        rez_info: 'Reservierung über Facebook · max. 10 Plätze',
+        godziny_title: 'Öffnungszeiten',
+        godziny_val: 'Freitag – Sonntag, 8:00 – 19:00 Uhr',
+        sezon: 'Juni · Juli · August',
+        platnosci: 'Zahlungsmethoden',
+        gotowka: 'Bargeld',
+        karta: 'Karte',
+        dojazd_title: 'Anfahrt',
+        nawiguj: '🗺️ Navigation starten',
+        galeria_title: 'Galerie',
+        opinie_title: 'Kundenbewertungen',
+        opinie_sub: 'Lesen Sie, was unsere Kunden bei Google sagen',
+        czytaj_opinie: 'Bewertungen bei Google lesen',
+        faq1q: 'Ist eine Reservierung erforderlich?',
+        faq1a: 'Eine Reservierung ist nicht erforderlich. Sie können ohne Reservierung ankommen und für 20 PLN/Tag parken. Eine Reservierung (25 PLN/Tag) garantiert Ihren Platz – über Facebook buchbar.',
+        faq2q: 'Wie kann ich einen Platz reservieren?',
+        faq2a: 'Die Reservierung erfolgt über unsere Facebook-Seite. Klicken Sie auf die Schaltfläche "Platz reservieren" oder schreiben Sie uns über Messenger.',
+        faq3q: 'Kann ich mit Karte oder BLIK bezahlen?',
+        faq3a: 'Ja! Wir akzeptieren Bargeld, BLIK, Debit-/Kreditkarte, Google Pay und Apple Pay.',
+        faq4q: 'Wird der Parkplatz bewacht?',
+        faq4a: 'Der Parkplatz ist unbewacht, jedoch ist während der gesamten Öffnungszeiten (8:00–19:00) ein Mitarbeiter anwesend.',
+        faq5q: 'Wann ist der Parkplatz geöffnet?',
+        faq5a: 'Der Parkplatz ist in der Sommersaison geöffnet: Juni, Juli und August – nur freitags, samstags und sonntags von 8:00 bis 19:00 Uhr.',
+        faq6q: 'Wo genau befindet sich der Parkplatz?',
+        faq6a: 'Der Parkplatz befindet sich in der ul. Turystyczna 69 auf der Insel Sobieszewo in Danzig, ca. 600 Meter vom Strandeingang Nr. 10 entfernt.',
+        kontakt_title: 'Kontakt',
+        zadzwon: 'Rufen Sie uns an',
+        napisz: 'Schreiben Sie uns',
+        messenger: 'Schreiben Sie über Messenger',
+        regulamin: 'Parkordnung (Facebook)',
+        rights: 'Alle Rechte vorbehalten.',
+        brakMiejsc: 'KEINE FREIEN PLÄTZE',
+        cookieText: 'Diese Website verwendet Cookies (Google Maps, Firebase, Analytics). Durch die Nutzung stimmen Sie deren Verwendung zu.',
+        cookieAccept: 'Akzeptieren',
+      }
+    },
+
+    t(key) {
+      return this.translations[this.lang]?.[key] || this.translations['pl'][key] || key;
+    },
+
+    setLang(l) {
+      this.lang = l;
+      localStorage.setItem('lang', l);
+      document.documentElement.lang = l;
+    },
+
+    acceptCookie() {
+      localStorage.setItem('cookieAccepted', '1');
+      this.showCookie = false;
+    },
+
+    init() {
+      document.documentElement.lang = this.lang;
+
+      // Listen for Firebase parking status updates
+      window.addEventListener('parking-status', (e) => {
+        this.brakMiejsc = e.detail.brakMiejsc;
+      });
+
+      // Fade-in on scroll observer
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+  }
+}
+</script>
+
+</body>
+</html>

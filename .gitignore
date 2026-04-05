@@ -1,0 +1,28 @@
+# Wyklucz inne projekty i śmieci
+node_modules/
+apps/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.exe
+*.bmp
+*.jfif
+*.pdf
+*.glb
+package.json
+package-lock.json
+scoped_dir*/
+PROJECT_SPEC.md
+TECH_STACK.md
+logo paragon.bmp
+mapa1.jpg
+orzel.jpg
+wyspa.glb
+Git-2.53.0.2-64-bit.exe
+*.png.bak
+5ee0fc5d-eafd-4dec-b8d2-28fa33dbf87b.jfif
+pobrany plik.png
+sobieszewo-mapa-2017-v2.pdf
+"Fotki parking/"

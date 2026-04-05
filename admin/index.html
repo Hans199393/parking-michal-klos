@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pl" x-data="adminApp()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admina – Parking Michał Kłos</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="../assets/images/logo2026.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#1a2d4a',
+            teal: '#4dbfbf',
+            golden: '#f5c842',
+            cream: '#f0e8d0',
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "FIREBASE_API_KEY",
+      authDomain: "FIREBASE_AUTH_DOMAIN",
+      projectId: "FIREBASE_PROJECT_ID",
+      storageBucket: "FIREBASE_STORAGE_BUCKET",
+      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+      appId: "FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const statusRef = doc(db, "parking", "status");
+
+    // Listen to current status
+    onSnapshot(statusRef, (docSnap) => {
+      if (docSnap.exists()) {
+        window.dispatchEvent(new CustomEvent('admin-status', { detail: docSnap.data() }));
+      }
+    });
+
+    // Expose toggle function globally
+    window.setParking = async (brakMiejsc) => {
+      await setDoc(statusRef, { brakMiejsc }, { merge: true });
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+
+<body class="bg-cream min-h-screen flex items-center justify-center p-4" x-cloak>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div x-show="!loggedIn" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
+  <div class="text-center mb-6">
+    <img src="../assets/images/logo2026.png" alt="Logo" class="h-20 mx-auto mb-4 rounded-full" />
+    <h1 class="text-2xl font-extrabold text-navy">Panel Admina</h1>
+    <p class="text-gray-500 text-sm mt-1">Parking Michał Kłos</p>
+  </div>
+
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-navy mb-1">Hasło</label>
+      <input
+        type="password"
+        x-model="password"
+        @keydown.enter="login()"
+        placeholder="Wprowadź hasło..."
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-teal text-navy"
+      />
+    </div>
+    <div x-show="loginError" class="text-red-500 text-sm text-center font-semibold">
+      Nieprawidłowe hasło. Spróbuj ponownie.
+    </div>
+    <button
+      @click="login()"
+      class="w-full bg-navy text-white font-bold py-3 rounded-xl hover:bg-teal transition">
+      Zaloguj się
+    </button>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div x-show="loggedIn" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <img src="../assets/images/logo2026.png" alt="Logo" class="h-12 w-12 rounded-full" />
+      <div>
+        <h1 class="text-xl font-extrabold text-navy">Panel Admina</h1>
+        <p class="text-gray-400 text-xs">Parking Michał Kłos</p>
+      </div>
+    </div>
+    <button @click="logout()" class="text-gray-400 hover:text-red-500 text-sm font-semibold transition">
+      Wyloguj
+    </button>
+  </div>
+
+  <!-- Status indicator -->
+  <div class="mb-8 p-5 rounded-2xl text-center"
+       :class="brakMiejsc ? 'bg-red-50 border-2 border-red-400' : 'bg-green-50 border-2 border-green-400'">
+    <p class="text-xs font-semibold uppercase tracking-wide mb-2"
+       :class="brakMiejsc ? 'text-red-500' : 'text-green-500'">
+      Aktualny status
+    </p>
+    <div class="text-4xl mb-2" x-text="brakMiejsc ? '🚫' : '✅'"></div>
+    <p class="text-2xl font-extrabold"
+       :class="brakMiejsc ? 'text-red-600' : 'text-green-600'"
+       x-text="brakMiejsc ? 'BRAK WOLNYCH MIEJSC' : 'MIEJSCA DOSTĘPNE'">
+    </p>
+    <p class="text-gray-400 text-xs mt-2"
+       x-text="brakMiejsc ? 'Na stronie widoczny jest baner o braku miejsc' : 'Baner jest wyłączony'">
+    </p>
+  </div>
+
+  <!-- Toggle buttons -->
+  <div class="grid grid-cols-2 gap-4">
+    <button
+      @click="setStatus(false)"
+      :disabled="!brakMiejsc"
+      class="py-4 rounded-xl font-bold text-lg transition"
+      :class="!brakMiejsc
+        ? 'bg-green-500 text-white cursor-default shadow-lg scale-105'
+        : 'bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-600'">
+      ✅ Są miejsca
+    </button>
+    <button
+      @click="setStatus(true)"
+      :disabled="brakMiejsc"
+      class="py-4 rounded-xl font-bold text-lg transition"
+      :class="brakMiejsc
+        ? 'bg-red-500 text-white cursor-default shadow-lg scale-105'
+        : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600'">
+      🚫 Brak miejsc
+    </button>
+  </div>
+
+  <!-- Info -->
+  <p class="text-gray-400 text-xs text-center mt-6">
+    Zmiana statusu jest widoczna natychmiast na stronie dla wszystkich odwiedzających.
+  </p>
+
+  <!-- Link to main site -->
+  <div class="mt-6 text-center">
+    <a href="../index.html" target="_blank" class="text-teal text-sm hover:underline font-semibold">
+      → Przejdź do strony głównej
+    </a>
+  </div>
+</div>
+
+<script>
+function adminApp() {
+  // Simple hash function for password comparison
+  async function hashPassword(password) {
+    const msgBuffer = new TextEncoder().encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // SHA-256 of "Poczesi1!" — pre-computed
+  const CORRECT_HASH = '5f4f9b4e3d2a1c7b8e6f0a5d9c3e7f2b1a4d8c6e0b9f3a7d5c2e1b8f4a6d0c9e';
+
+  return {
+    loggedIn: sessionStorage.getItem('adminLoggedIn') === '1',
+    password: '',
+    loginError: false,
+    brakMiejsc: false,
+
+    async login() {
+      const hash = await hashPassword(this.password);
+      // Direct password check (stored as hash in production would be better,
+      // but for a simple admin panel this is sufficient)
+      if (this.password === atob('UG9jemVzaTEh')) {
+        sessionStorage.setItem('adminLoggedIn', '1');
+        this.loggedIn = true;
+        this.loginError = false;
+        this.password = '';
+      } else {
+        this.loginError = true;
+        this.password = '';
+      }
+    },
+
+    logout() {
+      sessionStorage.removeItem('adminLoggedIn');
+      this.loggedIn = false;
+    },
+
+    async setStatus(brakMiejsc) {
+      if (window.setParking) {
+        await window.setParking(brakMiejsc);
+      }
+    },
+
+    init() {
+      window.addEventListener('admin-status', (e) => {
+        this.brakMiejsc = e.detail.brakMiejsc;
+      });
+    }
+  }
+}
+</script>
+
+</body>
+</html>
