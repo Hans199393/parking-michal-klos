@@ -58,36 +58,45 @@
   <!-- Alpine.js CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxGso9FM5aEoRbOn6GEV2al-toZ6xnSE4",
-      authDomain: "parking-michal-klos.firebaseapp.com",
-      projectId: "parking-michal-klos",
-      storageBucket: "parking-michal-klos.firebasestorage.app",
-      messagingSenderId: "1050182298060",
-      appId: "1:1050182298060:web:4df2d1427c2a23b1c5d569"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const statusRef = doc(db, "parking", "status");
-    onSnapshot(statusRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const brakMiejsc = docSnap.data().brakMiejsc;
-        window.dispatchEvent(new CustomEvent('parking-status', { detail: { brakMiejsc } }));
+      function dispatchRow(key, value) {
+        if (key === 'spots_available') {
+          window.dispatchEvent(new CustomEvent('parking-status', {
+            detail: { brakMiejsc: value === 'false' }
+          }));
+        }
+        if (key === 'komunikat') {
+          try {
+            window.dispatchEvent(new CustomEvent('komunikat-update', {
+              detail: JSON.parse(value)
+            }));
+          } catch (_) {}
+        }
       }
-    });
 
-    const komunikatRef = doc(db, "komunikaty", "aktywny");
-    onSnapshot(komunikatRef, (docSnap) => {
-      const data = docSnap.exists() ? docSnap.data() : { aktywny: false };
-      window.dispatchEvent(new CustomEvent('komunikat-update', { detail: data }));
-    });
+      async function init() {
+        const { data } = await sb.from('settings')
+          .select('key,value')
+          .in('key', ['spots_available', 'komunikat']);
+        if (data) data.forEach(r => dispatchRow(r.key, r.value));
+
+        sb.channel('settings-realtime')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'settings' },
+            payload => { if (payload.new) dispatchRow(payload.new.key, payload.new.value); }
+          )
+          .subscribe();
+      }
+
+      init();
+    })();
   </script>
 
   <!-- Google Analytics -->
@@ -623,7 +632,7 @@ function app() {
         regulamin: 'Regulamin parkingu (Facebook)',
         rights: 'Wszelkie prawa zastrzeżone.',
         brakMiejsc: 'BRAK WOLNYCH MIEJSC',
-        cookieText: 'Ta strona używa plików cookie (Google Maps, Firebase, Analytics). Korzystając ze strony, akceptujesz ich użycie.',
+        cookieText: 'Ta strona używa plików cookie (Google Maps, Analytics). Korzystając ze strony, akceptujesz ich użycie.',
         cookieAccept: 'Akceptuję',
       },
       en: {
@@ -682,7 +691,7 @@ function app() {
         regulamin: 'Parking regulations (Facebook)',
         rights: 'All rights reserved.',
         brakMiejsc: 'NO SPOTS AVAILABLE',
-        cookieText: 'This site uses cookies (Google Maps, Firebase, Analytics). By using this site, you agree to their use.',
+        cookieText: 'This site uses cookies (Google Maps, Analytics). By using this site, you agree to their use.',
         cookieAccept: 'Accept',
       },
       ua: {
@@ -741,7 +750,7 @@ function app() {
         regulamin: 'Правила паркінгу (Facebook)',
         rights: 'Усі права захищені.',
         brakMiejsc: 'ВІЛЬНИХ МІСЦЬ НЕМАЄ',
-        cookieText: 'Цей сайт використовує файли cookie (Google Maps, Firebase, Analytics). Користуючись сайтом, ви погоджуєтесь на їх використання.',
+        cookieText: 'Цей сайт використовує файли cookie (Google Maps, Analytics). Користуючись сайтом, ви погоджуєтесь на їх використання.',
         cookieAccept: 'Прийняти',
       },
       de: {
@@ -800,7 +809,7 @@ function app() {
         regulamin: 'Parkordnung (Facebook)',
         rights: 'Alle Rechte vorbehalten.',
         brakMiejsc: 'KEINE FREIEN PLÄTZE',
-        cookieText: 'Diese Website verwendet Cookies (Google Maps, Firebase, Analytics). Durch die Nutzung stimmen Sie deren Verwendung zu.',
+        cookieText: 'Diese Website verwendet Cookies (Google Maps, Analytics). Durch die Nutzung stimmen Sie deren Verwendung zu.',
         cookieAccept: 'Akzeptieren',
       }
     },
@@ -823,7 +832,7 @@ function app() {
     init() {
       document.documentElement.lang = this.lang;
 
-      // Listen for Firebase parking status updates
+      // Listen for Supabase parking status updates
       window.addEventListener('parking-status', (e) => {
         this.brakMiejsc = e.detail.brakMiejsc;
       });

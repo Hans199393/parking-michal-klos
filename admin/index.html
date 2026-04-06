@@ -23,58 +23,77 @@
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxGso9FM5aEoRbOn6GEV2al-toZ6xnSE4",
-      authDomain: "parking-michal-klos.firebaseapp.com",
-      projectId: "parking-michal-klos",
-      storageBucket: "parking-michal-klos.firebasestorage.app",
-      messagingSenderId: "1050182298060",
-      appId: "1:1050182298060:web:4df2d1427c2a23b1c5d569"
-    };
+      // Auth
+      window.adminLogin = (email, password) =>
+        sb.auth.signInWithPassword({ email, password }).then(({ error }) => ({
+          ok: !error,
+          msg: error?.message
+        }));
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const statusRef = doc(db, "parking", "status");
-    const komunikatRef = doc(db, "komunikaty", "aktywny");
+      window.adminLogout = () => sb.auth.signOut();
 
-    // Listen to parking status
-    onSnapshot(statusRef, (docSnap) => {
-      if (docSnap.exists()) {
-        window.dispatchEvent(new CustomEvent('admin-status', { detail: docSnap.data() }));
+      window.checkAdminSession = async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        return !!session;
+      };
+
+      // Status
+      window.setParking = async (brakMiejsc) => {
+        const value = brakMiejsc ? 'false' : 'true';
+        const { error } = await sb.from('settings')
+          .upsert({ key: 'spots_available', value }, { onConflict: 'key' });
+        window.dispatchEvent(new CustomEvent('parking-saved', {
+          detail: { ok: !error, msg: error?.message }
+        }));
+      };
+
+      // Komunikat
+      window.setKomunikat = async (kom) => {
+        const { error } = await sb.from('settings')
+          .upsert({ key: 'komunikat', value: JSON.stringify(kom) }, { onConflict: 'key' });
+        return { ok: !error, msg: error?.message };
+      };
+
+      // Initial data + realtime
+      function dispatchRow(key, value) {
+        if (key === 'spots_available') {
+          window.dispatchEvent(new CustomEvent('admin-status', {
+            detail: { brakMiejsc: value === 'false' }
+          }));
+        }
+        if (key === 'komunikat') {
+          try {
+            window.dispatchEvent(new CustomEvent('komunikat-status', {
+              detail: JSON.parse(value)
+            }));
+          } catch (_) {}
+        }
       }
-    });
 
-    // Listen to komunikat
-    onSnapshot(komunikatRef, (docSnap) => {
-      const data = docSnap.exists() ? docSnap.data() : { aktywny: false };
-      window.dispatchEvent(new CustomEvent('komunikat-status', { detail: data }));
-    });
+      async function initAdmin() {
+        const { data } = await sb.from('settings')
+          .select('key,value')
+          .in('key', ['spots_available', 'komunikat']);
+        if (data) data.forEach(r => dispatchRow(r.key, r.value));
 
-    // Expose toggle function globally
-    window.setParking = async (brakMiejsc) => {
-      try {
-        await setDoc(statusRef, { brakMiejsc }, { merge: true });
-        window.dispatchEvent(new CustomEvent('parking-saved', { detail: { ok: true } }));
-      } catch (err) {
-        console.error('Firestore error:', err);
-        window.dispatchEvent(new CustomEvent('parking-saved', { detail: { ok: false, msg: err.message } }));
+        sb.channel('admin-settings')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'settings' },
+            payload => { if (payload.new) dispatchRow(payload.new.key, payload.new.value); }
+          )
+          .subscribe();
       }
-    };
 
-    window.setKomunikat = async (data) => {
-      try {
-        await setDoc(komunikatRef, data);
-        return { ok: true };
-      } catch (err) {
-        console.error('Komunikat error:', err);
-        return { ok: false, msg: err.message };
-      }
-    };
+      initAdmin();
+    })();
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -97,22 +116,33 @@
 
   <div class="space-y-4">
     <div>
+      <label class="block text-sm font-semibold text-navy mb-1">E-mail</label>
+      <input
+        type="email"
+        x-model="email"
+        @keydown.enter="$refs.passwordInput.focus()"
+        placeholder="Adres e-mail..."
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-teal text-navy"
+      />
+    </div>
+    <div>
       <label class="block text-sm font-semibold text-navy mb-1">Hasło</label>
       <input
         type="password"
         x-model="password"
+        x-ref="passwordInput"
         @keydown.enter="login()"
         placeholder="Wprowadź hasło..."
         class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-teal text-navy"
       />
     </div>
-    <div x-show="loginError" class="text-red-500 text-sm text-center font-semibold">
-      Nieprawidłowe hasło. Spróbuj ponownie.
+    <div x-show="loginError" class="text-red-500 text-sm text-center font-semibold" x-text="loginErrorMsg || 'Nieprawidłowe dane. Spróbuj ponownie.'">
     </div>
     <button
       @click="login()"
-      class="w-full bg-navy text-white font-bold py-3 rounded-xl hover:bg-teal transition">
-      Zaloguj się
+      :disabled="loggingIn"
+      class="w-full bg-navy text-white font-bold py-3 rounded-xl hover:bg-teal transition disabled:opacity-50">
+      <span x-text="loggingIn ? 'Logowanie...' : 'Zaloguj się'"></span>
     </button>
   </div>
 </div>
@@ -242,21 +272,13 @@
 
 <script>
 function adminApp() {
-  // Simple hash function for password comparison
-  async function hashPassword(password) {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  // SHA-256 of "Poczesi1!" — pre-computed
-  const CORRECT_HASH = '5f4f9b4e3d2a1c7b8e6f0a5d9c3e7f2b1a4d8c6e0b9f3a7d5c2e1b8f4a6d0c9e';
-
   return {
-    loggedIn: sessionStorage.getItem('adminLoggedIn') === '1',
+    loggedIn: false,
+    email: '',
     password: '',
     loginError: false,
+    loginErrorMsg: '',
+    loggingIn: false,
     brakMiejsc: false,
     saving: false,
     saveMsg: '',
@@ -264,46 +286,41 @@ function adminApp() {
     komMsg: '',
 
     async login() {
-      const hash = await hashPassword(this.password);
-      // Direct password check (stored as hash in production would be better,
-      // but for a simple admin panel this is sufficient)
-      if (this.password === atob('UG9jemVzaTEh')) {
-        sessionStorage.setItem('adminLoggedIn', '1');
+      this.loggingIn = true;
+      this.loginError = false;
+      const { ok, msg } = await window.adminLogin(this.email, this.password);
+      this.loggingIn = false;
+      if (ok) {
         this.loggedIn = true;
-        this.loginError = false;
+        this.email = '';
         this.password = '';
       } else {
         this.loginError = true;
+        this.loginErrorMsg = msg || 'Nieprawidłowe dane. Spróbuj ponownie.';
         this.password = '';
       }
     },
 
-    logout() {
-      sessionStorage.removeItem('adminLoggedIn');
+    async logout() {
+      await window.adminLogout();
       this.loggedIn = false;
     },
 
     async setStatus(brakMiejsc) {
       this.saving = true;
       this.saveMsg = '';
-      if (window.setParking) {
-        await window.setParking(brakMiejsc);
-      } else {
-        this.saveMsg = 'Błąd: Firebase nie załadowany';
-        this.saving = false;
-      }
+      await window.setParking(brakMiejsc);
     },
 
     async saveKomunikat() {
       this.komMsg = '';
-      if (window.setKomunikat) {
-        const result = await window.setKomunikat(this.kom);
-        this.komMsg = result.ok ? '✅ Komunikat zapisany!' : '❌ Błąd: ' + result.msg;
-        setTimeout(() => this.komMsg = '', 5000);
-      }
+      const result = await window.setKomunikat(this.kom);
+      this.komMsg = result.ok ? '✅ Komunikat zapisany!' : '❌ Błąd: ' + result.msg;
+      setTimeout(() => this.komMsg = '', 5000);
     },
 
-    init() {
+    async init() {
+      // Rejestrujemy listenery PRZED await — eliminuje race condition
       window.addEventListener('admin-status', (e) => {
         this.brakMiejsc = e.detail.brakMiejsc;
       });
@@ -322,6 +339,8 @@ function adminApp() {
           aktywny: d.aktywny || false
         };
       });
+
+      this.loggedIn = await window.checkAdminSession();
     }
   }
 }
