@@ -275,6 +275,15 @@
        class="inline-block bg-golden text-navy font-extrabold text-lg px-8 py-4 rounded-full shadow-xl hover:bg-sunset hover:text-white transition transform hover:-translate-y-1"
        x-text="t('rezerwuj')"></a>
 
+    <!-- Status otwarcia -->
+    <div class="flex justify-center mt-6 mb-2">
+      <span
+        :class="openingStatus === 'open' ? 'bg-green-500/90 text-white' : 'bg-white/20 text-white border border-white/40'"
+        class="backdrop-blur-sm font-semibold text-sm px-5 py-2.5 rounded-full"
+        x-text="getOpeningLabel()">
+      </span>
+    </div>
+
     <!-- Kluczowe info — widoczne od razu -->
     <div class="flex flex-wrap justify-center gap-3 mt-8">
       <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge1')"></span>
@@ -620,6 +629,8 @@ function app() {
       { qKey: 'faq6q', aKey: 'faq6a', open: false },
     ],
 
+    openingStatus: null,
+
     translations: {
       pl: {
         nav_onas: 'O nas',
@@ -680,6 +691,9 @@ function app() {
         brakMiejsc: 'BRAK WOLNYCH MIEJSC',
         cookieText: 'Ta strona używa plików cookie (Google Maps, Analytics). Korzystając ze strony, akceptujesz ich użycie.',
         cookieAccept: 'Akceptuję',
+        opening_open: '🟢 Otwarty dziś · do 19:00',
+        opening_offseason: '📅 Sezon: czerwiec – sierpień · pt, sb, nd',
+        opening_tomorrow: 'Jutro',
       },
       en: {
         nav_onas: 'About',
@@ -742,6 +756,9 @@ function app() {
         brakMiejsc: 'NO SPOTS AVAILABLE',
         cookieText: 'This site uses cookies (Google Maps, Analytics). By using this site, you agree to their use.',
         cookieAccept: 'Accept',
+        opening_open: '🟢 Open today · until 19:00',
+        opening_offseason: '📅 Season: June – August · Fri, Sat, Sun',
+        opening_tomorrow: 'Tomorrow',
       },
       ua: {
         nav_onas: 'Про нас',
@@ -802,6 +819,9 @@ function app() {
         brakMiejsc: 'ВІЛЬНИХ МІСЦЬ НЕМАЄ',
         cookieText: 'Цей сайт використовує файли cookie (Google Maps, Analytics). Користуючись сайтом, ви погоджуєтесь на їх використання.',
         cookieAccept: 'Прийняти',
+        opening_open: '🟢 Відкрито сьогодні · до 19:00',
+        opening_offseason: '📅 Сезон: червень – серпень · пт, сб, нд',
+        opening_tomorrow: 'Завтра',
       },
       de: {
         nav_onas: 'Über uns',
@@ -864,6 +884,9 @@ function app() {
         brakMiejsc: 'KEINE FREIEN PLÄTZE',
         cookieText: 'Diese Website verwendet Cookies (Google Maps, Analytics). Durch die Nutzung stimmen Sie deren Verwendung zu.',
         cookieAccept: 'Akzeptieren',
+        opening_open: '🟢 Heute geöffnet · bis 19:00',
+        opening_offseason: '📅 Saison: Juni – August · Fr, Sa, So',
+        opening_tomorrow: 'Morgen',
       }
     },
 
@@ -882,8 +905,39 @@ function app() {
       this.showCookie = false;
     },
 
+    computeOpeningStatus() {
+      const now = new Date();
+      const wMs = now.getTime() + (2 * 60 - now.getTimezoneOffset()) * 60000;
+      const w = new Date(wMs);
+      const m = w.getMonth() + 1; // 1-12
+      const dow = w.getDay();     // 0=Nd, 5=Pt, 6=Sb
+      const h = w.getHours();
+      const openDow = [0, 5, 6];
+      if (m >= 6 && m <= 8 && openDow.includes(dow) && h >= 8 && h < 19) return 'open';
+      for (let i = 1; i <= 365; i++) {
+        const d = new Date(wMs + i * 86400000);
+        const dm = d.getMonth() + 1;
+        if (dm >= 6 && dm <= 8 && openDow.includes(d.getDay())) return { type: 'next', date: d, days: i };
+      }
+      return 'offseason';
+    },
+
+    getOpeningLabel() {
+      const s = this.openingStatus;
+      if (!s) return '';
+      if (s === 'open') return this.t('opening_open');
+      if (s === 'offseason') return this.t('opening_offseason');
+      const localeMap = { pl: 'pl-PL', en: 'en-GB', ua: 'uk-UA', de: 'de-DE' };
+      const locale = localeMap[this.lang] || 'pl-PL';
+      const dateStr = s.date.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' });
+      return s.days === 1
+        ? `📅 ${this.t('opening_tomorrow')} · ${dateStr}`
+        : `📅 ${dateStr}`;
+    },
+
     init() {
       document.documentElement.lang = this.lang;
+      this.openingStatus = this.computeOpeningStatus();
 
       // Listen for Supabase parking status updates
       window.addEventListener('parking-status', (e) => {
