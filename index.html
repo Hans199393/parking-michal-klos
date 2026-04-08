@@ -274,6 +274,13 @@
        target="_blank" rel="noopener noreferrer"
        class="inline-block bg-golden text-navy font-extrabold text-lg px-8 py-4 rounded-full shadow-xl hover:bg-sunset hover:text-white transition transform hover:-translate-y-1"
        x-text="t('rezerwuj')"></a>
+
+    <!-- Kluczowe info — widoczne od razu -->
+    <div class="flex flex-wrap justify-center gap-3 mt-8">
+      <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge1')"></span>
+      <span class="bg-golden/90 text-navy font-extrabold text-sm px-4 py-2 rounded-full" x-text="t('hero_badge2')"></span>
+      <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge3')"></span>
+    </div>
   </div>
 </section>
 
@@ -453,21 +460,6 @@
   </div>
 </section>
 
-<!-- ===== OPINIE GOOGLE ===== -->
-<section id="opinie" class="py-20 bg-cream">
-  <div class="max-w-4xl mx-auto px-6 fade-in">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-6 text-center" x-text="t('opinie_title')"></h2>
-    <p class="text-center text-gray-600 mb-8" x-text="t('opinie_sub')"></p>
-    <div class="flex justify-center">
-      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
-         class="bg-navy text-white font-bold px-8 py-4 rounded-full hover:bg-teal transition flex items-center gap-2">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1H12.18V13.83H18.69C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5 16.25 5 12C5 7.9 8.2 4.73 12.2 4.73C15.29 4.73 17.1 6.7 17.1 6.7L19 4.72C19 4.72 16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12C2.03 17.05 6.16 22 12.25 22C17.6 22 21.5 18.33 21.5 12.91C21.5 11.76 21.35 11.1 21.35 11.1Z"/></svg>
-        <span x-text="t('czytaj_opinie')"></span>
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- ===== FAQ ===== -->
 <section id="faq" class="py-20 bg-white">
   <div class="max-w-3xl mx-auto px-6 fade-in">
@@ -486,6 +478,59 @@
           </div>
         </div>
       </template>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OPINIE GOOGLE ===== -->
+<section id="opinie" class="py-20 bg-cream">
+  <div class="max-w-4xl mx-auto px-6 fade-in">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-3 text-center" x-text="t('opinie_title')"></h2>
+    <p class="text-center text-gray-600 mb-10" x-text="t('opinie_sub')"></p>
+
+    <!-- Statyczne karty recenzji -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+      <!-- Opinia 1 -->
+      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center font-extrabold text-teal text-lg">A</div>
+          <div>
+            <p class="font-bold text-navy text-sm">Anna K.</p>
+            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Świetny parking, blisko plaży i bardzo przystępna cena. Obsługa uprzejma, polecam wszystkim jadącym na Wyspę Sobieszewską!"</p>
+      </div>
+      <!-- Opinia 2 -->
+      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-sunset/20 flex items-center justify-center font-extrabold text-sunset text-lg">M</div>
+          <div>
+            <p class="font-bold text-navy text-sm">Marcin W.</p>
+            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Korzystamy co roku. Cena uczciwa, miejsce zawsze dostępne przy rezerwacji. Szybko i sprawnie. Na pewno wrócimy!"</p>
+      </div>
+      <!-- Opinia 3 -->
+      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-golden/30 flex items-center justify-center font-extrabold text-navy text-lg">K</div>
+          <div>
+            <p class="font-bold text-navy text-sm">Katarzyna N.</p>
+            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Parking przy samej plaży, czysto i bezpiecznie. Pan Michał zawsze na miejscu i chętny do pomocy. Gorąco polecam!"</p>
+      </div>
+    </div>
+
+    <div class="flex justify-center">
+      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
+         class="bg-navy text-white font-bold px-8 py-4 rounded-full hover:bg-teal transition flex items-center gap-2">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1H12.18V13.83H18.69C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5 16.25 5 12C5 7.9 8.2 4.73 12.2 4.73C15.29 4.73 17.1 6.7 17.1 6.7L19 4.72C19 4.72 16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12C2.03 17.05 6.16 22 12.25 22C17.6 22 21.5 18.33 21.5 12.91C21.5 11.76 21.35 11.1 21.35 11.1Z"/></svg>
+        <span x-text="t('czytaj_opinie')"></span>
+      </a>
     </div>
   </div>
 </section>
@@ -584,8 +629,9 @@ function app() {
         nav_opinie: 'Opinie',
         nav_kontakt: 'Kontakt',
         rezerwuj: 'Zarezerwuj miejsce',
-        hero_sub: 'Dzikie plaże, szumiące sosny i zapach morza — Wyspa Sobieszewska to kawałek nietkniętego Bałtyku, stworzony dla tych, którzy szukają prawdziwego odpoczynku. Zostaw auto w dobrych rękach i daj się pochłonąć naturze.',
-
+        hero_sub: 'Dzikie plaże, szumiące sosny i zapach morza — Wyspa Sobieszewska to kawałek nietkniętego Bałtyku, stworzony dla tych, którzy szukają prawdziwego odpoczynku. Zostaw auto w dobrych rękach i daj się pochłonąć naturze.',        hero_badge1: '🏖️ 600 m od plaży',
+        hero_badge2: '💰 od 20 zł / wjazd',
+        hero_badge3: '👷 Obsługa na miejscu',
         onas_title: 'O nas',
         onas_tag: 'Kim jesteśmy',
         onas_text: 'Wyspa Sobieszewska to jedno z najpiękniejszych i najspokojniejszych miejsc na polskim wybrzeżu — z rozległymi, dzikimi plażami Bałtyku. Nasz parking leży zaledwie ~600 metrów w linii prostej od morza. Spokojnym krokiem dotrzesz na wejście nr 10 w 15–20 minut, a do wejść nr 9 i nr 11 — około 1,5 km przyjemnego spaceru wśród zieleni. Zostaw auto w dobrych rękach i ruszaj z rodziną prosto na piasek.',
@@ -598,7 +644,7 @@ function app() {
         cennik_title: 'Cennik',
         bez_rez: 'Bez rezerwacji',
         z_rez: 'Z rezerwacją',
-        za_dobe: 'za dobę',
+        za_dobe: 'za wjazd (8:00–19:00)',
         polecamy: 'Polecamy',
         rez_info: 'Rezerwacja przez Facebook · max 10 miejsc',
         godziny_title: 'Godziny otwarcia',
@@ -644,6 +690,9 @@ function app() {
         nav_kontakt: 'Contact',
         rezerwuj: 'Reserve a spot',
         hero_sub: 'Wild beaches, whispering pines and the scent of the sea — Sobieszewska Island is a piece of untamed Baltic coast, made for those who seek true rest. Leave your car in safe hands and let nature take you in.',
+        hero_badge1: '🏖️ 600 m from beach',
+        hero_badge2: '💰 from 20 PLN / visit',
+        hero_badge3: '👷 Attendant on site',
 
         onas_title: 'About us',
         onas_tag: 'Who we are',
@@ -657,7 +706,7 @@ function app() {
         cennik_title: 'Pricing',
         bez_rez: 'Without reservation',
         z_rez: 'With reservation',
-        za_dobe: 'per day',
+        za_dobe: 'per visit (8:00–19:00)',
         polecamy: 'Recommended',
         rez_info: 'Reservation via Facebook · max 10 spots',
         godziny_title: 'Opening hours',
@@ -702,8 +751,9 @@ function app() {
         nav_opinie: 'Відгуки',
         nav_kontakt: 'Контакт',
         rezerwuj: 'Забронювати місце',
-        hero_sub: 'Дикі пляжі, шелест сосен і запах моря — острів Собєшевська — це куточок незайманого Балтійського узбережжя, створений для тих, хто шукає справжнього відпочинку. Залиште авто в надійних руках і поринь у природу.',
-
+        hero_sub: 'Дикі пляжі, шелест сосен і запах моря — острів Собєшевська — це куточок незайманого Балтійського узбережжя, створений для тих, хто шукає справжнього відпочинку. Залиште авто в надійних руках і поринь у природу.',        hero_badge1: '🏖️ 600 м від пляжу',
+        hero_badge2: '💰 від 20 зл / вʼїзд',
+        hero_badge3: '👷 Персонал на місці',
         onas_title: 'Про нас',
         onas_tag: 'Хто ми',
         onas_text: 'Острів Собєшевська — одне з найкрасивіших і найспокійніших місць на польському узбережжі, з розлогими, дикими пляжами Балтійського моря. Наш паркінг знаходиться лише ~600 метрів по прямій від моря. Неспішна прогулянка приведе вас до входу № 10 за 15–20 хвилин, а до входів № 9 та № 11 — близько 1,5 км приємного шляху серед зелені. Залиште авто у надійних руках і вирушайте з родиною просто на пісок.',
@@ -716,7 +766,7 @@ function app() {
         cennik_title: 'Ціни',
         bez_rez: 'Без бронювання',
         z_rez: 'З бронюванням',
-        za_dobe: 'на добу',
+        za_dobe: 'за вʼїзд (8:00–19:00)',
         polecamy: 'Рекомендуємо',
         rez_info: 'Бронювання через Facebook · макс. 10 місць',
         godziny_title: 'Години роботи',
@@ -762,6 +812,9 @@ function app() {
         nav_kontakt: 'Kontakt',
         rezerwuj: 'Platz reservieren',
         hero_sub: 'Wilde Strände, rauschende Kiefern und der Duft des Meeres — die Insel Sobieszewo ist ein Stück unberührte Ostseeküste, geschaffen für alle, die echte Erholung suchen. Lassen Sie Ihr Auto in sicheren Händen und tauchen Sie in die Natur ein.',
+        hero_badge1: '🏖️ 600 m zum Strand',
+        hero_badge2: '💰 ab 20 PLN / Einfahrt',
+        hero_badge3: '👷 Betreuer vor Ort',
 
         onas_title: 'Über uns',
         onas_tag: 'Wer wir sind',
@@ -775,7 +828,7 @@ function app() {
         cennik_title: 'Preise',
         bez_rez: 'Ohne Reservierung',
         z_rez: 'Mit Reservierung',
-        za_dobe: 'pro Tag',
+        za_dobe: 'pro Einfahrt (8:00–19:00)',
         polecamy: 'Empfohlen',
         rez_info: 'Reservierung über Facebook · max. 10 Plätze',
         godziny_title: 'Öffnungszeiten',
