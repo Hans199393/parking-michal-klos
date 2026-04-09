@@ -153,6 +153,10 @@
     /* Messenger float */
     #messenger-float { transition: transform 0.3s; }
     #messenger-float:hover { transform: scale(1.1); }
+
+    /* Chat widget bounce */
+    @keyframes bounce-slow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
   </style>
 </head>
 
@@ -568,6 +572,79 @@
   </svg>
 </a>
 
+<!-- ===== ORZEŁ CHAT WIDGET ===== -->
+<div x-data="chatWidget()" class="fixed bottom-24 right-6 z-40" @keydown.escape.window="open = false">
+  <!-- Toggle button -->
+  <button @click="toggle()" class="w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300"
+    :class="open ? 'bg-red-500 hover:bg-red-600' : 'bg-teal-500 hover:bg-teal-600 animate-bounce-slow'"
+    :aria-label="open ? 'Zamknij czat' : 'Otwórz czat z Orłem'">
+    <span x-show="!open" class="text-2xl">🦅</span>
+    <svg x-show="open" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+
+  <!-- Chat window -->
+  <div x-show="open" x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+       x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+       class="absolute bottom-16 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
+       style="height: 480px;">
+
+    <!-- Header -->
+    <div class="bg-navy text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
+      <span class="text-2xl">🦅</span>
+      <div class="flex-1">
+        <div class="font-bold text-sm">Orzeł · Asystent parkingu</div>
+        <div class="text-xs text-gray-300">Odpowiada natychmiast</div>
+      </div>
+      <button @click="open = false" class="text-gray-300 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div x-ref="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+      <template x-for="(msg, i) in messages" :key="i">
+        <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+          <div :class="msg.role === 'user'
+            ? 'bg-teal-500 text-white rounded-2xl rounded-br-md px-4 py-2 max-w-[80%] text-sm'
+            : 'bg-white text-gray-800 rounded-2xl rounded-bl-md px-4 py-2 max-w-[80%] text-sm shadow-sm border border-gray-100'"
+            x-text="msg.content"></div>
+        </div>
+      </template>
+      <!-- Typing indicator -->
+      <div x-show="loading" class="flex justify-start">
+        <div class="bg-white text-gray-400 rounded-2xl rounded-bl-md px-4 py-2 shadow-sm border border-gray-100 text-sm">
+          <span class="inline-flex gap-1">
+            <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+            <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+            <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <form @submit.prevent="send()" class="flex-shrink-0 border-t border-gray-200 p-3 bg-white flex gap-2">
+      <input x-model="input" x-ref="chatInput" :disabled="loading"
+        class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm text-gray-800 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 disabled:bg-gray-100"
+        placeholder="Napisz wiadomość..." maxlength="500" autocomplete="off" />
+      <button type="submit" :disabled="loading || !input.trim()"
+        class="bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 text-white rounded-full w-10 h-10 flex items-center justify-center transition flex-shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m0 0l-7 7m7-7l7 7" transform="rotate(90 12 12)"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- ===== ALPINE.JS APP SCRIPT ===== -->
 <script>
 function app() {
@@ -953,6 +1030,107 @@ function app() {
       }, { threshold: 0.15 });
 
       document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+  }
+}
+
+function chatWidget() {
+  return {
+    open: false,
+    loading: false,
+    input: '',
+    sessionId: sessionStorage.getItem('chat_session_id') || null,
+    messages: JSON.parse(sessionStorage.getItem('chat_messages') || '[]'),
+    API_URL: 'https://parking-messenger-bot.vercel.app/api/chat',
+    _sub: null,
+
+    toggle() {
+      this.open = !this.open;
+      if (this.open) {
+        if (this.messages.length === 0) {
+          const lang = localStorage.getItem('lang') || 'pl';
+          const greetings = {
+            pl: 'Cześć! 🦅 Jestem Orzeł — pracownik parkingu. Pytaj o ceny, godziny otwarcia, dojazd, rezerwacje — cokolwiek potrzebujesz!',
+            en: 'Hi! 🦅 I\'m Orzeł — parking attendant. Ask about prices, opening hours, directions, reservations — anything you need!',
+            ua: 'Привіт! 🦅 Я Orzeł — працівник парковки. Запитуйте про ціни, години роботи, маршрут, бронювання — все що потрібно!',
+            de: 'Hallo! 🦅 Ich bin Orzeł — Parkmitarbeiter. Fragen Sie nach Preisen, Öffnungszeiten, Anfahrt, Reservierungen — alles was Sie brauchen!'
+          };
+          this.messages.push({ role: 'assistant', content: greetings[lang] || greetings.pl });
+          this.saveMessages();
+        }
+        this.subscribeRealtime();
+        this.$nextTick(() => {
+          this.$refs.chatInput?.focus();
+          this.scrollToBottom();
+        });
+      }
+    },
+
+    subscribeRealtime() {
+      if (this._sub || !this.sessionId || !window.supabase) return;
+      try {
+        const sb2 = window.supabase.createClient(
+          'https://qgqevlkjwinxrtdgdedy.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+        );
+        const sid = this.sessionId;
+        const self = this;
+        this._sub = sb2.channel('chat-owner-' + sid)
+          .on('postgres_changes', {
+            event: 'INSERT', schema: 'public', table: 'chat_messages',
+            filter: 'session_id=eq.' + sid
+          }, (payload) => {
+            const msg = payload.new;
+            if (msg.role === 'owner') {
+              self.messages.push({ role: 'assistant', content: msg.content });
+              self.saveMessages();
+              self.$nextTick(() => self.scrollToBottom());
+            }
+          })
+          .subscribe();
+      } catch {}
+    },
+
+    async send() {
+      const text = this.input.trim();
+      if (!text || this.loading) return;
+
+      this.messages.push({ role: 'user', content: text });
+      this.input = '';
+      this.loading = true;
+      this.saveMessages();
+      this.$nextTick(() => this.scrollToBottom());
+
+      try {
+        const lang = localStorage.getItem('lang') || 'pl';
+        const resp = await fetch(this.API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, sessionId: this.sessionId, lang })
+        });
+        const data = await resp.json();
+        if (data.sessionId && !this.sessionId) {
+          this.sessionId = data.sessionId;
+          sessionStorage.setItem('chat_session_id', data.sessionId);
+          this.subscribeRealtime();
+        }
+        this.messages.push({ role: 'assistant', content: data.reply });
+      } catch {
+        this.messages.push({ role: 'assistant', content: 'Przepraszam, mam problem z połączeniem. Spróbuj za chwilę lub zadzwoń: 784 828 748 📞' });
+      }
+
+      this.loading = false;
+      this.saveMessages();
+      this.$nextTick(() => this.scrollToBottom());
+    },
+
+    scrollToBottom() {
+      const el = this.$refs.chatMessages;
+      if (el) el.scrollTop = el.scrollHeight;
+    },
+
+    saveMessages() {
+      sessionStorage.setItem('chat_messages', JSON.stringify(this.messages));
     }
   }
 }
