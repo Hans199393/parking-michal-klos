@@ -87,6 +87,16 @@
           .in('key', ['spots_available', 'komunikat']);
         if (data) data.forEach(r => dispatchRow(r.key, r.value));
 
+        // Fetch extra open days
+        const { data: extraDays } = await sb.from('extra_open_days')
+          .select('date')
+          .eq('active', true);
+        if (extraDays) {
+          window.dispatchEvent(new CustomEvent('extra-open-days', {
+            detail: extraDays.map(r => r.date)
+          }));
+        }
+
         sb.channel('settings-realtime')
           .on('postgres_changes',
             { event: '*', schema: 'public', table: 'settings' },
@@ -283,7 +293,7 @@
     </div>
 
     <!-- Kluczowe info — widoczne od razu -->
-    <div class="flex flex-wrap justify-center gap-3 mt-3">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mt-3">
       <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge1')"></span>
       <span class="bg-golden/90 text-navy font-extrabold text-sm px-4 py-2 rounded-full" x-text="t('hero_badge2')"></span>
       <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge3')"></span>
@@ -575,6 +585,7 @@ function app() {
     ],
 
     openingStatus: null,
+    extraOpenDays: [],
 
     translations: {
       pl: {
@@ -639,6 +650,7 @@ function app() {
         opening_open: '🟢 Otwarty dziś · do 19:00',
         opening_offseason: '📅 Sezon: czerwiec – sierpień · pt, sb, nd',
         opening_tomorrow: 'Jutro',
+        opening_next: 'Najbliższe otwarcie:',
       },
       en: {
         nav_onas: 'About',
@@ -703,8 +715,7 @@ function app() {
         cookieAccept: 'Accept',
         opening_open: '🟢 Open today · until 19:00',
         opening_offseason: '📅 Season: June – August · Fri, Sat, Sun',
-        opening_tomorrow: 'Tomorrow',
-      },
+        opening_tomorrow: 'Tomorrow',        opening_next: 'Next opening:',      },
       ua: {
         nav_onas: 'Про нас',
         nav_cennik: 'Ціни',
@@ -767,6 +778,7 @@ function app() {
         opening_open: '🟢 Відкрито сьогодні · до 19:00',
         opening_offseason: '📅 Сезон: червень – серпень · пт, сб, нд',
         opening_tomorrow: 'Завтра',
+        opening_next: 'Наступне відкриття:',
       },
       de: {
         nav_onas: 'Über uns',
@@ -832,6 +844,7 @@ function app() {
         opening_open: '🟢 Heute geöffnet · bis 19:00',
         opening_offseason: '📅 Saison: Juni – August · Fr, Sa, So',
         opening_tomorrow: 'Morgen',
+        opening_next: 'Nächste Öffnung:',
       }
     },
 
@@ -854,15 +867,28 @@ function app() {
       const now = new Date();
       const wMs = now.getTime() + (2 * 60 - now.getTimezoneOffset()) * 60000;
       const w = new Date(wMs);
-      const m = w.getMonth() + 1; // 1-12
-      const dow = w.getDay();     // 0=Nd, 5=Pt, 6=Sb
+      const m = w.getMonth() + 1;
+      const dow = w.getDay();
       const h = w.getHours();
       const openDow = [0, 5, 6];
+      // Currently open — regular schedule
       if (m >= 6 && m <= 8 && openDow.includes(dow) && h >= 8 && h < 19) return 'open';
+      // Currently open — extra day
+      const todayStr = String(w.getDate()).padStart(2,'0') + '.' + String(m).padStart(2,'0') + '.' + w.getFullYear();
+      if (this.extraOpenDays.includes(todayStr) && h >= 8 && h < 19) return 'open';
+      // Build set of extra days for fast lookup (YYYY-MM-DD)
+      const extraSet = new Set();
+      for (const ds of this.extraOpenDays) {
+        const [dd, mm, yyyy] = ds.split('.');
+        extraSet.add(`${yyyy}-${mm}-${dd}`);
+      }
+      // Find next open day (regular OR extra)
       for (let i = 1; i <= 365; i++) {
         const d = new Date(wMs + i * 86400000);
         const dm = d.getMonth() + 1;
-        if (dm >= 6 && dm <= 8 && openDow.includes(d.getDay())) return { type: 'next', date: d, days: i };
+        const isRegular = dm >= 6 && dm <= 8 && openDow.includes(d.getDay());
+        const dKey = `${d.getFullYear()}-${String(dm).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        if (isRegular || extraSet.has(dKey)) return { type: 'next', date: d, days: i };
       }
       return 'offseason';
     },
@@ -875,14 +901,19 @@ function app() {
       const localeMap = { pl: 'pl-PL', en: 'en-GB', ua: 'uk-UA', de: 'de-DE' };
       const locale = localeMap[this.lang] || 'pl-PL';
       const dateStr = s.date.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' });
-      return s.days === 1
-        ? `📅 ${this.t('opening_tomorrow')} · ${dateStr}`
-        : `📅 ${dateStr}`;
+      if (s.days === 1) return `📅 ${this.t('opening_tomorrow')} · ${dateStr}`;
+      return `📅 ${this.t('opening_next')} ${dateStr}`;
     },
 
     init() {
       document.documentElement.lang = this.lang;
       this.openingStatus = this.computeOpeningStatus();
+
+      // Listen for extra open days from Supabase
+      window.addEventListener('extra-open-days', (e) => {
+        this.extraOpenDays = e.detail;
+        this.openingStatus = this.computeOpeningStatus();
+      });
 
       // Listen for Supabase parking status updates
       window.addEventListener('parking-status', (e) => {
