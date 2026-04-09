@@ -273,23 +273,19 @@
        class="inline-block bg-golden text-navy font-extrabold text-lg px-8 py-4 rounded-full shadow-xl hover:bg-sunset hover:text-white transition transform hover:-translate-y-1"
        x-text="t('rezerwuj')"></a>
 
-    <!-- Cena — wyśrodkowana pod przyciskiem -->
-    <div class="flex justify-center mt-6">
-      <span class="bg-golden/90 text-navy font-extrabold text-base px-6 py-2.5 rounded-full shadow-lg" x-text="t('hero_badge2')"></span>
-    </div>
-
-    <!-- Data następnego otwarcia — wyśrodkowana -->
-    <div class="flex justify-center mt-3">
+    <!-- Status otwarcia -->
+    <div class="flex justify-center mt-6 mb-2">
       <span
         :class="openingStatus === 'open' ? 'bg-green-500/90 text-white' : 'bg-white/20 text-white border border-white/40'"
-        class="backdrop-blur-sm font-semibold text-sm px-5 py-2 rounded-full"
+        class="backdrop-blur-sm font-semibold text-sm px-5 py-2.5 rounded-full"
         x-text="getOpeningLabel()">
       </span>
     </div>
 
-    <!-- Dodatkowe info — rząd pod spodem -->
+    <!-- Kluczowe info — widoczne od razu -->
     <div class="flex flex-wrap justify-center gap-3 mt-3">
       <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge1')"></span>
+      <span class="bg-golden/90 text-navy font-extrabold text-sm px-4 py-2 rounded-full" x-text="t('hero_badge2')"></span>
       <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge3')"></span>
     </div>
   </div>
