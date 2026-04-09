@@ -209,7 +209,6 @@
       <li><a href="#cennik" class="hover:text-golden transition" x-text="t('nav_cennik')"></a></li>
       <li><a href="#dojazd" class="hover:text-golden transition" x-text="t('nav_dojazd')"></a></li>
       <li><a href="#galeria" class="hover:text-golden transition" x-text="t('nav_galeria')"></a></li>
-      <li><a href="#opinie" class="hover:text-golden transition" x-text="t('nav_opinie')"></a></li>
       <li><a href="#faq" class="hover:text-golden transition">FAQ</a></li>
       <li><a href="#kontakt" class="hover:text-golden transition" x-text="t('nav_kontakt')"></a></li>
     </ul>
@@ -247,7 +246,6 @@
       <li><a href="#cennik" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_cennik')"></a></li>
       <li><a href="#dojazd" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_dojazd')"></a></li>
       <li><a href="#galeria" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_galeria')"></a></li>
-      <li><a href="#opinie" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_opinie')"></a></li>
       <li><a href="#faq" @click="mobileMenu=false" class="block py-1 hover:text-golden">FAQ</a></li>
       <li><a href="#kontakt" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_kontakt')"></a></li>
       <li>
@@ -487,59 +485,6 @@
           </div>
         </div>
       </template>
-    </div>
-  </div>
-</section>
-
-<!-- ===== OPINIE GOOGLE ===== -->
-<section id="opinie" class="py-20 bg-cream">
-  <div class="max-w-4xl mx-auto px-6 fade-in">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-3 text-center" x-text="t('opinie_title')"></h2>
-    <p class="text-center text-gray-600 mb-10" x-text="t('opinie_sub')"></p>
-
-    <!-- Statyczne karty recenzji -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-      <!-- Opinia 1 -->
-      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center font-extrabold text-teal text-lg">A</div>
-          <div>
-            <p class="font-bold text-navy text-sm">Anna K.</p>
-            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
-          </div>
-        </div>
-        <p class="text-gray-600 text-sm leading-relaxed">"Świetny parking, blisko plaży i bardzo przystępna cena. Obsługa uprzejma, polecam wszystkim jadącym na Wyspę Sobieszewską!"</p>
-      </div>
-      <!-- Opinia 2 -->
-      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-sunset/20 flex items-center justify-center font-extrabold text-sunset text-lg">M</div>
-          <div>
-            <p class="font-bold text-navy text-sm">Marcin W.</p>
-            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
-          </div>
-        </div>
-        <p class="text-gray-600 text-sm leading-relaxed">"Korzystamy co roku. Cena uczciwa, miejsce zawsze dostępne przy rezerwacji. Szybko i sprawnie. Na pewno wrócimy!"</p>
-      </div>
-      <!-- Opinia 3 -->
-      <div class="bg-white rounded-2xl p-6 shadow-md flex flex-col gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-golden/30 flex items-center justify-center font-extrabold text-navy text-lg">K</div>
-          <div>
-            <p class="font-bold text-navy text-sm">Katarzyna N.</p>
-            <div class="flex gap-0.5 text-golden text-sm">★★★★★</div>
-          </div>
-        </div>
-        <p class="text-gray-600 text-sm leading-relaxed">"Parking przy samej plaży, czysto i bezpiecznie. Pan Michał zawsze na miejscu i chętny do pomocy. Gorąco polecam!"</p>
-      </div>
-    </div>
-
-    <div class="flex justify-center">
-      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
-         class="bg-navy text-white font-bold px-8 py-4 rounded-full hover:bg-teal transition flex items-center gap-2">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1H12.18V13.83H18.69C18.36 17.64 15.19 19.27 12.19 19.27C8.36 19.27 5 16.25 5 12C5 7.9 8.2 4.73 12.2 4.73C15.29 4.73 17.1 6.7 17.1 6.7L19 4.72C19 4.72 16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12C2.03 17.05 6.16 22 12.25 22C17.6 22 21.5 18.33 21.5 12.91C21.5 11.76 21.35 11.1 21.35 11.1Z"/></svg>
-        <span x-text="t('czytaj_opinie')"></span>
-      </a>
     </div>
   </div>
 </section>
