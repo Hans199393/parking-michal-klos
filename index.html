@@ -212,7 +212,7 @@
      :style="komunikat.visible ? 'top:48px' : 'top:0'">
   <div class="max-w-6xl mx-auto px-4 py-1 flex items-center justify-between">
     <!-- Logo -->
-    <a href="#hero" class="flex items-center gap-2">
+    <a href="/" @click.prevent="window.scrollTo({ top: 0, behavior: 'smooth' })" class="flex items-center gap-2">
       <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" style="height:60px;width:auto;" />
       <span class="font-bold text-sm md:text-base leading-tight hidden sm:block">Parking<br><span class="text-golden">Michał Kłos</span></span>
     </a>
@@ -1042,6 +1042,8 @@ function chatWidget() {
     messages: JSON.parse(sessionStorage.getItem('chat_messages') || '[]'),
     API_URL: 'https://parking-messenger-bot.vercel.app/api/chat',
     _sub: null,
+    _pollInterval: null,
+    _lastPollTime: null,
 
     toggle() {
       this.open = !this.open;
@@ -1058,10 +1060,13 @@ function chatWidget() {
           this.saveMessages();
         }
         this.subscribeRealtime();
+        this.startPolling();
         this.$nextTick(() => {
           this.$refs.chatInput?.focus();
           this.scrollToBottom();
         });
+      } else {
+        this.stopPolling();
       }
     },
 
@@ -1112,6 +1117,7 @@ function chatWidget() {
           this.sessionId = data.sessionId;
           sessionStorage.setItem('chat_session_id', data.sessionId);
           this.subscribeRealtime();
+          this.startPolling();
         }
         this.messages.push({ role: 'assistant', content: data.reply });
       } catch {
@@ -1130,6 +1136,41 @@ function chatWidget() {
 
     saveMessages() {
       sessionStorage.setItem('chat_messages', JSON.stringify(this.messages));
+    },
+
+    startPolling() {
+      this.stopPolling();
+      if (!this.sessionId) return;
+      this._lastPollTime = new Date().toISOString();
+      this._pollInterval = setInterval(() => this.pollNewMessages(), 5000);
+    },
+
+    stopPolling() {
+      if (this._pollInterval) {
+        clearInterval(this._pollInterval);
+        this._pollInterval = null;
+      }
+    },
+
+    async pollNewMessages() {
+      if (!this.sessionId || !this._lastPollTime) return;
+      try {
+        const { data } = await sb
+          .from('chat_messages')
+          .select('role, content, created_at')
+          .eq('session_id', this.sessionId)
+          .eq('role', 'owner')
+          .gt('created_at', this._lastPollTime)
+          .order('created_at', { ascending: true });
+        if (data && data.length > 0) {
+          for (const msg of data) {
+            this.messages.push({ role: 'assistant', content: msg.content });
+            this._lastPollTime = msg.created_at;
+          }
+          this.saveMessages();
+          this.$nextTick(() => this.scrollToBottom());
+        }
+      } catch {}
     }
   }
 }
