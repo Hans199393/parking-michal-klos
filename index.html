@@ -267,10 +267,9 @@
       </div>
 
       <!-- CTA Zarezerwuj -->
-      <a href="https://www.facebook.com/profile.php?id=61575778705898"
-         target="_blank" rel="noopener noreferrer"
+      <button @click="$dispatch('open-chat')"
          class="hidden sm:inline-block bg-golden text-navy font-bold text-sm px-4 py-2 rounded-full hover:bg-sunset hover:text-white transition"
-         x-text="t('rezerwuj')"></a>
+         x-text="t('rezerwuj')"></button>
 
       <!-- Hamburger mobile -->
       <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white focus:outline-none">
@@ -292,9 +291,9 @@
       <li><a href="#faq" @click="mobileMenu=false" class="block py-1 hover:text-golden">FAQ</a></li>
       <li><a href="#kontakt" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_kontakt')"></a></li>
       <li>
-        <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
+        <button @click="mobileMenu=false; $dispatch('open-chat')"
            class="inline-block mt-1 bg-golden text-navy font-bold px-5 py-2 rounded-full"
-           x-text="t('rezerwuj')"></a>
+           x-text="t('rezerwuj')"></button>
       </li>
     </ul>
   </div>
