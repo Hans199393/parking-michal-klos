@@ -565,8 +565,8 @@
   <div class="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
 
     <!-- Kolumna 1: Logo + adres -->
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center gap-3">
+    <div class="flex flex-col gap-3 items-center text-center md:items-start md:text-left">
+      <div class="flex flex-col items-center md:items-start gap-2">
         <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-20 w-20 object-contain flex-shrink-0" />
         <div>
           <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
@@ -603,12 +603,14 @@
 
     <!-- Kolumna 3: Godziny + regulamin -->
     <div class="flex flex-col gap-2 text-sm">
-      <p class="font-semibold text-white text-xs uppercase tracking-wider mb-1" x-text="t('footer_hours')"></p>
-      <p class="text-xs" x-text="t('footer_days')"></p>
-      <p class="text-xs text-golden font-semibold">8:00 – 19:00</p>
-      <p class="text-xs" x-text="t('footer_season')"></p>
+      <p class="font-semibold text-white text-xs uppercase tracking-wider mb-2" x-text="t('footer_hours')"></p>
+      <div class="flex flex-col gap-1 pl-0 border-l-2 border-teal/40 pl-3">
+        <p class="text-xs" x-text="t('footer_days')"></p>
+        <p class="text-sm text-golden font-bold">8:00 – 19:00</p>
+        <p class="text-xs" x-text="t('footer_season')"></p>
+      </div>
       <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
-         class="hover:text-golden transition text-xs mt-2 inline-flex items-center gap-1">
+         class="hover:text-golden transition text-xs mt-3 inline-flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         <span x-text="t('regulamin')"></span>
       </a>
