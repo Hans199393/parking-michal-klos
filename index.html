@@ -565,22 +565,20 @@
   <div class="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
 
     <!-- Kolumna 1: Logo + adres -->
-    <div class="flex flex-col gap-3 items-center text-center md:items-start md:text-left">
-      <div class="flex flex-col items-center md:items-start gap-2">
-        <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-20 w-20 object-contain flex-shrink-0" />
-        <div>
-          <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
-          <p class="text-xs">ul. Turystyczna 69</p>
-          <p class="text-xs">Wyspa Sobieszewska, Gdańsk</p>
-        </div>
+    <div class="flex items-start gap-3">
+      <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-16 w-16 object-contain flex-shrink-0 mt-1" />
+      <div class="flex flex-col gap-1">
+        <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
+        <p class="text-xs">ul. Turystyczna 69</p>
+        <p class="text-xs">Wyspa Sobieszewska, Gdańsk</p>
+        <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1 text-xs hover:text-golden transition mt-1">
+          <svg class="w-4 h-4 text-teal flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+          <span x-text="t('footer_map')"></span>
+        </a>
       </div>
-      <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-2 text-xs hover:text-golden transition mt-1">
-        <svg class="w-4 h-4 text-teal flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
-        <span x-text="t('footer_map')"></span>
-      </a>
     </div>
 
     <!-- Kolumna 2: Kontakt -->
