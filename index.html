@@ -138,11 +138,23 @@
     })();
   </script>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDXGCSBJQ3"></script>
+  <!-- Google Analytics — Consent Mode v2 (domyślnie denied, zgodne z RODO) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    // Ustaw domyślnie denied PRZED załadowaniem skryptu GA
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'wait_for_update': 500
+    });
+    // Powracający użytkownik który już zaakceptował — od razu grant
+    if (localStorage.getItem('cookieAccepted')) {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDXGCSBJQ3"></script>
+  <script>
     gtag('js', new Date());
     gtag('config', 'G-QDXGCSBJQ3');
   </script>
@@ -480,7 +492,8 @@
     <p class="text-center text-gray-600 mb-8">📍 ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
     <div class="rounded-2xl overflow-hidden shadow-xl">
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d793.5!2d18.8864555!3d54.3406681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fd6d9054d24689%3A0x3d66f59ee339a135!2sParking%20p%C5%82atny%20niestrzez%C4%87ony%20%22Micha%C5%82%20K%C5%82os%22!5e0!3m2!1spl!2spl!4v1712345678901"
+        id="gmap-iframe"
+        data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d793.5!2d18.8864555!3d54.3406681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fd6d9054d24689%3A0x3d66f59ee339a135!2sParking%20p%C5%82atny%20niestrzez%C4%87ony%20%22Micha%C5%82%20K%C5%82os%22!5e0!3m2!1spl!2spl!4v1712345678901"
         width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
         title="Mapa dojazdu do Parkingu Michał Kłos">
@@ -1019,6 +1032,27 @@ function app() {
     acceptCookie() {
       localStorage.setItem('cookieAccepted', '1');
       this.showCookie = false;
+      // Odblokuj GA4
+      if (typeof gtag === 'function') {
+        gtag('consent', 'update', { 'analytics_storage': 'granted' });
+      }
+      // Załaduj Google Maps dopiero po zgodzie
+      const mapIframe = document.getElementById('gmap-iframe');
+      if (mapIframe && mapIframe.dataset.src && !mapIframe.src.startsWith('https://www.google')) {
+        mapIframe.src = mapIframe.dataset.src;
+      }
+    },
+
+    initMaps() {
+      // Wywołaj przy starcie — jeśli zgoda już była, załaduj mapę od razu
+      if (localStorage.getItem('cookieAccepted')) {
+        this.$nextTick(() => {
+          const mapIframe = document.getElementById('gmap-iframe');
+          if (mapIframe && mapIframe.dataset.src) {
+            mapIframe.src = mapIframe.dataset.src;
+          }
+        });
+      }
     },
 
     computeOpeningStatus() {
@@ -1066,6 +1100,7 @@ function app() {
     init() {
       document.documentElement.lang = this.lang;
       this.openingStatus = this.computeOpeningStatus();
+      this.initMaps();
 
       // Listen for extra open days from Supabase
       window.addEventListener('extra-open-days', (e) => {
