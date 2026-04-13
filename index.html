@@ -149,7 +149,7 @@
       'wait_for_update': 500
     });
     // Powracający użytkownik który już zaakceptował — od razu grant
-    if (localStorage.getItem('cookieAccepted')) {
+    if (localStorage.getItem('cookieAccepted') === '1') {
       gtag('consent', 'update', { 'analytics_storage': 'granted' });
     }
   </script>
@@ -240,11 +240,20 @@
      x-show="showCookie"
      x-transition
      class="fixed bottom-0 left-0 right-0 z-40 bg-navy text-cream px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
-  <p class="text-sm text-center md:text-left" x-text="t('cookieText')"></p>
-  <button @click="acceptCookie()"
-          class="shrink-0 bg-golden text-navy font-bold px-6 py-2 rounded-full hover:bg-sunset hover:text-white transition">
-    <span x-text="t('cookieAccept')"></span>
-  </button>
+  <p class="text-sm text-center md:text-left flex-1">
+    <span x-text="t('cookieText')"></span>
+    <a href="/polityka-prywatnosci" class="underline hover:text-golden ml-1" x-text="t('privacy')"></a>.
+  </p>
+  <div class="flex gap-3 shrink-0">
+    <button @click="declineCookie()"
+            class="bg-white/10 hover:bg-white/20 text-cream font-semibold px-5 py-2 rounded-full border border-white/30 transition text-sm">
+      <span x-text="t('cookieDecline')"></span>
+    </button>
+    <button @click="acceptCookie()"
+            class="bg-golden text-navy font-bold px-6 py-2 rounded-full hover:bg-sunset hover:text-white transition text-sm">
+      <span x-text="t('cookieAccept')"></span>
+    </button>
+  </div>
 </div>
 
 <!-- ===== NAVBAR ===== -->
@@ -566,8 +575,7 @@
         <span class="text-sm text-cream/70" x-text="t('messenger')"></span>
       </a>
     </div>
-    <a href="https://www.facebook.com/profile.php?id=61575778705898" target="_blank" rel="noopener noreferrer"
-       class="inline-block text-cream/60 text-sm underline hover:text-golden transition"
+    <a href="/regulamin" class="inline-block text-cream/60 text-sm underline hover:text-golden transition"
        x-text="t('regulamin')"></a>
   </div>
 </section>
@@ -583,6 +591,7 @@
         <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
         <p class="text-xs">ul. Turystyczna 69</p>
         <p class="text-xs">Wyspa Sobieszewska, Gdańsk</p>
+        <p class="text-xs text-cream/50 mt-1">NIP: 583-318-56-70</p>
       </div>
     </div>
 
@@ -616,6 +625,16 @@
          class="hover:text-golden transition text-xs mt-3 inline-flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         <span x-text="t('privacy')"></span>
+      </a>
+      <a href="/regulamin"
+         class="hover:text-golden transition text-xs mt-1 inline-flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span x-text="t('regulamin')"></span>
+      </a>
+      <a href="/regulamin-chatbota"
+         class="hover:text-golden transition text-xs mt-1 inline-flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"/></svg>
+        <span x-text="t('regulamin_bot')"></span>
       </a>
     </div>
 
@@ -663,8 +682,8 @@
     <div class="bg-navy text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
       <span class="text-2xl">🦅</span>
       <div class="flex-1">
-        <div class="font-bold text-sm">Orzeł · Asystent parkingu</div>
-        <div class="text-xs text-golden/80">Tu możesz zarezerwować miejsce</div>
+        <div class="font-bold text-sm">Orzeł · Asystent AI 🤖</div>
+        <div class="text-xs text-golden/80">Powered by AI · mogę się mylić</div>
       </div>
       <button @click="open = false" class="text-gray-300 hover:text-white transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -790,7 +809,8 @@ function app() {
         zadzwon: 'Zadzwoń do nas',
         napisz: 'Napisz do nas',
         messenger: 'Napisz przez Messengera',
-        regulamin: 'Regulamin parkingu (Facebook)',
+        regulamin: 'Regulamin parkingu',
+        regulamin_bot: 'Regulamin chatbota Orzeł',
         privacy: 'Polityka prywatności',
         rights: 'Wszelkie prawa zastrzeżone.',
         footer_hours: 'Godziny otwarcia',
@@ -798,8 +818,9 @@ function app() {
         footer_season: 'Czerwiec · Lipiec · Sierpień',
         footer_map: 'Zobacz na mapie Google',
         brakMiejsc: 'BRAK WOLNYCH MIEJSC',
-        cookieText: 'Ta strona używa plików cookie (Google Maps, Analytics). Korzystając ze strony, akceptujesz ich użycie.',
+        cookieText: 'Ta strona używa plików cookie (Google Maps, Analytics).',
         cookieAccept: 'Akceptuję',
+        cookieDecline: 'Tylko niezbędne',
         opening_open: '🟢 Otwarty dziś · do 19:00',
         opening_offseason: '📅 Sezon: czerwiec – sierpień · pt, sb, nd',
         opening_tomorrow: 'Jutro',
@@ -863,7 +884,8 @@ function app() {
         zadzwon: 'Call us',
         napisz: 'Email us',
         messenger: 'Message us on Messenger',
-        regulamin: 'Parking regulations (Facebook)',
+        regulamin: 'Parking regulations',
+        regulamin_bot: 'Orzeł chatbot terms',
         privacy: 'Privacy policy',
         rights: 'All rights reserved.',
         footer_hours: 'Opening hours',
@@ -871,8 +893,9 @@ function app() {
         footer_season: 'June · July · August',
         footer_map: 'View on Google Maps',
         brakMiejsc: 'NO SPOTS AVAILABLE',
-        cookieText: 'This site uses cookies (Google Maps, Analytics). By using this site, you agree to their use.',
-        cookieAccept: 'Accept',
+        cookieText: 'This site uses cookies (Google Maps, Analytics).',
+        cookieAccept: 'Accept all',
+        cookieDecline: 'Essential only',
         opening_open: '🟢 Open today · until 19:00',
         opening_offseason: '📅 Season: June – August · Fri, Sat, Sun',
         opening_tomorrow: 'Tomorrow',        opening_next: 'Next opening:',      },
@@ -933,7 +956,8 @@ function app() {
         zadzwon: 'Зателефонуйте нам',
         napisz: 'Напишіть нам',
         messenger: 'Написати через Messenger',
-        regulamin: 'Правила паркінгу (Facebook)',
+        regulamin: 'Правила паркінгу',
+        regulamin_bot: 'Умови використання чат-бота',
         privacy: 'Політика конфіденційності',
         rights: 'Усі права захищені.',
         footer_hours: 'Години роботи',
@@ -941,8 +965,9 @@ function app() {
         footer_season: 'Червень · Липень · Серпень',
         footer_map: 'Переглянути на Google Maps',
         brakMiejsc: 'ВІЛЬНИХ МІСЦЬ НЕМАЄ',
-        cookieText: 'Цей сайт використовує файли cookie (Google Maps, Analytics). Користуючись сайтом, ви погоджуєтесь на їх використання.',
-        cookieAccept: 'Прийняти',
+        cookieText: 'Цей сайт використовує файли cookie (Google Maps, Analytics).',
+        cookieAccept: 'Прийняти все',
+        cookieDecline: 'Лише необхідні',
         opening_open: '🟢 Відкрито сьогодні · до 19:00',
         opening_offseason: '📅 Сезон: червень – серпень · пт, сб, нд',
         opening_tomorrow: 'Завтра',
@@ -1006,7 +1031,8 @@ function app() {
         zadzwon: 'Rufen Sie uns an',
         napisz: 'Schreiben Sie uns',
         messenger: 'Schreiben Sie über Messenger',
-        regulamin: 'Parkordnung (Facebook)',
+        regulamin: 'Parkordnung',
+        regulamin_bot: 'Chatbot-Nutzungsbedingungen',
         privacy: 'Datenschutzerklärung',
         rights: 'Alle Rechte vorbehalten.',
         footer_hours: 'Öffnungszeiten',
@@ -1014,8 +1040,9 @@ function app() {
         footer_season: 'Juni · Juli · August',
         footer_map: 'Auf Google Maps anzeigen',
         brakMiejsc: 'KEINE FREIEN PLÄTZE',
-        cookieText: 'Diese Website verwendet Cookies (Google Maps, Analytics). Durch die Nutzung stimmen Sie deren Verwendung zu.',
-        cookieAccept: 'Akzeptieren',
+        cookieText: 'Diese Website verwendet Cookies (Google Maps, Analytics).',
+        cookieAccept: 'Alle akzeptieren',
+        cookieDecline: 'Nur notwendige',
         opening_open: '🟢 Heute geöffnet · bis 19:00',
         opening_offseason: '📅 Saison: Juni – August · Fr, Sa, So',
         opening_tomorrow: 'Morgen',
@@ -1047,9 +1074,15 @@ function app() {
       }
     },
 
+    declineCookie() {
+      // Zapisz odmowę — banner nie pojawi się ponownie, GA pozostaje denied
+      localStorage.setItem('cookieAccepted', '0');
+      this.showCookie = false;
+    },
+
     initMaps() {
-      // Wywołaj przy starcie — jeśli zgoda już była, załaduj mapę od razu
-      if (localStorage.getItem('cookieAccepted')) {
+      // Wywołaj przy starcie — jeśli zgoda była (=== '1'), załaduj mapę od razu
+      if (localStorage.getItem('cookieAccepted') === '1') {
         this.$nextTick(() => {
           const mapIframe = document.getElementById('gmap-iframe');
           if (mapIframe && mapIframe.dataset.src) {
@@ -1170,10 +1203,10 @@ function chatWidget() {
         if (this.messages.length === 0) {
           const lang = localStorage.getItem('lang') || 'pl';
           const greetings = {
-            pl: 'Cześć! 🦅 Jestem Orzeł — pracownik parkingu. Pytaj o ceny, godziny otwarcia, dojazd, rezerwacje — cokolwiek potrzebujesz!',
-            en: 'Hi! 🦅 I\'m Orzeł — parking attendant. Ask about prices, opening hours, directions, reservations — anything you need!',
-            ua: 'Привіт! 🦅 Я Orzeł — працівник парковки. Запитуйте про ціни, години роботи, маршрут, бронювання — все що потрібно!',
-            de: 'Hallo! 🦅 Ich bin Orzeł — Parkmitarbeiter. Fragen Sie nach Preisen, Öffnungszeiten, Anfahrt, Reservierungen — alles was Sie brauchen!'
+            pl: 'Cześć! 🦅 Jestem Orzeł — asystent AI parkingu Michała Kłosa. Pytaj o ceny, godziny otwarcia, dojazd, rezerwacje — cokolwiek potrzebujesz!',
+            en: 'Hi! 🦅 I\'m Orzeł — an AI assistant for Michał Kłos Parking. Ask about prices, opening hours, directions, reservations — anything you need!',
+            ua: 'Привіт! 🦅 Я Orzeł — AI-асистент паркінгу Міхала Кльоса. Запитуйте про ціни, години роботи, маршрут, бронювання — все що потрібно!',
+            de: 'Hallo! 🦅 Ich bin Orzeł — ein KI-Assistent des Michał Kłos Parkplatzes. Fragen Sie nach Preisen, Öffnungszeiten, Anfahrt und Reservierungen!'
           };
           this.messages.push({ role: 'assistant', content: greetings[lang] || greetings.pl });
           this.saveMessages();
