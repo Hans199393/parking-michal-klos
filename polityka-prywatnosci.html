@@ -77,15 +77,26 @@
       <span class="text-white text-sm font-bold truncate hidden sm:block" x-text="titles[lang]"></span>
 
       <!-- Language switcher -->
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <button @click="setLang('pl')" :class="lang==='pl' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
-          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Polski">🇵🇱</button>
-        <button @click="setLang('en')" :class="lang==='en' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
-          class="text-2xl transition-all rounded focus:outline-none leading-none" title="English">🇬🇧</button>
-        <button @click="setLang('ua')" :class="lang==='ua' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
-          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Українська">🇺🇦</button>
-        <button @click="setLang('de')" :class="lang==='de' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
-          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Deutsch">🇩🇪</button>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇵🇱</span><span>PL</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('en')" :class="lang==='en' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇬🇧</span><span>EN</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('ua')" :class="lang==='ua' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇺🇦</span><span>UA</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('de')" :class="lang==='de' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇩🇪</span><span>DE</span>
+        </button>
       </div>
     </div>
   </nav>
