@@ -1,250 +1,740 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" x-data="app()" :lang="langAttr()">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Regulamin parkingu – Parking Michał Kłos</title>
+  <title x-text="titles[lang]">Regulamin parkingu – Parking Michał Kłos</title>
   <meta name="robots" content="noindex, follow" />
   <link rel="canonical" href="https://parkingsobieszewo.pl/regulamin" />
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/logo2026.png" />
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"><\/script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            navy:   '#1a2d4a',
-            teal:   '#4dbfbf',
-            sunset: '#e8622a',
-            golden: '#f5c842',
-            cream:  '#f0e8d0',
-          },
+          colors: { navy: '#1a2d4a', teal: '#4dbfbf', sunset: '#e8622a', golden: '#f5c842', cream: '#f0e8d0' },
           fontFamily: { sans: ['Inter', 'sans-serif'] }
         }
       }
     }
-  </script>
-
-  <!-- Google Fonts -->
+  <\/script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"><\/script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>[x-cloak]{display:none!important}</style>
 </head>
 <body class="bg-gray-50 text-navy font-sans min-h-screen flex flex-col">
 
-  <!-- NAVBAR -->
+  <!-- ===== NAVBAR ===== -->
   <nav class="sticky top-0 z-50 bg-navy/95 backdrop-blur-sm shadow-md">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <a href="/" class="flex items-center gap-2 text-cream hover:text-golden transition text-sm font-semibold">
+      <a href="/" class="flex items-center gap-2 text-cream hover:text-golden transition text-sm font-semibold whitespace-nowrap">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
         </svg>
-        Strona główna
+        <span x-text="back[lang]"></span>
       </a>
-      <span class="text-white text-sm font-bold hidden sm:block">Regulamin parkingu</span>
-      <div class="flex items-center gap-2">
-        <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-8 w-auto" />
+      <span class="text-white text-sm font-bold truncate hidden sm:block" x-text="titles[lang]"></span>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇵🇱</span><span>PL</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('en')" :class="lang==='en' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇬🇧</span><span>EN</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('ua')" :class="lang==='ua' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇺🇦</span><span>UA</span>
+        </button>
+        <span class="text-cream/20 text-xs">|</span>
+        <button @click="setLang('de')" :class="lang==='de' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm focus:outline-none">
+          <span class="text-base leading-none">🇩🇪</span><span>DE</span>
+        </button>
       </div>
     </div>
   </nav>
 
-  <!-- CONTENT -->
+  <!-- ===== MAIN CONTENT ===== -->
   <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-10 pb-20">
 
-    <!-- Header -->
-    <div class="text-center mb-10">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-navy rounded-2xl mb-4">
-        <svg class="w-8 h-8 text-golden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
+    <!-- ===== PL ===== -->
+    <article x-show="lang==='pl'" x-cloak>
+
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-navy rounded-2xl mb-4">
+          <svg class="w-8 h-8 text-golden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-navy mb-2">Regulamin parkingu</h1>
+        <p class="text-gray-500 text-sm">Parking płatny niestrzeżony „Michał Kłos“ · ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
       </div>
-      <h1 class="text-3xl font-black text-navy mb-2">Regulamin parkingu</h1>
-      <p class="text-gray-500 text-sm">Parking płatny niestrzeżony „Michał Kłos" · ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
-      <!-- Language switcher -->
-      <div class="flex items-center justify-center gap-2 mt-4">
-        <span class="text-xs text-gray-400 mr-1">Język:</span>
-        <a href="/regulamin"    class="text-xl hover:scale-110 transition-transform" title="Polski">🇵🇱</a>
-        <a href="/regulamin-en" class="text-xl hover:scale-110 transition-transform opacity-50 hover:opacity-100" title="English">🇬🇧</a>
-        <a href="/regulamin-ua" class="text-xl hover:scale-110 transition-transform opacity-50 hover:opacity-100" title="Українська">🇺🇦</a>
-        <a href="/regulamin-de" class="text-xl hover:scale-110 transition-transform opacity-50 hover:opacity-100" title="Deutsch">🇩🇪</a>
+
+      <div class="bg-teal/10 border-l-4 border-teal rounded-xl p-5 mb-8 flex gap-4 items-start">
+        <span class="text-2xl flex-shrink-0">📋</span>
+        <div>
+          <p class="font-bold text-navy text-sm mb-1">Regulamin obowiązuje od sezonu 2026</p>
+          <p class="text-sm text-gray-600">Korzystanie z parkingu jest równoznaczne z akceptacją poniższego regulaminu. Regulamin wywieszony jest fizycznie przy wjeździe na parking.</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Info bar -->
-    <div class="bg-teal/10 border-l-4 border-teal rounded-xl p-5 mb-8 flex gap-4 items-start">
-      <span class="text-2xl flex-shrink-0">📋</span>
-      <div>
-        <p class="font-bold text-navy text-sm mb-1">Regulamin obowiązuje od sezonu 2026</p>
-        <p class="text-sm text-gray-600">Korzystanie z parkingu jest równoznaczne z akceptacją poniższego regulaminu. Regulamin wywieszony jest fizycznie przy wjeździe na parking.</p>
-      </div>
-    </div>
+      <div class="space-y-5">
 
-    <!-- Full content -->
-    <div class="space-y-5">
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§1</span>
+            Postanowienia ogólne
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Parking jest parkingiem niestrzeżonym, płatnym, zarządzanym przez <strong>Michała Kłosa</strong>, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk.</li>
+            <li>Korzystanie z parkingu oznacza zawarcie umowy najmu miejsca parkingowego na czas postoju oraz akceptację niniejszego regulaminu.</li>
+            <li>Regulamin dostępny jest przy wjeździe na parking oraz na stronie internetowej <strong>parkingsobieszewo.pl</strong>.</li>
+          </ol>
+        </section>
 
-      <!-- §1 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§1</span>
-          Postanowienia ogólne
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Parking jest parkingiem niestrzeżonym, płatnym, zarządzanym przez <strong>Michała Kłosa</strong>, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk.</li>
-          <li>Korzystanie z parkingu oznacza zawarcie umowy najmu miejsca parkingowego na czas postoju oraz akceptację niniejszego regulaminu.</li>
-          <li>Regulamin dostępny jest przy wjeździe na parking oraz na stronie internetowej <strong>parkingsobieszewo.pl</strong>.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§2</span>
+            Godziny otwarcia i sezon
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Parking czynny jest w sezonie letnim: <strong>czerwiec, lipiec, sierpień</strong>, w piątki, soboty i niedziele, w godzinach <strong>8:00–19:00</strong>.</li>
+            <li>Właściciel zastrzega sobie możliwość otwarcia parkingu w wybrane, pojedyncze dni poza wskazanym harmonogramem — informacja publikowana jest na stronie internetowej i profilu Facebook.</li>
+            <li>Wjazd na teren parkingu po godzinie 18:45 może być niemożliwy z uwagi na przygotowanie do zamknięcia.</li>
+          </ol>
+        </section>
 
-      <!-- §2 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§2</span>
-          Godziny otwarcia i sezon
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Parking czynny jest w sezonie letnim: <strong>czerwiec, lipiec, sierpień</strong>, w piątki, soboty i niedziele, w godzinach <strong>8:00–19:00</strong>.</li>
-          <li>Właściciel zastrzega sobie możliwość otwarcia parkingu w wybrane, pojedyncze dni poza wskazanym harmonogramem — informacja publikowana jest na stronie internetowej i profilu Facebook.</li>
-          <li>Wjazd na teren parkingu po godzinie 18:45 może być niemożliwy z uwagi na przygotowanie do zamknięcia.</li>
-        </ol>
-      </section>
-
-      <!-- §3 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§3</span>
-          Cennik i płatności
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Opłata za pobyt (w godzinach otwarcia 8:00–19:00) wynosi:
-            <ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§3</span>
+            Cennik i płatności
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Opłata za pobyt (w godzinach otwarcia 8:00–19:00) wynosi:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
               <li><strong>20 PLN</strong> — bez rezerwacji (miejsca bez rezerwacji, w kolejności przybycia)</li>
               <li><strong>25 PLN</strong> — z rezerwacją (miejsca zarezerwowane przez chatbota Orzeł)</li>
-            </ul>
-          </li>
-          <li>Aktualny cennik dostępny jest przy wjeździe na parking oraz na stronie <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer" class="text-teal font-medium hover:underline">Google Maps</a>.</li>
-          <li>Opłatę uiszcza się u obsługi parkingu przy wjeździe lub wyjeździe.</li>
-          <li>Akceptowane formy płatności: <strong>gotówka, BLIK, karta płatnicza, Google Pay, Apple Pay</strong>.</li>
-          <li>Brak opłaty za parkowanie skutkuje naliczeniem opłaty dodatkowej w wysokości <strong>100 PLN</strong>.</li>
-          <li>W przypadku niewyje­chania z parkingu do godziny zamknięcia (19:00), po upływie 15 minut od zamknięcia naliczana jest dodatkowa opłata w wysokości <strong>50 PLN za każdą rozpoczętą godzinę</strong> postoju.</li>
-        </ol>
-      </section>
+            </ul></li>
+            <li>Aktualny cennik dostępny jest przy wjeździe na parking oraz na stronie <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer" class="text-teal font-medium hover:underline">Google Maps</a>.</li>
+            <li>Opłatę uiszcza się u obsługi parkingu przy wjeździe lub wyjeździe.</li>
+            <li>Akceptowane formy płatności: <strong>gotówka, BLIK, karta płatnicza, Google Pay, Apple Pay</strong>.</li>
+            <li>Brak opłaty za parkowanie skutkuje naliczeniem opłaty dodatkowej w wysokości <strong>100 PLN</strong>.</li>
+            <li>W przypadku niewyje­chania z parkingu do godziny zamknięcia (19:00), po upływie 15 minut od zamknięcia naliczana jest dodatkowa opłata w wysokości <strong>50 PLN za każdą rozpoczętą godzinę</strong> postoju.</li>
+          </ol>
+        </section>
 
-      <!-- §4 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§4</span>
-          Rezerwacje
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Rezerwacje miejsc parkingowych przyjmowane są wyłącznie przez <strong>chatbota Orzeł</strong> (dostępny na stronie parkingsobieszewo.pl oraz przez Facebook Messenger) lub telefonicznie pod numerem <a href="tel:+48784828748" class="text-teal font-medium">784&nbsp;828&nbsp;748</a>.</li>
-          <li>Liczba miejsc z rezerwacją jest ograniczona — maksymalnie <strong>10 miejsc</strong> dziennie.</li>
-          <li>Rezerwację uważa się za potwierdzoną w momencie otrzymania potwierdzenia z systemu chatbota.</li>
-          <li>Dokonując rezerwacji, klient podaje numer rejestracyjny pojazdu, który jest wiążący — pojazd inny niż zarejestrowany nie ma prawa do zarezerwowanego miejsca.</li>
-          <li>Opłata za rezerwację pobierana jest na miejscu po zaparkowaniu (25 PLN). Rezerwacja nie jest płatna z góry.</li>
-          <li>Anulowanie rezerwacji możliwe jest w dowolnym momencie — przez chatbota Orzeł lub telefonicznie pod numerem <a href="tel:+48784828748" class="text-teal font-medium">784&nbsp;828&nbsp;748</a>.</li>
-          <li>Nieodwołana rezerwacja i niestawienie się na miejscu może skutkować blokadą możliwości składania rezerwacji w przyszłości.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§4</span>
+            Rezerwacje
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Rezerwacje miejsc parkingowych przyjmowane są wyłącznie przez <strong>chatbota Orzeł</strong> (dostępny na stronie parkingsobieszewo.pl oraz przez Facebook Messenger) lub telefonicznie pod numerem <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>Liczba miejsc z rezerwacją jest ograniczona — maksymalnie <strong>10 miejsc</strong> dziennie.</li>
+            <li>Rezerwację uważa się za potwierdzoną w momencie otrzymania potwierdzenia z systemu chatbota.</li>
+            <li>Dokonując rezerwacji, klient podaje numer rejestracyjny pojazdu, który jest wiążący — pojazd inny niż zarejestrowany nie ma prawa do zarezerwowanego miejsca.</li>
+            <li>Opłata za rezerwację pobierana jest na miejscu po zaparkowaniu (25 PLN). Rezerwacja nie jest płatna z góry.</li>
+            <li>Anulowanie rezerwacji możliwe jest w dowolnym momencie — przez chatbota Orzeł lub telefonicznie pod numerem <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>Nieodwołana rezerwacja i niestawienie się na miejscu może skutkować blokadą możliwości składania rezerwacji w przyszłości.</li>
+          </ol>
+        </section>
 
-      <!-- §5 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§5</span>
-          Odpowiedzialność
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Parking jest <strong>niestrzeżony</strong> — właściciel nie ponosi odpowiedzialności za szkody, kradzieże, uszkodzenia pojazdów ani za rzeczy pozostawione w pojazdach.</li>
-          <li>Użytkownik parkingu zobowiązany jest do należytego zabezpieczenia pojazdu (zamknięcie, zabezpieczenia antykradzieżowe) i niepozostawiania w nim wartościowych przedmiotów.</li>
-          <li>Właściciel parkingu nie odpowiada za szkody wynikłe z warunków atmosferycznych, działania sił przyrody ani działań osób trzecich.</li>
-          <li>Za szkody wyrządzone na terenie parkingu przez osobę korzystającą z parkingu (m.in. uszkodzenie ogrodzenia, nawierzchni, pojazdów innych użytkowników) odpowiada ta osoba.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§5</span>
+            Odpowiedzialność
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Parking jest <strong>niestrzeżony</strong> — właściciel nie ponosi odpowiedzialności za szkody, kradzieże, uszkodzenia pojazdów ani za rzeczy pozostawione w pojazdach.</li>
+            <li>Użytkownik parkingu zobowiązany jest do należytego zabezpieczenia pojazdu (zamknięcie, zabezpieczenia antykradzieżowe) i niepozostawiania w nim wartościowych przedmiotów.</li>
+            <li>Właściciel parkingu nie odpowiada za szkody wynikłe z warunków atmosferycznych, działania sił przyrody ani działań osób trzecich.</li>
+            <li>Za szkody wyrządzone na terenie parkingu przez osobę korzystającą z parkingu (m.in. uszkodzenie ogrodzenia, nawierzchni, pojazdów innych użytkowników) odpowiada ta osoba.</li>
+          </ol>
+        </section>
 
-      <!-- §6 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§6</span>
-          Zasady porządkowe
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Na terenie parkingu obowiązuje ograniczenie prędkości do <strong>10 km/h</strong>.</li>
-          <li>Parking przeznaczony jest wyłącznie dla <strong>samochodów osobowych</strong>.</li>
-          <li>Zabrania się prowadzenia działalności handlowej, reklamowej oraz napraw pojazdów na terenie parkingu.</li>
-          <li>Zabrania się pozostawiania pojazdów niesprawnych, nieubezpieczonych lub bez ważnych tablic rejestracyjnych.</li>
-          <li>Obsługa parkingu ma prawo odmówić wjazdu pojazdowi niespełniającemu powyższych wymogów lub w przypadku braku wolnych miejsc.</li>
-          <li>Na terenie parkingu może być prowadzony monitoring wizyjny (CCTV) — szczegóły w <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Polityce Prywatności</a>.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§6</span>
+            Zasady porządkowe
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Na terenie parkingu obowiązuje ograniczenie prędkości do <strong>10 km/h</strong>.</li>
+            <li>Parking przeznaczony jest wyłącznie dla <strong>samochodów osobowych</strong>.</li>
+            <li>Zabrania się prowadzenia działalności handlowej, reklamowej oraz napraw pojazdów na terenie parkingu.</li>
+            <li>Zabrania się pozostawiania pojazdów niesprawnych, nieubezpieczonych lub bez ważnych tablic rejestracyjnych.</li>
+            <li>Obsługa parkingu ma prawo odmówić wjazdu pojazdowi niespełniającemu powyższych wymogów lub w przypadku braku wolnych miejsc.</li>
+            <li>Na terenie parkingu może być prowadzony monitoring wizyjny (CCTV) — szczegóły w <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Polityce Prywatnoci</a>.</li>
+          </ol>
+        </section>
 
-      <!-- §7 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§7</span>
-          Dane osobowe (RODO)
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Administratorem danych osobowych jest Michał Kłos, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, kontakt: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
-          <li>Dane klientów (numer rejestracyjny pojazdu, identyfikator Messengera) przetwarzane są wyłącznie w celu realizacji usługi parkingowej i obsługi rezerwacji, na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy).</li>
-          <li>Dane przechowywane są przez okres niezbędny do realizacji usługi i rozpatrywania ewentualnych reklamacji — nie dłużej niż 2 lata od daty rezerwacji.</li>
-          <li>Klientowi przysługuje prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia — poprzez kontakt e-mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
-          <li>Szczegółowe informacje dotyczące przetwarzania danych zawarte są w <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Polityce Prywatności</a>.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§7</span>
+            Dane osobowe (RODO)
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Administratorem danych osobowych jest Michał Kłos, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, kontakt: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Dane klientów (numer rejestracyjny pojazdu, identyfikator Messengera) przetwarzane są wyłącznie w celu realizacji usługi parkingowej i obsługi rezerwacji, na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy).</li>
+            <li>Dane przechowywane są przez okres niezbędny do realizacji usługi i rozpatrywania ewentualnych reklamacji — nie dłużej niż 2 lata od daty rezerwacji.</li>
+            <li>Klientowi przysługuje prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia — poprzez kontakt e-mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Szczegółowe informacje dotyczące przetwarzania danych zawarte są w <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Polityce Prywatnoci</a>.</li>
+          </ol>
+        </section>
 
-      <!-- §8 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§8</span>
-          Reklamacje i kontakt
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>Reklamacje można składać:
-            <ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
-              <li>telefonicznie: <a href="tel:+48784828748" class="text-teal font-medium">784&nbsp;828&nbsp;748</a></li>
-              <li>mailowo: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium">kontakt@parkingsobieszewo.pl</a></li>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§8</span>
+            Reklamacje i kontakt
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Reklamacje można składać:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li>telefonicznie: <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a></li>
+              <li>mailowo: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a></li>
               <li>osobiście — u obsługi parkingu w godzinach otwarcia</li>
-            </ul>
-          </li>
-          <li>Reklamacja powinna zawierać: datę zdarzenia, opis problemu, numer rejestracyjny pojazdu oraz dane kontaktowe składającego.</li>
-          <li>Reklamacja zostanie rozpatrzona w terminie 14 dni od jej otrzymania.</li>
-        </ol>
-      </section>
+            </ul></li>
+            <li>Reklamacja powinna zawierać: datę zdarzenia, opis problemu, numer rejestracyjny pojazdu oraz dane kontaktowe składającego.</li>
+            <li>Reklamacja zostanie rozpatrzona w terminie 14 dni od jej otrzymania.</li>
+          </ol>
+        </section>
 
-      <!-- §9 -->
-      <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§9</span>
-          Postanowienia końcowe
-        </h2>
-        <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
-          <li>W sprawach nieuregulowanych niniejszym regulaminem zastosowanie mają odpowiednie przepisy Kodeksu cywilnego oraz innych powszechnie obowiązujących przepisów prawa polskiego.</li>
-          <li>Właściciel zastrzega sobie prawo do zmiany regulaminu. Zmieniony regulamin wchodzi w życie z dniem opublikowania na stronie internetowej.</li>
-          <li>Regulamin obowiązuje od <strong>1 czerwca 2026 r.</strong></li>
-          <li>Korzystanie z chatbota Orzeł podlega odrębnym zasadom określonym w <a href="/regulamin-chatbota" class="text-teal font-medium hover:underline">Regulaminie chatbota Orzeł</a>.</li>
-        </ol>
-      </section>
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§9</span>
+            Postanowienia końcowe
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>W sprawach nieuregulowanych niniejszym regulaminem zastosowanie mają odpowiednie przepisy Kodeksu cywilnego oraz innych powszechnie obowiązujących przepisów prawa polskiego.</li>
+            <li>Właściciel zastrzega sobie prawo do zmiany regulaminu. Zmieniony regulamin wchodzi w życie z dniem opublikowania na stronie internetowej.</li>
+            <li>Regulamin obowiązuje od <strong>1 czerwca 2026 r.</strong></li>
+            <li>Korzystanie z chatbota Orzeł podlega odrębnym zasadom określonym w <a href="/regulamin-chatbota" class="text-teal font-medium hover:underline">Regulaminie chatbota Orzeł</a>.</li>
+          </ol>
+        </section>
+      </div>
 
-    </div>
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">Polityka prywatności</a>
+        <a href="/regulamin-chatbota" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">Regulamin chatbota Orzeł</a>
+      </div>
+    </article>
+    <!-- ===== EN ===== -->
+    <article x-show="lang==='en'" x-cloak>
 
-    <!-- Related links -->
-    <div class="mt-10 flex flex-wrap gap-3 justify-center">
-      <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">
-        Polityka prywatności
-      </a>
-      <a href="/regulamin-chatbota" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">
-        Regulamin chatbota Orzeł
-      </a>
-    </div>
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-navy rounded-2xl mb-4">
+          <svg class="w-8 h-8 text-golden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-navy mb-2">Car Park Terms and Conditions</h1>
+        <p class="text-gray-500 text-sm">Unattended Paid Car Park „Michał Kłos“ · ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
+      </div>
 
+      <div class="bg-teal/10 border-l-4 border-teal rounded-xl p-5 mb-8 flex gap-4 items-start">
+        <span class="text-2xl flex-shrink-0">📋</span>
+        <div>
+          <p class="font-bold text-navy text-sm mb-1">These Terms and Conditions apply from the 2026 season</p>
+          <p class="text-sm text-gray-600">By using the car park you accept these Terms and Conditions. A printed copy is displayed at the car park entrance.</p>
+        </div>
+      </div>
+
+      <div class="space-y-5">
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§1</span>
+            General Provisions
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The car park is an unattended, paid facility managed by <strong>Michał Kłos</strong>, Tax ID (NIP): 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Poland.</li>
+            <li>By entering the car park, the user concludes a parking space rental agreement for the duration of their stay and accepts these Terms and Conditions.</li>
+            <li>These Terms and Conditions are available at the car park entrance and on the website <strong>parkingsobieszewo.pl</strong>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§2</span>
+            Opening Hours and Season
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The car park is open during the summer season: <strong>June, July, August</strong>, on Fridays, Saturdays and Sundays, from <strong>8:00 to 19:00</strong>.</li>
+            <li>The owner reserves the right to open the car park on selected additional days outside the above schedule — announcements will be published on the website and Facebook page.</li>
+            <li>Entry after 18:45 may not be possible due to closing procedures.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§3</span>
+            Pricing and Payments
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The parking fee (for a stay during opening hours 8:00–19:00) is:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li><strong>20 PLN</strong> — without reservation (first come, first served)</li>
+              <li><strong>25 PLN</strong> — with reservation (via Orzeł chatbot)</li>
+            </ul></li>
+            <li>The current price list is available at the car park entrance and on <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer" class="text-teal font-medium hover:underline">Google Maps</a>.</li>
+            <li>Payment is made to the car park staff upon entry or exit.</li>
+            <li>Accepted payment methods: <strong>cash, BLIK, debit/credit card, Google Pay, Apple Pay</strong>.</li>
+            <li>Failure to pay the parking fee will result in an additional charge of <strong>100 PLN</strong>.</li>
+            <li>If a vehicle has not left the car park by closing time (19:00), an additional charge of <strong>50 PLN per each commenced hour</strong> will be applied as of 15 minutes after closing.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§4</span>
+            Reservations
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Parking space reservations are accepted exclusively via the <strong>Orzeł chatbot</strong> (available at parkingsobieszewo.pl or through Facebook Messenger) or by phone at <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>The number of reserved spaces is limited to a maximum of <strong>10 per day</strong>.</li>
+            <li>A reservation is confirmed upon receiving a confirmation from the chatbot system.</li>
+            <li>When making a reservation, the customer provides the vehicle registration plate number, which is binding — a vehicle with a different plate has no right to the reserved space.</li>
+            <li>The reservation fee (25 PLN) is paid on-site after parking. No advance payment is required.</li>
+            <li>A reservation may be cancelled at any time — via the Orzeł chatbot or by phone at <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>An uncancelled reservation combined with failure to appear may result in the blocking of future reservation privileges.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§5</span>
+            Liability
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The car park is <strong>unattended</strong> — the owner accepts no liability for damage, theft, vehicle damage or loss of items left in vehicles.</li>
+            <li>The car park user is responsible for properly securing their vehicle (locking, anti-theft devices) and not leaving valuables inside.</li>
+            <li>The car park owner is not liable for damage caused by weather conditions, natural forces or actions of third parties.</li>
+            <li>Any person using the car park is liable for any damage they cause on the premises (including damage to fencing, paving or other vehicles).</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§6</span>
+            Rules of Conduct
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The speed limit within the car park is <strong>10 km/h</strong>.</li>
+            <li>The car park is exclusively for <strong>passenger cars</strong>.</li>
+            <li>Commercial, advertising or vehicle repair activities are not permitted on the premises.</li>
+            <li>Leaving unroadworthy, uninsured or vehicles without valid registration plates is prohibited.</li>
+            <li>Car park staff have the right to refuse entry to vehicles that do not meet the above requirements or when the car park is full.</li>
+            <li>The car park may operate CCTV surveillance — details in the <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Privacy Policy</a>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§7</span>
+            Personal Data (GDPR)
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>The data controller is Michał Kłos, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Poland, contact: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Customer data (vehicle registration plate, Messenger ID) is processed solely for the purpose of providing the parking service and handling reservations, based on Art. 6(1)(b) GDPR (performance of a contract).</li>
+            <li>Data is retained for the period necessary to provide the service and handle potential complaints — no longer than 2 years from the reservation date.</li>
+            <li>Customers have the right to access, rectify, erase, restrict processing of, and port their data — by contacting: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Detailed information on data processing is available in the <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Privacy Policy</a>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§8</span>
+            Complaints and Contact
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Complaints may be submitted:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li>by phone: <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a></li>
+              <li>by email: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a></li>
+              <li>in person — to car park staff during opening hours</li>
+            </ul></li>
+            <li>A complaint should include: the date of the incident, a description of the issue, the vehicle registration plate and the contact details of the complainant.</li>
+            <li>Complaints will be reviewed within 14 days of receipt.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§9</span>
+            Final Provisions
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Matters not covered by these Terms and Conditions are governed by the applicable provisions of the Polish Civil Code and other generally applicable Polish law.</li>
+            <li>The owner reserves the right to amend these Terms and Conditions. Amendments take effect upon publication on the website.</li>
+            <li>These Terms and Conditions are effective from <strong>1 June 2026</strong>.</li>
+            <li>Use of the Orzeł chatbot is subject to the separate <a href="/regulamin-chatbota" class="text-teal font-medium hover:underline">Orzeł Chatbot Terms of Service</a>.</li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">Privacy Policy</a>
+        <a href="/regulamin-chatbota" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">Orzeł Chatbot Terms</a>
+      </div>
+    </article>
+    <!-- ===== UA ===== -->
+    <article x-show="lang==='ua'" x-cloak>
+
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-navy rounded-2xl mb-4">
+          <svg class="w-8 h-8 text-golden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-navy mb-2">Правила паркування</h1>
+        <p class="text-gray-500 text-sm">Платне паркування без охорони „Michał Kłos“ · вул. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
+      </div>
+
+      <div class="bg-teal/10 border-l-4 border-teal rounded-xl p-5 mb-8 flex gap-4 items-start">
+        <span class="text-2xl flex-shrink-0">📋</span>
+        <div>
+          <p class="font-bold text-navy text-sm mb-1">Правила діють з сезону 2026 року</p>
+          <p class="text-sm text-gray-600">Користування парковкою означає прийняття цих правил. Друкований примірник розміщено при в'їзді на парковку.</p>
+        </div>
+      </div>
+
+      <div class="space-y-5">
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§1</span>
+            Загальні положення
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Парковка є платним об'єктом без охорони, яким управляє <strong>Міхал Клос (Michał Kłos)</strong>, ІПН (NIP): 583-318-56-70, вул. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Польща.</li>
+            <li>В'їзд на парковку означає укладення договору оренди паркувального місця на час стоянки та прийняття цих правил.</li>
+            <li>Правила розміщено при в'їзді на парковку та на сайті <strong>parkingsobieszewo.pl</strong>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§2</span>
+            Години роботи та сезон
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Парковка працює у літньому сезоні: <strong>червень, липень, серпень</strong>, у п'ятницю, суботу та неділю, з <strong>8:00 до 19:00</strong>.</li>
+            <li>Власник залишає за собою право відкривати парковку в окремі додаткові дні поза зазначеним графіком — інформація публікується на сайті та сторінці у Facebook.</li>
+            <li>В'їзд після 18:45 може бути неможливим у зв'язку з підготовкою до закриття.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§3</span>
+            Ціни та оплата
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Плата за паркування (у години роботи — 8:00–19:00) становить:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li><strong>20 PLN</strong> — без бронювання (місця за принципом «хто перший»)</li>
+              <li><strong>25 PLN</strong> — з бронюванням (через чат-бота Orzeł)</li>
+            </ul></li>
+            <li>Актуальний прайс розміщено при в'їзді на парковку та на <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer" class="text-teal font-medium hover:underline">Google Maps</a>.</li>
+            <li>Оплата здійснюється персоналу парковки під час в'їзду або виїзду.</li>
+            <li>Прийняті форми оплати: <strong>готівка, BLIK, банківська картка, Google Pay, Apple Pay</strong>.</li>
+            <li>Неоплата паркування тягне за собою додаткову плату в розмірі <strong>100 PLN</strong>.</li>
+            <li>Якщо автомобіль не виїхав до часу закриття (19:00), через 15 хвилин після закриття нараховується додаткова плата в розмірі <strong>50 PLN за кожну розпочату годину</strong> стоянки.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§4</span>
+            Бронювання
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Бронювання паркувальних місць здійснюється виключно через <strong>чат-бота Orzeł</strong> (на сайті parkingsobieszewo.pl або через Facebook Messenger) або телефоном за номером <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>Кількість місць з бронюванням обмежена — максимум <strong>10 місць</strong> на день.</li>
+            <li>Бронювання вважається підтвердженим після отримання підтвердження від системи чат-бота.</li>
+            <li>Під час бронювання клієнт вказує номерний знак автомобіля, який є обов'язковим — автомобіль з іншим номером не має права на заброньоване місце.</li>
+            <li>Плата за бронювання (25 PLN) сплачується на місці після паркування. Попередня оплата не потрібна.</li>
+            <li>Скасування бронювання можливе в будь-який момент — через чат-бота Orzeł або телефоном за номером <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>Нескасоване бронювання та неявка на місце можуть призвести до блокування можливості здійснення бронювань у майбутньому.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§5</span>
+            Відповідальність
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Парковка є <strong>об'єктом без охорони</strong> — власник не несе відповідальності за пошкодження, крадіжки, ушкодження автомобілів або речі, залишені в автомобілях.</li>
+            <li>Користувач парковки зобов'язаний належним чином захистити свій автомобіль (замкнути, увімкнути захист від крадіжки) і не залишати цінних речей всередині.</li>
+            <li>Власник парковки не несе відповідальності за збитки, спричинені погодними умовами, стихійними силами або діями третіх осіб.</li>
+            <li>Особа, яка користується парковкою, несе відповідальність за будь-які збитки, завдані нею на території парковки (зокрема пошкодження огорожі, покриття або автомобілів інших користувачів).</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§6</span>
+            Правила поведінки
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>На території парковки діє обмеження швидкості <strong>10 км/год</strong>.</li>
+            <li>Парковка призначена виключно для <strong>легкових автомобілів</strong>.</li>
+            <li>Торговельна, рекламна діяльність та ремонт автомобілів на території парковки заборонені.</li>
+            <li>Залишати несправні, незастраховані автомобілі або автомобілі без дійсних номерних знаків заборонено.</li>
+            <li>Персонал парковки має право відмовити у в'їзді автомобілю, який не відповідає зазначеним вимогам, або якщо немає вільних місць.</li>
+            <li>На території парковки може вестися відеоспостереження (CCTV) — детальна інформація у <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Політиці конфіденційності</a>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§7</span>
+            Персональні дані (GDPR/RODO)
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Адміністратором персональних даних є Міхал Клос (Michał Kłos), NIP: 583-318-56-70, вул. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Польща, контакт: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Дані клієнтів (номерний знак автомобіля, ідентифікатор Messenger) обробляються виключно з метою надання послуги паркування та обробки бронювань на підставі ст. 6(1)(b) GDPR (виконання договору).</li>
+            <li>Дані зберігаються протягом часу, необхідного для надання послуги та розгляду можливих скарг — не довше ніж 2 роки з дати бронювання.</li>
+            <li>Клієнт має право на доступ до своїх даних, їх виправлення, видалення, обмеження обробки та перенесення — через контакт електронною поштою: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Детальна інформація про обробку даних міститься у <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Політиці конфіденційності</a>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§8</span>
+            Скарги та контакт
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Скарги можна подати:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li>телефоном: <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a></li>
+              <li>електронною поштою: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a></li>
+              <li>особисто — персоналу парковки у години роботи</li>
+            </ul></li>
+            <li>Скарга повинна містити: дату події, опис проблеми, номерний знак автомобіля та контактні дані заявника.</li>
+            <li>Скарга буде розглянута протягом 14 днів з моменту її отримання.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§9</span>
+            Прикінцеві положення
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Питання, не врегульовані цими правилами, регулюються відповідними положеннями Цивільного кодексу Польщі та іншим загальнообов'язковим польським законодавством.</li>
+            <li>Власник залишає за собою право вносити зміни до цих правил. Зміни набирають чинності з дня їх публікації на сайті.</li>
+            <li>Ці правила діють з <strong>1 червня 2026 р.</strong></li>
+            <li>Використання чат-бота Orzeł регулюється окремими умовами, викладеними в <a href="/regulamin-chatbota" class="text-teal font-medium hover:underline">Умовах використання чат-бота Orzeł</a>.</li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">Політика конфіденційності</a>
+        <a href="/regulamin-chatbota" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">Умови чат-бота Orzeł</a>
+      </div>
+    </article>
+    <!-- ===== DE ===== -->
+    <article x-show="lang==='de'" x-cloak>
+
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-navy rounded-2xl mb-4">
+          <svg class="w-8 h-8 text-golden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-black text-navy mb-2">Parkordnung</h1>
+        <p class="text-gray-500 text-sm">Unbewachter Kostenpflichtiger Parkplatz „Michał Kłos“ · ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk</p>
+      </div>
+
+      <div class="bg-teal/10 border-l-4 border-teal rounded-xl p-5 mb-8 flex gap-4 items-start">
+        <span class="text-2xl flex-shrink-0">📋</span>
+        <div>
+          <p class="font-bold text-navy text-sm mb-1">Diese Parkordnung gilt ab der Saison 2026</p>
+          <p class="text-sm text-gray-600">Mit der Nutzung des Parkplatzes akzeptieren Sie diese Parkordnung. Ein Ausdruck ist am Eingang des Parkplatzes ausgehängt.</p>
+        </div>
+      </div>
+
+      <div class="space-y-5">
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§1</span>
+            Allgemeine Bestimmungen
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Der Parkplatz ist ein unbewachtes, kostenpflichtiges Objekt, das von <strong>Michał Kłos</strong>, Steuer-ID (NIP): 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Polen, betrieben wird.</li>
+            <li>Die Einfahrt in den Parkplatz gilt als Abschluss eines Mietvertrags über einen Stellplatz für die Dauer des Aufenthalts sowie als Zustimmung zu dieser Parkordnung.</li>
+            <li>Die Parkordnung ist am Eingang des Parkplatzes sowie auf der Website <strong>parkingsobieszewo.pl</strong> einsehbar.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§2</span>
+            Öffnungszeiten und Saison
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Der Parkplatz ist während der Sommersaison geöffnet: <strong>Juni, Juli, August</strong>, freitags, samstags und sonntags, von <strong>8:00 bis 19:00 Uhr</strong>.</li>
+            <li>Der Betreiber behält sich das Recht vor, den Parkplatz an einzelnen zusätzlichen Tagen außerhalb des genannten Zeitplans zu öffnen — Ankündigungen werden auf der Website und der Facebook-Seite veröffentlicht.</li>
+            <li>Eine Einfahrt nach 18:45 Uhr ist aufgrund der Schließvorbereitungen möglicherweise nicht mehr möglich.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§3</span>
+            Preise und Zahlungen
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Die Parkgebühr (für einen Aufenthalt während der Öffnungszeiten 8:00–19:00 Uhr) beträgt:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li><strong>20 PLN</strong> — ohne Reservierung (nach dem Prinzip „Wer zuerst kommt, mahlt zuerst“)</li>
+              <li><strong>25 PLN</strong> — mit Reservierung (über den Orzeł-Chatbot)</li>
+            </ul></li>
+            <li>Die aktuelle Preisliste ist am Eingang des Parkplatzes sowie auf <a href="https://maps.app.goo.gl/vJhmaJJtVKNzJVP97" target="_blank" rel="noopener noreferrer" class="text-teal font-medium hover:underline">Google Maps</a> einsehbar.</li>
+            <li>Die Zahlung erfolgt beim Parkpersonal bei der Ein- oder Ausfahrt.</li>
+            <li>Akzeptierte Zahlungsmethoden: <strong>Bargeld, BLIK, Debit-/Kreditkarte, Google Pay, Apple Pay</strong>.</li>
+            <li>Bei Nichtzahlung der Parkgebühr wird ein Zusatzentgelt von <strong>100 PLN</strong> erhoben.</li>
+            <li>Verlässt ein Fahrzeug den Parkplatz nicht bis zur Schließzeit (19:00 Uhr), wird ab 15 Minuten nach Schließung ein Zusatzentgelt von <strong>50 PLN je angefangener Stunde</strong> berechnet.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§4</span>
+            Reservierungen
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Stellplatzreservierungen werden ausschließlich über den <strong>Orzeł-Chatbot</strong> (verfügbar auf parkingsobieszewo.pl oder über Facebook Messenger) oder telefonisch unter der Nummer <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a> entgegengenommen.</li>
+            <li>Die Anzahl der reservierbaren Stellplätze ist auf maximal <strong>10 pro Tag</strong> begrenzt.</li>
+            <li>Eine Reservierung gilt als bestätigt, sobald eine Bestätigung vom Chatbot-System eingegangen ist.</li>
+            <li>Bei der Reservierung gibt der Kunde das amtliche Kennzeichen seines Fahrzeugs an — dieses ist verbindlich; ein Fahrzeug mit einem abweichenden Kennzeichen hat keinen Anspruch auf den reservierten Stellplatz.</li>
+            <li>Die Reservierungsgebühr (25 PLN) wird vor Ort nach dem Einparken bezahlt. Eine Vorauszahlung ist nicht erforderlich.</li>
+            <li>Eine Reservierung kann jederzeit storniert werden — über den Orzeł-Chatbot oder telefonisch unter <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a>.</li>
+            <li>Eine nicht stornierte Reservierung verbunden mit Nichterscheinen kann zur Sperrung künftiger Reservierungsrechte führen.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§5</span>
+            Haftung
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Der Parkplatz ist <strong>unbewacht</strong> — der Betreiber übernimmt keine Haftung für Schäden, Diebstahl, Fahrzeugbeschädigungen oder den Verlust von im Fahrzeug zurückgelassenen Gegenständen.</li>
+            <li>Der Nutzer des Parkplatzes ist verpflichtet, sein Fahrzeug ordnungsgemäß zu sichern (Abschließen, Diebstahlsicherung) und keine Wertsachen im Fahrzeug zu lassen.</li>
+            <li>Der Betreiber haftet nicht für Schäden, die durch Witterungsbedingungen, höhere Gewalt oder das Handeln Dritter entstehen.</li>
+            <li>Für Schäden, die durch eine den Parkplatz nutzende Person auf dem Gelände verursacht werden (u. a. Beschädigung von Zäunen, Belag oder Fahrzeugen anderer Nutzer), haftet diese Person.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§6</span>
+            Hausordnung
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Auf dem Parkplatzgelände gilt eine Höchstgeschwindigkeit von <strong>10 km/h</strong>.</li>
+            <li>Der Parkplatz ist ausschließlich für <strong>Personenkraftwagen</strong> bestimmt.</li>
+            <li>Gewerbliche, werbliche Tätigkeiten sowie Fahrzeugreparaturen auf dem Parkplatzgelände sind untersagt.</li>
+            <li>Das Abstellen von fahrunfähigen, nicht versicherten Fahrzeugen oder Fahrzeugen ohne gültige Kennzeichen ist verboten.</li>
+            <li>Das Parkpersonal hat das Recht, Fahrzeugen, die die oben genannten Anforderungen nicht erfüllen, oder bei fehlenden freien Stellplätzen die Einfahrt zu verweigern.</li>
+            <li>Auf dem Parkplatzgelände kann eine Videoüberwachung (CCTV) betrieben werden — Einzelheiten in der <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Datenschutzerklärung</a>.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§7</span>
+            Personenbezogene Daten (DSGVO)
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Verantwortlicher für die Verarbeitung personenbezogener Daten ist Michał Kłos, NIP: 583-318-56-70, ul. Turystyczna 69, Wyspa Sobieszewska, 80-680 Gdańsk, Polen, Kontakt: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Kundendaten (amtliches Kennzeichen, Messenger-ID) werden ausschließlich zur Erbringung der Parkdienstleistung und Bearbeitung von Reservierungen verarbeitet, auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</li>
+            <li>Die Daten werden für den zur Leistungserbringung und Bearbeitung etwaiger Beschwerden erforderlichen Zeitraum gespeichert — höchstens 2 Jahre ab dem Reservierungsdatum.</li>
+            <li>Kunden haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung sowie Datenübertragbarkeit — durch Kontaktaufnahme per E-Mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a>.</li>
+            <li>Ausführliche Informationen zur Datenverarbeitung sind in der <a href="/polityka-prywatnosci" class="text-teal font-medium hover:underline">Datenschutzerklärung</a> enthalten.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§8</span>
+            Beschwerden und Kontakt
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Beschwerden können eingereicht werden:
+<ul class="mt-1 ml-5 space-y-1 list-disc text-gray-600">
+              <li>telefonisch: <a href="tel:+48784828748" class="text-teal font-medium">784 828 748</a></li>
+              <li>per E-Mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal font-medium hover:underline">kontakt@parkingsobieszewo.pl</a></li>
+              <li>persönlich — beim Parkpersonal während der Öffnungszeiten</li>
+            </ul></li>
+            <li>Eine Beschwerde sollte enthalten: Datum des Vorfalls, Beschreibung des Problems, amtliches Kennzeichen des Fahrzeugs und Kontaktdaten des Beschwerdeführers.</li>
+            <li>Beschwerden werden innerhalb von 14 Tagen nach Eingang bearbeitet.</li>
+          </ol>
+        </section>
+
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-navy mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-navy text-golden rounded-lg flex items-center justify-center text-sm font-black">§9</span>
+            Schlussbestimmungen
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-2 list-decimal list-inside leading-relaxed">
+            <li>Für nicht in dieser Parkordnung geregelte Angelegenheiten gelten die einschlägigen Bestimmungen des polnischen Zivilgesetzbuches sowie sonstiger allgemein verbindlicher polnischer Rechtsvorschriften.</li>
+            <li>Der Betreiber behält sich das Recht zur Änderung dieser Parkordnung vor. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.</li>
+            <li>Diese Parkordnung gilt ab dem <strong>1. Juni 2026</strong>.</li>
+            <li>Die Nutzung des Orzeł-Chatbots unterliegt den gesonderten Bedingungen der <a href="/regulamin-chatbota" class="text-teal font-medium hover:underline">Nutzungsbedingungen des Orzeł-Chatbots</a>.</li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">Datenschutzerklärung</a>
+        <a href="/regulamin-chatbota" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">Nutzungsbedingungen Chatbot Orzeł</a>
+      </div>
+    </article>
   </main>
 
-  <!-- FOOTER -->
+  <!-- ===== FOOTER ===== -->
   <footer class="bg-navy text-cream/60 text-center text-xs py-4">
-    © <script>document.write(new Date().getFullYear())</script> Parking Michał Kłos · NIP: 583-318-56-70 · ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk
+    &copy; <span x-text="new Date().getFullYear()"></span> Parking Michał Kłos &middot; NIP: 583-318-56-70 &middot; ul. Turystyczna 69, Wyspa Sobieszewska, Gdańsk
   </footer>
+
+  <script>
+    function app() {
+      return {
+        lang: localStorage.getItem('lang') || 'pl',
+        titles: {
+          pl: 'Regulamin parkingu – Parking Michał Kłos',
+          en: 'Car Park Terms and Conditions – Parking Michał Kłos',
+          ua: 'Правила паркування – Parking Michał Kłos',
+          de: 'Parkordnung – Parking Michał Kłos'
+        },
+        back: {
+          pl: 'Wróć na stronę główną',
+          en: 'Back to homepage',
+          ua: 'На головну сторінку',
+          de: 'Zurück zur Hauptseite'
+        },
+        setLang(l) {
+          this.lang = l;
+          localStorage.setItem('lang', l);
+        },
+        langAttr() {
+          return this.lang === 'ua' ? 'uk' : this.lang;
+        }
+      }
+    }
+  </script>
 
 </body>
 </html>
