@@ -445,11 +445,8 @@
         </div>
 
         <!-- BLIK -->
-        <div class="bg-white rounded-2xl px-5 py-3 flex items-center shadow-md">
-          <svg viewBox="0 0 80 28" class="h-7 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <rect width="80" height="28" rx="4" fill="#E30613"/>
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial Black,Arial" font-weight="900" font-size="14" letter-spacing="1">BLIK</text>
-          </svg>
+        <div class="bg-black rounded-2xl px-5 py-3 flex items-center shadow-md">
+          <img src="assets/images/Blik_logo.jpg" alt="BLIK" class="h-7 w-auto object-contain" />
         </div>
 
         <!-- Visa -->
@@ -613,31 +610,34 @@
       </a>
     </div>
 
-    <!-- Kolumna 3: Godziny + regulamin -->
+    <!-- Kolumna 3: Godziny -->
     <div class="flex flex-col gap-2 text-sm">
       <p class="font-semibold text-white text-xs uppercase tracking-wider mb-2" x-text="t('footer_hours')"></p>
-      <div class="flex flex-col gap-1 pl-0 border-l-2 border-teal/40 pl-3">
+      <div class="flex flex-col gap-1 border-l-2 border-teal/40 pl-3">
         <p class="text-xs" x-text="t('footer_days')"></p>
         <p class="text-sm text-golden font-bold">8:00 – 19:00</p>
         <p class="text-xs" x-text="t('footer_season')"></p>
       </div>
-      <a href="/polityka-prywatnosci"
-         class="hover:text-golden transition text-xs mt-3 inline-flex items-center gap-1">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    </div>
+
+  </div>
+
+  <!-- Dokumenty prawne — 3 kolumny poziomo -->
+  <div class="border-t border-white/10 max-w-5xl mx-auto px-6 py-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+      <a href="/polityka-prywatnosci" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-2 text-cream/70 rounded-lg hover:bg-white/5">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         <span x-text="t('privacy')"></span>
       </a>
-      <a href="/regulamin"
-         class="hover:text-golden transition text-xs mt-1 inline-flex items-center gap-1">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <a href="/regulamin" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-2 text-cream/70 rounded-lg hover:bg-white/5">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         <span x-text="t('regulamin')"></span>
       </a>
-      <a href="/regulamin-chatbota"
-         class="hover:text-golden transition text-xs mt-1 inline-flex items-center gap-1">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"/></svg>
+      <a href="/regulamin-chatbota" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-2 text-cream/70 rounded-lg hover:bg-white/5">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"/></svg>
         <span x-text="t('regulamin_bot')"></span>
       </a>
     </div>
-
   </div>
 
   <div class="border-t border-white/10 text-center text-xs py-4 text-cream/40">
@@ -820,7 +820,7 @@ function app() {
         brakMiejsc: 'BRAK WOLNYCH MIEJSC',
         cookieText: 'Ta strona używa plików cookie (Google Maps, Analytics).',
         cookieAccept: 'Akceptuję',
-        cookieDecline: 'Tylko niezbędne',
+        cookieDecline: 'Odmów',
         opening_open: '🟢 Otwarty dziś · do 19:00',
         opening_offseason: '📅 Sezon: czerwiec – sierpień · pt, sb, nd',
         opening_tomorrow: 'Jutro',
@@ -895,7 +895,7 @@ function app() {
         brakMiejsc: 'NO SPOTS AVAILABLE',
         cookieText: 'This site uses cookies (Google Maps, Analytics).',
         cookieAccept: 'Accept all',
-        cookieDecline: 'Essential only',
+        cookieDecline: 'Decline',
         opening_open: '🟢 Open today · until 19:00',
         opening_offseason: '📅 Season: June – August · Fri, Sat, Sun',
         opening_tomorrow: 'Tomorrow',        opening_next: 'Next opening:',      },
@@ -967,7 +967,7 @@ function app() {
         brakMiejsc: 'ВІЛЬНИХ МІСЦЬ НЕМАЄ',
         cookieText: 'Цей сайт використовує файли cookie (Google Maps, Analytics).',
         cookieAccept: 'Прийняти все',
-        cookieDecline: 'Лише необхідні',
+        cookieDecline: 'Відмовити',
         opening_open: '🟢 Відкрито сьогодні · до 19:00',
         opening_offseason: '📅 Сезон: червень – серпень · пт, сб, нд',
         opening_tomorrow: 'Завтра',
@@ -1042,7 +1042,7 @@ function app() {
         brakMiejsc: 'KEINE FREIEN PLÄTZE',
         cookieText: 'Diese Website verwendet Cookies (Google Maps, Analytics).',
         cookieAccept: 'Alle akzeptieren',
-        cookieDecline: 'Nur notwendige',
+        cookieDecline: 'Ablehnen',
         opening_open: '🟢 Heute geöffnet · bis 19:00',
         opening_offseason: '📅 Saison: Juni – August · Fr, Sa, So',
         opening_tomorrow: 'Morgen',
