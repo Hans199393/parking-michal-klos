@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pl" x-data="app()" :lang="langAttr()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title x-text="titles[lang]">Polityka prywatności – Parking Michał Kłos</title>
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://parkingsobieszewo.pl/polityka-prywatnosci" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo2026.png" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:   '#1a2d4a',
+            teal:   '#4dbfbf',
+            sunset: '#e8622a',
+            golden: '#f5c842',
+            cream:  '#f0e8d0',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Google Analytics — Consent Mode v2 (domyślnie denied, zgodne z RODO) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'wait_for_update': 500
+    });
+    if (localStorage.getItem('cookieAccepted')) {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDXGCSBJQ3"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-QDXGCSBJQ3');
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>[x-cloak]{display:none!important}</style>
+</head>
+<body class="bg-gray-50 text-navy font-sans min-h-screen flex flex-col">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="sticky top-0 z-50 bg-navy/95 backdrop-blur-sm shadow-md">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+
+      <!-- Back to home -->
+      <a href="/" class="flex items-center gap-2 text-cream hover:text-golden transition text-sm font-semibold whitespace-nowrap">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span x-text="back[lang]"></span>
+      </a>
+
+      <!-- Title -->
+      <span class="text-white text-sm font-bold truncate" x-text="titles[lang]"></span>
+
+      <!-- Language switcher -->
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
+          class="text-lg transition-all rounded-sm focus:outline-none" title="Polski">🇵🇱</button>
+        <button @click="setLang('en')" :class="lang==='en' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
+          class="text-lg transition-all rounded-sm focus:outline-none" title="English">🇬🇧</button>
+        <button @click="setLang('ua')" :class="lang==='ua' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
+          class="text-lg transition-all rounded-sm focus:outline-none" title="Українська">🇺🇦</button>
+        <button @click="setLang('de')" :class="lang==='de' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
+          class="text-lg transition-all rounded-sm focus:outline-none" title="Deutsch">🇩🇪</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-10">
+
+    <!-- ===== POLSKI ===== -->
+    <article x-show="lang==='pl'" x-cloak class="prose prose-sm sm:prose max-w-none bg-white rounded-2xl shadow-sm p-6 sm:p-10">
+      <h1 class="text-2xl font-bold text-navy mb-1">Polityka prywatności</h1>
+      <p class="text-sm text-gray-400 mb-8">Parking niestrzeżony płatny „Michał Kłos" · obowiązuje od 13.04.2026</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">1. Administrator danych osobowych</h2>
+      <p>Administratorem Twoich danych osobowych jest:</p>
+      <address class="not-italic bg-cream/40 rounded-xl p-4 text-sm leading-relaxed my-3 border border-cream">
+        <strong>Michał Kłos</strong><br>
+        Parking niestrzeżony płatny „Michał Kłos"<br>
+        ul. Turystyczna 69, 80-690 Gdańsk (Wyspa Sobieszewska)<br>
+        NIP: 583-318-56-70<br>
+        Tel.: <a href="tel:+48784828748" class="text-teal hover:underline">784 828 748</a><br>
+        E-mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a>
+      </address>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">2. Jakie dane przetwarzamy i skąd pochodzą</h2>
+      <p><strong>A) Rezerwacje i czat</strong> (strona internetowa / Facebook Messenger):</p>
+      <ol type="a" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Numer rejestracyjny pojazdu — podany dobrowolnie przy rezerwacji</li>
+        <li>Treść wiadomości przesłanych przez czat na stronie internetowej — przechowywana w bazie danych (Supabase) wraz z historią sesji</li>
+        <li>Treść wiadomości przesłanych przez Facebook Messenger — przechowywana w bazie danych powiązana z identyfikatorem PSID</li>
+        <li>Page-Scoped User ID (PSID) — unikalny identyfikator przypisany przez Meta Platforms do Twojej interakcji z naszą stroną na Facebooku. PSID nie ujawnia imienia ani innych danych profilu, lecz umożliwia powiązanie historii rozmów z tym samym użytkownikiem.</li>
+        <li>Identyfikator sesji czatu (UUID) — anonimowy, po stronie widgetu www</li>
+        <li>Wykryty język rozmowy (pl/en/ua/de) — anonimowy parametr sesji</li>
+      </ol>
+      <p class="mt-3"><strong>B) Strona internetowa</strong> (parkingsobieszewo.pl):</p>
+      <ol type="a" start="7" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Dane analityczne zbierane przez Google Analytics 4 — adres IP (anonimizowany przez Google), przeglądarka, urządzenie, zachowanie na stronie. Zbierane wyłącznie za Twoją <strong>zgodą</strong> (baner cookie). Podstawa: art. 6 ust. 1 lit. a RODO.</li>
+        <li>Dane przekazywane przez embedded Google Maps — możliwe zbieranie przez Google danych o lokalizacji/sesji po załadowaniu mapy. Zbierane za Twoją <strong>zgodą</strong> (baner cookie).</li>
+      </ol>
+      <p class="mt-3"><strong>C) Monitoring wizyjny (CCTV)</strong> na terenie parkingu:</p>
+      <ol type="a" start="9" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Obraz z kamer monitoringu — rejestruje wizerunek osób i pojazdów przebywających na terenie parkingu w celach bezpieczeństwa i ochrony mienia. Kamery <strong>nie służą</strong> do automatycznego odczytu tablic rejestracyjnych. Obszar objęty monitoringiem jest oznakowany tabliczkami informacyjnymi przy wjeździe. Podstawa: art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes).</li>
+      </ol>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">3. Cel i podstawa prawna przetwarzania</h2>
+      <ul class="space-y-2 text-sm pl-0 list-none">
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Obsługa rezerwacji</strong> (dane a–e) — art. 6 ust. 1 lit. b RODO (wykonanie umowy)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Bezpieczeństwo i egzekwowanie regulaminu (lista no-show)</strong> (dane a, d) — art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Obsługa zapytań i udzielanie informacji</strong> (dane b–e) — art. 6 ust. 1 lit. b lub f RODO</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Analityka strony internetowej</strong> (dane g) — art. 6 ust. 1 lit. a RODO (zgoda)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Bezpieczeństwo mienia i osób (CCTV)</strong> (dane i) — art. 6 ust. 1 lit. f RODO (uzasadniony interes). Nagrania przechowywane maksymalnie 14 dni, następnie automatycznie nadpisywane.</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">4. Okres przechowywania danych</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Dane rezerwacji: do końca sezonu parkingowego + 12 miesięcy (roszczenia)</li>
+        <li>Historia czatu (widget strony): 6 miesięcy od ostatniej aktywności</li>
+        <li>Historia rozmów Messenger: 6 miesięcy od ostatniej aktywności</li>
+        <li>Lista no-show (tablice rejestracyjne): do 2 lat lub do wniesienia skutecznego sprzeciwu</li>
+        <li>Dane analityczne (Google Analytics): 14 miesięcy po stronie Google</li>
+        <li>Nagrania CCTV: maksymalnie 14 dni (nadpisywanie cykliczne)</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">5. Odbiorcy danych (podmioty przetwarzające)</h2>
+      <p class="text-sm mb-2">Twoje dane mogą być przekazywane następującym podmiotom przetwarzającym:</p>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li class="border-l-4 border-teal pl-3"><strong>Supabase Inc.</strong> — baza danych (rezerwacje, historia czatu). Serwery: region EU West (Irlandia/Frankfurt). DPA: supabase.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Groq Inc.</strong> — przetwarzanie treści wiadomości przez AI (model Llama 4 Scout). Treści rozmów są przesyłane do API Groq w celu generowania odpowiedzi. Polityka prywatności: groq.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Vercel Inc.</strong> — hosting serwera bota i API. Serwery: USA/EU (Edge Network). DPA: vercel.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Meta Platforms Ireland Ltd.</strong> — platforma komunikacyjna (Facebook Messenger). Meta jest niezależnym administratorem danych w zakresie swojej platformy. Polityka prywatności: facebook.com/policy.php</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Google LLC</strong> — analityka (Google Analytics 4), mapy (Google Maps embed). Przetwarzanie na podstawie zgody. Polityka prywatności: policies.google.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Organy publiczne</strong> — wyłącznie gdy obowiązek wynika z przepisów prawa</li>
+      </ul>
+      <p class="text-sm mt-2 font-semibold">Dane nie są sprzedawane ani przekazywane w celach marketingowych.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">6. Przekazywanie danych poza EOG</h2>
+      <p class="text-sm">Następujące podmioty mają siedzibę poza EOG (USA): Groq Inc., Vercel Inc., Google LLC, Meta Platforms (centrala). Przekazywanie odbywa się na podstawie Standardowych Klauzul Umownych (SCC) zatwierdzonych przez Komisję Europejską lub decyzji o odpowiednim stopniu ochrony (np. EU-US Data Privacy Framework). Meta Platforms Ireland Ltd. ma siedzibę w UE (Dublin).</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">7. Twoje prawa</h2>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li>✓ <strong>Prawo dostępu</strong> (art. 15) — informacja o danych i celu przetwarzania</li>
+        <li>✓ <strong>Prawo do sprostowania</strong> (art. 16) — poprawienie błędnych danych</li>
+        <li>✓ <strong>Prawo do usunięcia</strong> (art. 17) — „prawo do bycia zapomnianym"</li>
+        <li>✓ <strong>Prawo do ograniczenia przetwarzania</strong> (art. 18)</li>
+        <li>✓ <strong>Prawo do przenoszenia danych</strong> (art. 20)</li>
+        <li>✓ <strong>Prawo do sprzeciwu</strong> (art. 21) — wobec przetwarzania na podstawie uzasadnionego interesu (pkt 3b, 3c, 3e)</li>
+        <li>✓ <strong>Prawo do cofnięcia zgody</strong> (art. 7 ust. 3) — dotyczy cookies (Google Analytics, Google Maps). Cofnięcie nie wpływa na zgodność przetwarzania przed cofnięciem.</li>
+        <li>✓ <strong>Prawo do interwencji ludzkiej</strong> (art. 22) — w zakresie zautomatyzowanej decyzji o odmowie rezerwacji (lista no-show) — patrz pkt 8</li>
+      </ul>
+      <p class="text-sm mt-3">Aby skorzystać z praw: <a href="tel:+48784828748" class="text-teal hover:underline">784 828 748</a> lub <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+      <p class="text-sm mt-2">Masz prawo wniesienia skargi do: <strong>Prezes Urzędu Ochrony Danych Osobowych (PUODO)</strong>, ul. Stawki 2, 00-193 Warszawa, <a href="https://www.uodo.gov.pl" target="_blank" rel="noopener" class="text-teal hover:underline">www.uodo.gov.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">8. Zautomatyzowane podejmowanie decyzji</h2>
+      <p class="text-sm"><strong>A) Chatbot „Orzeł" (AI):</strong> Czat obsługiwany jest przez system AI (model Llama 4 Scout, Groq Inc.). Rozmowy przetwarzane są automatycznie. Nie podejmujemy na tej podstawie decyzji wywołujących skutki prawne dla użytkownika — chatbot służy wyłącznie do udzielania informacji i przyjmowania rezerwacji.</p>
+      <p class="text-sm mt-2"><strong>B) Lista no-show (automatyczna odmowa rezerwacji):</strong> Po 3 niestawiennictwach numer rejestracyjny zostaje zablokowany — system automatycznie odrzuca nowe rezerwacje z tego numeru. Jest to zautomatyzowane podejmowanie decyzji w rozumieniu art. 22 RODO (podstawa: art. 6 ust. 1 lit. f RODO). Przysługuje Ci prawo do wyjaśnienia mechanizmu, wyrażenia stanowiska oraz żądania interwencji ludzkiej (ręczne rozpatrzenie przez właściciela). Kontakt: <a href="tel:+48784828748" class="text-teal hover:underline">784 828 748</a> lub <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">9. Monitoring wizyjny (CCTV)</h2>
+      <p class="text-sm">Teren parkingu jest objęty monitoringiem wizyjnym. Cel: bezpieczeństwo mienia i osób. Kamery <strong>nie służą</strong> do automatycznego odczytu tablic rejestracyjnych. Obszar monitorowany jest oznaczony tabliczkami informacyjnymi. Nagrania przechowywane maksymalnie 14 dni i automatycznie nadpisywane. Dostęp do nagrań ma wyłącznie administrator.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">10. Dobrowolność podania danych</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Numer rejestracyjny: dobrowolny, lecz niezbędny do złożenia rezerwacji.</li>
+        <li>Parkowanie bez rezerwacji (20 zł, kolejność wjazdu): nie wymaga podawania żadnych danych.</li>
+        <li>Dane analityczne (cookies): dobrowolne — możesz odrzucić w banerze cookie. Odrzucenie nie wpływa na korzystanie ze strony.</li>
+      </ul>
+    </article>
+
+    <!-- ===== ENGLISH ===== -->
+    <article x-show="lang==='en'" x-cloak class="prose prose-sm sm:prose max-w-none bg-white rounded-2xl shadow-sm p-6 sm:p-10">
+      <h1 class="text-2xl font-bold text-navy mb-1">Privacy Policy</h1>
+      <p class="text-sm text-gray-400 mb-8">Paid unguarded parking "Michał Kłos" · effective 13 April 2026</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">1. Data Controller</h2>
+      <p>The controller of your personal data is:</p>
+      <address class="not-italic bg-cream/40 rounded-xl p-4 text-sm leading-relaxed my-3 border border-cream">
+        <strong>Michał Kłos</strong><br>
+        Paid unguarded parking "Michał Kłos"<br>
+        ul. Turystyczna 69, 80-690 Gdańsk (Wyspa Sobieszewska, Poland)<br>
+        VAT ID (NIP): 583-318-56-70<br>
+        Phone: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a><br>
+        E-mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a>
+      </address>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">2. What data we process and where it comes from</h2>
+      <p><strong>A) Reservations and chat</strong> (website / Facebook Messenger):</p>
+      <ol type="a" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Vehicle registration number — provided voluntarily when making a reservation</li>
+        <li>Chat messages sent via the website widget — stored in our database (Supabase) along with session history</li>
+        <li>Facebook Messenger messages — stored in the database, linked to your Page-Scoped User ID (PSID)</li>
+        <li>Page-Scoped User ID (PSID) — a unique identifier assigned by Meta Platforms to your interaction with our Facebook page. PSID does not reveal your name or profile data, but allows linking chat history to the same user.</li>
+        <li>Chat session identifier (UUID) — anonymous, client-side widget identifier</li>
+        <li>Detected language (pl/en/ua/de) — anonymous session parameter</li>
+      </ol>
+      <p class="mt-3"><strong>B) Website</strong> (parkingsobieszewo.pl):</p>
+      <ol type="a" start="7" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Analytics data collected by Google Analytics 4 — anonymised IP address, browser, device, on-site behaviour. Collected only with your <strong>consent</strong> (cookie banner). Legal basis: Art. 6(1)(a) GDPR.</li>
+        <li>Data transmitted via embedded Google Maps — Google may collect location/session data upon map load. Collected with your <strong>consent</strong> (cookie banner).</li>
+      </ol>
+      <p class="mt-3"><strong>C) CCTV surveillance</strong> on the parking premises:</p>
+      <ol type="a" start="9" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>CCTV footage — records images of persons and vehicles on the premises for security and property protection. Cameras do <strong>not</strong> perform automatic licence plate recognition. The monitored area is marked with information signs at the entrance. Legal basis: Art. 6(1)(f) GDPR (legitimate interest).</li>
+      </ol>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">3. Purpose and legal basis for processing</h2>
+      <ul class="space-y-2 text-sm pl-0 list-none">
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Parking reservation service</strong> (data a–e) — Art. 6(1)(b) GDPR (performance of a contract)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Security and enforcement (no-show list)</strong> (data a, d) — Art. 6(1)(f) GDPR (legitimate interest)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Handling enquiries and providing information</strong> (data b–e) — Art. 6(1)(b) or (f) GDPR</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Website analytics</strong> (data g) — Art. 6(1)(a) GDPR (consent)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Security of property and persons (CCTV)</strong> (data i) — Art. 6(1)(f) GDPR. Recordings stored for a maximum of 14 days, then automatically overwritten.</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">4. Retention periods</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Reservation data: until end of parking season + 12 months (claims)</li>
+        <li>Chat history (website widget): 6 months from last session activity</li>
+        <li>Messenger conversation history: 6 months from last activity</li>
+        <li>No-show list (registration numbers): up to 2 years or until a successful objection</li>
+        <li>Analytics data (Google Analytics): 14 months — held by Google</li>
+        <li>CCTV recordings: maximum 14 days (cyclic overwrite)</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">5. Data recipients (processors)</h2>
+      <p class="text-sm mb-2">Your data may be shared with the following data processors:</p>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li class="border-l-4 border-teal pl-3"><strong>Supabase Inc.</strong> — database (reservations, chat history). Servers: EU West (Ireland/Frankfurt). DPA: supabase.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Groq Inc.</strong> — AI processing of message content (Llama 4 Scout model). Message content is sent to the Groq API to generate responses. Privacy: groq.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Vercel Inc.</strong> — hosting of the bot server and API. Servers: USA/EU (Edge Network). DPA: vercel.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Meta Platforms Ireland Ltd.</strong> — communications platform (Facebook Messenger). Meta is an independent data controller. Privacy: facebook.com/policy.php</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Google LLC</strong> — analytics (GA4), maps (Maps embed). Processed on the basis of consent. Privacy: policies.google.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Public authorities</strong> — only when required by law</li>
+      </ul>
+      <p class="text-sm mt-2 font-semibold">Data is not sold or shared for marketing purposes.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">6. Transfers outside the EEA</h2>
+      <p class="text-sm">The following providers are based outside the EEA (USA): Groq Inc., Vercel Inc., Google LLC, Meta Platforms (HQ). Transfers are based on Standard Contractual Clauses (SCCs) approved by the European Commission, or adequacy decisions (e.g. EU-US Data Privacy Framework). Meta Platforms Ireland Ltd. is based in the EU (Dublin).</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">7. Your rights</h2>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li>✓ <strong>Right of access</strong> (Art. 15)</li>
+        <li>✓ <strong>Right to rectification</strong> (Art. 16)</li>
+        <li>✓ <strong>Right to erasure</strong> (Art. 17) — "right to be forgotten"</li>
+        <li>✓ <strong>Right to restriction of processing</strong> (Art. 18)</li>
+        <li>✓ <strong>Right to data portability</strong> (Art. 20)</li>
+        <li>✓ <strong>Right to object</strong> (Art. 21) — to processing based on legitimate interest (sections 3b, 3c, 3e)</li>
+        <li>✓ <strong>Right to withdraw consent</strong> (Art. 7(3)) — for cookies (Google Analytics, Google Maps). Withdrawal does not affect prior processing.</li>
+        <li>✓ <strong>Right to human intervention</strong> (Art. 22) — regarding automated refusal of reservation (no-show list) — see section 8</li>
+      </ul>
+      <p class="text-sm mt-3">To exercise your rights: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> or <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+      <p class="text-sm mt-2">You also have the right to lodge a complaint with the supervisory authority: <strong>Prezes Urzędu Ochrony Danych Osobowych (PUODO)</strong>, ul. Stawki 2, 00-193 Warszawa, Poland, <a href="https://www.uodo.gov.pl" target="_blank" rel="noopener" class="text-teal hover:underline">www.uodo.gov.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">8. Automated decision-making</h2>
+      <p class="text-sm"><strong>A) "Orzeł" chatbot (AI):</strong> The chat is operated by an AI system (Llama 4 Scout, Groq Inc.). Conversations are processed automatically. No legally significant decisions are made on this basis — the chatbot only provides information and accepts reservations.</p>
+      <p class="text-sm mt-2"><strong>B) No-show list (automated refusal of reservations):</strong> After 3 no-shows, a registration number is flagged and new reservations from it are automatically declined. This constitutes automated decision-making under Art. 22 GDPR (basis: Art. 6(1)(f)). You have the right to an explanation, to express your point of view, and to request human review. Contact: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> or <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">9. CCTV surveillance</h2>
+      <p class="text-sm">The parking area is subject to video surveillance for security purposes. Cameras do <strong>not</strong> perform automatic licence plate reading. The monitored area is marked with signs. Recordings are stored for a maximum of 14 days and automatically overwritten. Only the controller has access to recordings.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">10. Voluntary provision of data</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Registration number: voluntary, but required for a reservation.</li>
+        <li>Parking without reservation (20 PLN, first come first served): no data required.</li>
+        <li>Website analytics (cookies): voluntary — decline in the cookie banner. Declining does not affect use of the website.</li>
+      </ul>
+    </article>
+
+    <!-- ===== УКРАЇНСЬКА ===== -->
+    <article x-show="lang==='ua'" x-cloak class="prose prose-sm sm:prose max-w-none bg-white rounded-2xl shadow-sm p-6 sm:p-10">
+      <h1 class="text-2xl font-bold text-navy mb-1">Політика конфіденційності</h1>
+      <p class="text-sm text-gray-400 mb-8">Платне несторожоване паркування „Michał Kłos" · діє з 13.04.2026</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">1. Контролер персональних даних</h2>
+      <p>Контролером ваших персональних даних є:</p>
+      <address class="not-italic bg-cream/40 rounded-xl p-4 text-sm leading-relaxed my-3 border border-cream">
+        <strong>Michał Kłos</strong><br>
+        Платне несторожоване паркування „Michał Kłos"<br>
+        вул. Turystyczna 69, 80-690 Ґданськ (острів Собєшево, Польща)<br>
+        NIP: 583-318-56-70<br>
+        Тел.: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a><br>
+        E-mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a>
+      </address>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">2. Які дані ми обробляємо та звідки вони походять</h2>
+      <p><strong>А) Бронювання та чат</strong> (веб-сайт / Facebook Messenger):</p>
+      <ol type="a" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Номерний знак транспортного засобу — надається добровільно при бронюванні</li>
+        <li>Повідомлення чату через віджет сайту — зберігаються у базі даних (Supabase) разом з історією сесії</li>
+        <li>Повідомлення Facebook Messenger — зберігаються в базі даних, пов'язані з вашим Page-Scoped User ID (PSID)</li>
+        <li>Page-Scoped User ID (PSID) — унікальний ідентифікатор, присвоєний Meta Platforms для вашої взаємодії з нашою сторінкою Facebook. PSID не розкриває ваше ім'я, але дозволяє пов'язувати історію чату з одним користувачем.</li>
+        <li>Ідентифікатор сесії чату (UUID) — анонімний ідентифікатор на стороні клієнта</li>
+        <li>Визначена мова (pl/en/ua/de) — анонімний параметр сесії</li>
+      </ol>
+      <p class="mt-3"><strong>Б) Веб-сайт</strong> (parkingsobieszewo.pl):</p>
+      <ol type="a" start="7" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Аналітичні дані Google Analytics 4 — анонімізована IP-адреса, браузер, пристрій, поведінка на сайті. Збираються лише за вашою <strong>згодою</strong> (банер cookie). Підстава: ст. 6(1)(a) GDPR.</li>
+        <li>Дані вбудованих Google Maps — Google може збирати дані після завантаження карти. Збираються за вашою <strong>згодою</strong> (банер cookie).</li>
+      </ol>
+      <p class="mt-3"><strong>В) Відеоспостереження (CCTV)</strong> на території паркінгу:</p>
+      <ol type="a" start="9" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Відеозаписи з камер — фіксують зображення осіб і транспортних засобів з метою безпеки та охорони майна. Камери <strong>не здійснюють</strong> автоматичне розпізнавання номерних знаків. Зона спостереження позначена інформаційними табличками при в'їзді. Підстава: ст. 6(1)(f) GDPR (законний інтерес).</li>
+      </ol>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">3. Мета та правова підстава обробки</h2>
+      <ul class="space-y-2 text-sm pl-0 list-none">
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Обслуговування бронювання</strong> (дані a–e) — ст. 6(1)(b) GDPR (виконання договору)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Безпека і контроль (список no-show)</strong> (дані a, d) — ст. 6(1)(f) GDPR (законний інтерес)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Обробка запитів і надання інформації</strong> (дані b–e) — ст. 6(1)(b) або (f) GDPR</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Аналітика сайту</strong> (дані g) — ст. 6(1)(a) GDPR (згода)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Безпека майна та осіб (CCTV)</strong> (дані i) — ст. 6(1)(f) GDPR. Записи зберігаються максимум 14 днів, потім автоматично перезаписуються.</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">4. Терміни зберігання даних</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Дані бронювання: до кінця паркувального сезону + 12 місяців</li>
+        <li>Історія чату (віджет сайту): 6 місяців від останньої активності</li>
+        <li>Переписка Messenger: 6 місяців від останньої активності</li>
+        <li>Список no-show: до 2 років або до ефективного заперечення</li>
+        <li>Аналітичні дані (Google Analytics): 14 місяців по стороні Google</li>
+        <li>Відеозаписи CCTV: максимум 14 днів (циклічне перезаписування)</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">5. Одержувачі даних (підрядники)</h2>
+      <p class="text-sm mb-2">Ваші дані можуть передаватися наступним підрядникам:</p>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li class="border-l-4 border-teal pl-3"><strong>Supabase Inc.</strong> — база даних (бронювання, чати). Сервери: EU West. DPA: supabase.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Groq Inc.</strong> — ШІ-обробка повідомлень (модель Llama 4 Scout). Зміст розмов передається до API Groq для генерації відповідей. Політика: groq.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Vercel Inc.</strong> — хостинг сервера бота та API. Сервери: США/EU. DPA: vercel.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Meta Platforms Ireland Ltd.</strong> — платформа Messenger (незалежний контролер). Політика: facebook.com/policy.php</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Google LLC</strong> — аналітика (GA4), карти (Maps). Обробляється на основі згоди. Політика: policies.google.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Державні органи</strong> — лише за законними вимогами</li>
+      </ul>
+      <p class="text-sm mt-2 font-semibold">Дані не продаються та не передаються для маркетингових цілей.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">6. Передача даних за межі ЄЕП</h2>
+      <p class="text-sm">Наступні постачальники мають штаб-квартиру за межами ЄЕП (США): Groq Inc., Vercel Inc., Google LLC, Meta Platforms. Передача здійснюється на основі стандартних договірних положень (SCC) або рішень про відповідність (EU-US Data Privacy Framework). Meta Platforms Ireland Ltd. має осідок у ЄС (Дублін).</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">7. Ваші права</h2>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li>✓ <strong>Право доступу</strong> (ст. 15)</li>
+        <li>✓ <strong>Право на виправлення</strong> (ст. 16)</li>
+        <li>✓ <strong>Право на видалення</strong> (ст. 17)</li>
+        <li>✓ <strong>Право на обмеження обробки</strong> (ст. 18)</li>
+        <li>✓ <strong>Право на перенесення даних</strong> (ст. 20)</li>
+        <li>✓ <strong>Право на заперечення</strong> (ст. 21) — щодо обробки на основі законного інтересу (пп. 3b, 3c, 3e)</li>
+        <li>✓ <strong>Право на відкликання згоди</strong> (ст. 7(3)) — щодо cookies (GA, Maps). Відкликання не впливає на попередню обробку.</li>
+        <li>✓ <strong>Право на участь людини у прийнятті рішення</strong> (ст. 22) — щодо автоматизованої відмови (список no-show) — див. п. 8</li>
+      </ul>
+      <p class="text-sm mt-3">Для реалізації прав: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> або <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+      <p class="text-sm mt-2">Скарги до наглядового органу в Польщі: <strong>PUODO</strong>, ul. Stawki 2, 00-193 Warszawa, <a href="https://www.uodo.gov.pl" target="_blank" rel="noopener" class="text-teal hover:underline">www.uodo.gov.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">8. Автоматизоване прийняття рішень</h2>
+      <p class="text-sm"><strong>А) Чат-бот „Orzeł" (ШІ):</strong> Чат обслуговується системою ШІ (Llama 4 Scout, Groq Inc.). Розмови обробляються автоматично. Юридично значущих рішень на цій основі не приймається — чат-бот лише надає інформацію та приймає бронювання.</p>
+      <p class="text-sm mt-2"><strong>Б) Список no-show (автоматична відмова у бронюванні):</strong> Після 3 неявок номерний знак блокується — система автоматично відхиляє нові бронювання. Це автоматизоване рішення за ст. 22 GDPR. Ви маєте право на пояснення, вираження позиції та ручний розгляд. Контакт: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> або <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">9. Відеоспостереження (CCTV)</h2>
+      <p class="text-sm">Територія паркінгу знаходиться під відеоспостереженням з метою безпеки. Камери <strong>не здійснюють</strong> автоматичне зчитування номерних знаків. Зона позначена інформаційними табличками. Записи зберігаються максимум 14 днів та автоматично перезаписуються. Доступ до записів має лише адміністратор.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">10. Добровільність надання даних</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Номерний знак: добровільно, але необхідно для бронювання.</li>
+        <li>Паркування без бронювання (20 зл, черга): жодних даних не потрібно.</li>
+        <li>Аналітика (cookies): добровільно — можна відхилити в банері cookie. Відмова не впливає на користування сайтом.</li>
+      </ul>
+    </article>
+
+    <!-- ===== DEUTSCH ===== -->
+    <article x-show="lang==='de'" x-cloak class="prose prose-sm sm:prose max-w-none bg-white rounded-2xl shadow-sm p-6 sm:p-10">
+      <h1 class="text-2xl font-bold text-navy mb-1">Datenschutzerklärung</h1>
+      <p class="text-sm text-gray-400 mb-8">Bezahlter unbewachter Parkplatz „Michał Kłos" · gültig ab 13.04.2026</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">1. Verantwortlicher für die Datenverarbeitung</h2>
+      <p>Verantwortlicher für die Verarbeitung Ihrer personenbezogenen Daten ist:</p>
+      <address class="not-italic bg-cream/40 rounded-xl p-4 text-sm leading-relaxed my-3 border border-cream">
+        <strong>Michał Kłos</strong><br>
+        Bezahlter unbewachter Parkplatz „Michał Kłos"<br>
+        ul. Turystyczna 69, 80-690 Gdańsk (Insel Sobieszewska, Polen)<br>
+        Steuernummer (NIP): 583-318-56-70<br>
+        Tel.: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a><br>
+        E-Mail: <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a>
+      </address>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">2. Welche Daten wir verarbeiten und woher sie stammen</h2>
+      <p><strong>A) Reservierungen und Chat</strong> (Website / Facebook Messenger):</p>
+      <ol type="a" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Fahrzeugkennzeichen — freiwillig bei der Reservierung angegeben</li>
+        <li>Chatnachrichten über das Website-Widget — in der Datenbank (Supabase) gespeichert</li>
+        <li>Facebook-Messenger-Nachrichten — in der Datenbank gespeichert, verknüpft mit Ihrer PSID</li>
+        <li>Page-Scoped User ID (PSID) — eine eindeutige Kennung von Meta Platforms. PSID enthüllt nicht Ihren Namen, ermöglicht aber die Verknüpfung des Chatverlaufs mit demselben Nutzer.</li>
+        <li>Chat-Sitzungskennung (UUID) — anonym, client-seitig</li>
+        <li>Erkannte Sprache (pl/en/ua/de) — anonymer Sitzungsparameter</li>
+      </ol>
+      <p class="mt-3"><strong>B) Website</strong> (parkingsobieszewo.pl):</p>
+      <ol type="a" start="7" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>Analysedaten von Google Analytics 4 — anonymisierte IP, Browser, Gerät, Verhalten auf der Website. Nur mit Ihrer <strong>Einwilligung</strong> (Cookie-Banner) erhoben. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO.</li>
+        <li>Daten aus eingebetteten Google Maps — Google kann Standort-/Sitzungsdaten nach Kartenladung erheben. Mit Ihrer <strong>Einwilligung</strong> (Cookie-Banner).</li>
+      </ol>
+      <p class="mt-3"><strong>C) Videoüberwachung (CCTV)</strong> auf dem Parkgelände:</p>
+      <ol type="a" start="9" class="list-[lower-alpha] pl-5 space-y-1 text-sm">
+        <li>CCTV-Aufnahmen — erfassen Bilder von Personen und Fahrzeugen auf dem Gelände zum Zweck der Sicherheit und des Eigentumsschutzes. Die Kameras lesen Kennzeichen <strong>nicht</strong> automatisch aus. Das überwachte Gebiet ist mit Hinweisschildern am Eingang gekennzeichnet. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse).</li>
+      </ol>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">3. Zweck und Rechtsgrundlage der Verarbeitung</h2>
+      <ul class="space-y-2 text-sm pl-0 list-none">
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Abwicklung der Stellplatzreservierung</strong> (Daten a–e) — Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Sicherheit und Durchsetzung (No-Show-Liste)</strong> (Daten a, d) — Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Anfragenbearbeitung und Auskunftserteilung</strong> (Daten b–e) — Art. 6 Abs. 1 lit. b oder f DSGVO</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Website-Analyse</strong> (Daten g) — Art. 6 Abs. 1 lit. a DSGVO (Einwilligung)</li>
+        <li class="bg-gray-50 rounded-lg p-3"><strong>Objektsicherheit (CCTV)</strong> (Daten i) — Art. 6 Abs. 1 lit. f DSGVO. Aufnahmen max. 14 Tage gespeichert, dann automatisch überschrieben.</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">4. Speicherdauer</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Reservierungsdaten: bis Ende der Parksaison + 12 Monate</li>
+        <li>Chat-Verlauf (Website-Widget): 6 Monate nach letzter Aktivität</li>
+        <li>Messenger-Verlauf: 6 Monate nach letzter Aktivität</li>
+        <li>No-Show-Liste: bis zu 2 Jahre oder bis zum erfolgreichen Widerspruch</li>
+        <li>Analysedaten (Google Analytics): 14 Monate seitens Google</li>
+        <li>CCTV-Aufnahmen: max. 14 Tage (zyklische Überschreibung)</li>
+      </ul>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">5. Empfänger der Daten (Auftragsverarbeiter)</h2>
+      <p class="text-sm mb-2">Ihre Daten können an folgende Auftragsverarbeiter weitergegeben werden:</p>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li class="border-l-4 border-teal pl-3"><strong>Supabase Inc.</strong> — Datenbank (Reservierungen, Chats). Server: EU West. DPA: supabase.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Groq Inc.</strong> — KI-Verarbeitung von Nachrichten (Llama 4 Scout). Nachrichteninhalte werden an die Groq-API übermittelt. Datenschutz: groq.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Vercel Inc.</strong> — Hosting des Bot-Servers und der API. Server: USA/EU. DPA: vercel.com/legal/dpa</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Meta Platforms Ireland Ltd.</strong> — Messenger-Plattform (eigenverantwortlicher Verarbeiter). Datenschutz: facebook.com/policy.php</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Google LLC</strong> — Analyse (GA4), Karten (Maps). Basis: Einwilligung. Datenschutz: policies.google.com/privacy</li>
+        <li class="border-l-4 border-teal pl-3"><strong>Behörden</strong> — nur bei gesetzlicher Verpflichtung</li>
+      </ul>
+      <p class="text-sm mt-2 font-semibold">Daten werden nicht verkauft oder für Marketingzwecke weitergegeben.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">6. Übermittlung in Drittländer</h2>
+      <p class="text-sm">Folgende Anbieter haben ihren Sitz außerhalb des EWR (USA): Groq Inc., Vercel Inc., Google LLC, Meta Platforms (Zentrale). Übermittlungen erfolgen auf Grundlage von Standardvertragsklauseln (SCC) oder Angemessenheitsbeschlüssen (EU-US Data Privacy Framework). Meta Platforms Ireland Ltd. ist in der EU ansässig (Dublin).</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">7. Ihre Rechte</h2>
+      <ul class="text-sm space-y-2 list-none pl-0">
+        <li>✓ <strong>Auskunftsrecht</strong> (Art. 15 DSGVO)</li>
+        <li>✓ <strong>Berichtigungsrecht</strong> (Art. 16 DSGVO)</li>
+        <li>✓ <strong>Löschungsrecht</strong> (Art. 17 DSGVO)</li>
+        <li>✓ <strong>Einschränkungsrecht</strong> (Art. 18 DSGVO)</li>
+        <li>✓ <strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
+        <li>✓ <strong>Widerspruchsrecht</strong> (Art. 21 DSGVO) — gegen Verarbeitung auf Basis berechtigter Interessen (Abschnitte 3b, 3c, 3e)</li>
+        <li>✓ <strong>Widerruf der Einwilligung</strong> (Art. 7 Abs. 3 DSGVO) — für Cookies (GA, Maps). Widerruf berührt nicht die Rechtmäßigkeit der Verarbeitung davor.</li>
+        <li>✓ <strong>Recht auf menschliche Entscheidung</strong> (Art. 22 DSGVO) — bei automatisierter Ablehnung (No-Show-Liste) — siehe Abschnitt 8</li>
+      </ul>
+      <p class="text-sm mt-3">Zur Ausübung Ihrer Rechte: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> oder <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+      <p class="text-sm mt-2">Beschwerderecht bei der Aufsichtsbehörde in Polen: <strong>PUODO</strong>, ul. Stawki 2, 00-193 Warszawa, <a href="https://www.uodo.gov.pl" target="_blank" rel="noopener" class="text-teal hover:underline">www.uodo.gov.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">8. Automatisierte Entscheidungsfindung</h2>
+      <p class="text-sm"><strong>A) Chatbot „Orzeł" (KI):</strong> Der Chat wird von einem KI-System betrieben (Llama 4 Scout, Groq Inc.). Gespräche werden automatisch verarbeitet. Es werden keine rechtlich bedeutsamen Entscheidungen getroffen — der Chatbot dient nur zur Auskunft und Reservierungsannahme.</p>
+      <p class="text-sm mt-2"><strong>B) No-Show-Liste (automatisierte Reservierungsablehnung):</strong> Nach 3 Nichterscheinen wird das Kennzeichen gesperrt — neue Reservierungen werden automatisch abgelehnt. Dies ist eine automatisierte Entscheidung gem. Art. 22 DSGVO (Grundlage: Art. 6 Abs. 1 lit. f). Sie haben das Recht auf Erklärung, Stellungnahme und manuelle Überprüfung. Kontakt: <a href="tel:+48784828748" class="text-teal hover:underline">+48 784 828 748</a> oder <a href="mailto:kontakt@parkingsobieszewo.pl" class="text-teal hover:underline">kontakt@parkingsobieszewo.pl</a></p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">9. Videoüberwachung (CCTV)</h2>
+      <p class="text-sm">Das Parkgelände wird videoüberwacht zum Zweck der Sicherheit von Personen und Eigentum. Kameras lesen Kennzeichen <strong>nicht</strong> automatisch aus. Die überwachte Zone ist durch Hinweisschilder gekennzeichnet. Aufnahmen werden max. 14 Tage gespeichert und automatisch überschrieben. Zugang hat ausschließlich der Verantwortliche.</p>
+
+      <h2 class="text-base font-bold text-navy mt-6 mb-2 uppercase tracking-wide">10. Freiwilligkeit der Datenangabe</h2>
+      <ul class="text-sm space-y-1 list-disc pl-5">
+        <li>Kennzeichen: freiwillig, aber für Reservierungen erforderlich.</li>
+        <li>Parken ohne Reservierung (20 PLN, Einfahrt nach Reihenfolge): keine Dateneingabe erforderlich.</li>
+        <li>Analytik (Cookies): freiwillig — im Cookie-Banner ablehnen. Ablehnen beeinträchtigt nicht die Nutzung der Website.</li>
+      </ul>
+    </article>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-navy text-cream/60 text-center text-xs py-5 mt-6">
+    © <span x-text="new Date().getFullYear()"></span> Parking Michał Kłos &nbsp;·&nbsp;
+    <a href="/" class="hover:text-golden transition underline" x-text="back[lang]"></a>
+  </footer>
+
+  <!-- Alpine.js app -->
+  <script>
+    function app() {
+      return {
+        lang: localStorage.getItem('lang') || 'pl',
+        titles: {
+          pl: 'Polityka prywatności – Parking Michał Kłos',
+          en: 'Privacy Policy – Parking Michał Kłos',
+          ua: 'Політика конфіденційності – Parking Michał Kłos',
+          de: 'Datenschutzerklärung – Parking Michał Kłos'
+        },
+        back: {
+          pl: 'Wróć na stronę główną',
+          en: 'Back to homepage',
+          ua: 'На головну сторінку',
+          de: 'Zurück zur Hauptseite'
+        },
+        setLang(l) {
+          this.lang = l;
+          localStorage.setItem('lang', l);
+        },
+        langAttr() {
+          return this.lang === 'ua' ? 'uk' : this.lang;
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
