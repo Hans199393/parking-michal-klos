@@ -74,18 +74,18 @@
       </a>
 
       <!-- Title -->
-      <span class="text-white text-sm font-bold truncate" x-text="titles[lang]"></span>
+      <span class="text-white text-sm font-bold truncate hidden sm:block" x-text="titles[lang]"></span>
 
       <!-- Language switcher -->
-      <div class="flex items-center gap-1 flex-shrink-0">
-        <button @click="setLang('pl')" :class="lang==='pl' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
-          class="text-lg transition-all rounded-sm focus:outline-none" title="Polski">🇵🇱</button>
-        <button @click="setLang('en')" :class="lang==='en' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
-          class="text-lg transition-all rounded-sm focus:outline-none" title="English">🇬🇧</button>
-        <button @click="setLang('ua')" :class="lang==='ua' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
-          class="text-lg transition-all rounded-sm focus:outline-none" title="Українська">🇺🇦</button>
-        <button @click="setLang('de')" :class="lang==='de' ? 'ring-2 ring-golden scale-110' : 'opacity-60 hover:opacity-100'"
-          class="text-lg transition-all rounded-sm focus:outline-none" title="Deutsch">🇩🇪</button>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
+          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Polski">🇵🇱</button>
+        <button @click="setLang('en')" :class="lang==='en' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
+          class="text-2xl transition-all rounded focus:outline-none leading-none" title="English">🇬🇧</button>
+        <button @click="setLang('ua')" :class="lang==='ua' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
+          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Українська">🇺🇦</button>
+        <button @click="setLang('de')" :class="lang==='de' ? 'outline outline-2 outline-golden brightness-100' : 'brightness-75 hover:brightness-100'"
+          class="text-2xl transition-all rounded focus:outline-none leading-none" title="Deutsch">🇩🇪</button>
       </div>
     </div>
   </nav>
