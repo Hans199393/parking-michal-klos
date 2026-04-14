@@ -201,7 +201,7 @@
   </style>
 </head>
 
-<body class="font-sans bg-cream text-navy" x-cloak>
+<body class="font-sans bg-cream text-navy overflow-x-hidden" x-cloak>
 
 <!-- ===== BRAK MIEJSC BANNER ===== -->
 <div id="brak-miejsc-banner"
@@ -267,7 +267,7 @@
     </a>
 
     <!-- Desktop Menu -->
-    <ul class="hidden md:flex gap-6 text-sm font-semibold">
+    <ul class="hidden md:flex gap-6 text-sm font-semibold whitespace-nowrap">
       <li><a href="#onas" class="hover:text-golden transition" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" class="hover:text-golden transition" x-text="t('nav_cennik')"></a></li>
       <li><a href="#dojazd" class="hover:text-golden transition" x-text="t('nav_dojazd')"></a></li>
@@ -277,7 +277,7 @@
     </ul>
 
     <!-- Right: Language + CTA + Hamburger -->
-    <div class="flex items-center gap-2 md:gap-3">
+    <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
       <!-- Language flags -->
       <div class="flex gap-1 items-center">
         <button @click="setLang('pl')" :class="lang==='pl' ? 'active' : ''" class="flag-btn text-lg" title="Polski">🇵🇱</button>
@@ -445,7 +445,7 @@
         </div>
 
         <!-- BLIK -->
-        <div class="bg-black rounded-2xl px-5 py-3 flex items-center shadow-md">
+        <div class="bg-white rounded-2xl px-5 py-3 flex items-center shadow-md">
           <img src="assets/images/Blik_logo.jpg" alt="BLIK" class="h-7 w-auto object-contain" />
         </div>
 
@@ -582,14 +582,14 @@
   <div class="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
 
     <!-- Kolumna 1: Logo + adres -->
-    <div class="flex items-start gap-3">
-      <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-16 w-16 object-contain flex-shrink-0 mt-1" />
-      <div class="flex flex-col gap-1">
-        <p class="font-bold text-white text-sm">Parking Michał Kłos</p>
-        <p class="text-xs">ul. Turystyczna 69</p>
-        <p class="text-xs">Wyspa Sobieszewska, Gdańsk</p>
-        <p class="text-xs text-cream/50 mt-1">NIP: 583-318-56-70</p>
+    <div class="flex flex-col gap-2 text-sm">
+      <div class="flex items-center gap-2 mb-1">
+        <img src="assets/images/logo2026.png" alt="Parking Michał Kłos logo" class="h-7 w-7 object-contain flex-shrink-0" />
+        <p class="font-semibold text-white text-xs uppercase tracking-wider">Parking Michał Kłos</p>
       </div>
+      <p class="text-xs">ul. Turystyczna 69</p>
+      <p class="text-xs">Wyspa Sobieszewska, Gdańsk</p>
+      <p class="text-xs text-cream/50">NIP: 583-318-56-70</p>
     </div>
 
     <!-- Kolumna 2: Kontakt -->
@@ -624,7 +624,7 @@
 
   <!-- Dokumenty prawne — 3 kolumny poziomo -->
   <div class="border-t border-white/10 max-w-5xl mx-auto px-6 py-4">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-2 text-xs">
       <a href="/polityka-prywatnosci" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-2 text-cream/70 rounded-lg hover:bg-white/5">
         <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         <span x-text="t('privacy')"></span>
