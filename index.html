@@ -552,9 +552,9 @@
 
 <!-- ===== KONTAKT ===== -->
 <section id="kontakt" class="py-20 bg-navy text-white">
-  <div class="max-w-3xl mx-auto px-6 fade-in text-center">
+  <div class="max-w-5xl mx-auto px-6 fade-in text-center">
     <h2 class="text-3xl md:text-4xl font-extrabold mb-10" x-text="t('kontakt_title')"></h2>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
       <a href="tel:+48784828748" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
         <span class="text-4xl">📞</span>
         <span class="font-bold text-golden">784 828 748</span>
@@ -1239,6 +1239,7 @@ function chatWidget() {
             if (msg.role === 'owner') {
               self.messages.push({ role: 'assistant', content: msg.content });
               self.saveMessages();
+              if (msg.created_at) self._lastPollTime = msg.created_at;
               self.$nextTick(() => self.scrollToBottom());
             }
           })
