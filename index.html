@@ -270,7 +270,7 @@
     <ul class="hidden md:flex gap-6 text-sm font-semibold whitespace-nowrap">
       <li><a href="#onas" class="hover:text-golden transition" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" class="hover:text-golden transition" x-text="t('nav_cennik')"></a></li>
-      <li><a href="#dojazd" class="hover:text-golden transition" x-text="t('nav_dojazd')"></a></li>
+      <li><a href="#dostepnosc" class="hover:text-golden transition">📅 Dostępność</a></li>
       <li><a href="#galeria" class="hover:text-golden transition" x-text="t('nav_galeria')"></a></li>
       <li><a href="#faq" class="hover:text-golden transition">FAQ</a></li>
       <li><a href="#kontakt" class="hover:text-golden transition" x-text="t('nav_kontakt')"></a></li>
@@ -306,7 +306,7 @@
     <ul class="flex flex-col gap-3 text-sm font-semibold">
       <li><a href="#onas" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_cennik')"></a></li>
-      <li><a href="#dojazd" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_dojazd')"></a></li>
+      <li><a href="#dostepnosc" @click="mobileMenu=false" class="block py-1 hover:text-golden">📅 Dostępność</a></li>
       <li><a href="#galeria" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_galeria')"></a></li>
       <li><a href="#faq" @click="mobileMenu=false" class="block py-1 hover:text-golden">FAQ</a></li>
       <li><a href="#kontakt" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_kontakt')"></a></li>
@@ -490,6 +490,140 @@
     </div>
   </div>
 </section>
+
+<!-- ===== DOSTĘPNOŚĆ — KALENDARZ ===== -->
+<section id="dostepnosc" class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-6 fade-in">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-navy mb-3" x-text="t('dostepnosc_title') || 'Dostępność miejsc'"></h2>
+      <p class="text-gray-500 text-sm" x-text="t('dostepnosc_subtitle') || 'Sezon czerwiec–sierpień 2026 · odświeżane co 5 min · tylko miejsca z rezerwacją (10 miejsc)'"></p>
+    </div>
+
+    <!-- Legenda -->
+    <div class="flex flex-wrap justify-center gap-4 mb-8 text-sm">
+      <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded-full bg-emerald-500"></span> Wolne miejsca</span>
+      <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded-full bg-amber-400"></span> Mało miejsc (1–3)</span>
+      <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded-full bg-red-500"></span> Brak miejsc z rezerwacją</span>
+      <span class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded-full bg-blue-400 border-2 border-blue-600"></span> Dodatkowy dzień otwarcia</span>
+    </div>
+
+    <!-- Uwaga o miejscach bez rezerwacji -->
+    <div class="max-w-2xl mx-auto mb-8 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3 text-sm text-amber-800 text-center">
+      ⚠️ Czerwony oznacza brak <strong>miejsc z rezerwacją</strong>. Na parking bez rezerwacji można nadal wjechać (20 zł/wjazd) w godzinach otwarcia.
+    </div>
+
+    <!-- Kalendarz -->
+    <div id="cal-container" class="min-h-[120px] flex items-center justify-center">
+      <div class="text-gray-400 text-sm animate-pulse">Ładowanie kalendarza...</div>
+    </div>
+
+    <!-- Stopka kalendarza -->
+    <p id="cal-updated" class="text-center text-xs text-gray-400 mt-4"></p>
+  </div>
+</section>
+
+<script>
+(function() {
+  const API_URL = 'https://parking-messenger-bot.vercel.app/api/availability';
+  const REFRESH_MS = 5 * 60 * 1000; // 5 min
+
+  const MONTH_PL = ['', 'Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+  const MONTH_FULL_PL = ['', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+  const DOW_PL = ['Nd', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb'];
+
+  function parseDate(ddmmyyyy) {
+    const [d, m, y] = ddmmyyyy.split('.').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function statusColor(status, isExtra) {
+    if (isExtra) return 'bg-blue-100 border-blue-400 text-blue-900';
+    if (status === 'full') return 'bg-red-100 border-red-400 text-red-900';
+    if (status === 'limited') return 'bg-amber-100 border-amber-400 text-amber-900';
+    return 'bg-emerald-100 border-emerald-400 text-emerald-900';
+  }
+
+  function dotColor(status, isExtra) {
+    if (isExtra) return 'bg-blue-400';
+    if (status === 'full') return 'bg-red-500';
+    if (status === 'limited') return 'bg-amber-400';
+    return 'bg-emerald-500';
+  }
+
+  function renderCalendar(calendar) {
+    const container = document.getElementById('cal-container');
+    if (!calendar || calendar.length === 0) {
+      container.innerHTML = '<p class="text-gray-400 text-sm">Brak danych o dostępności.</p>';
+      return;
+    }
+
+    // Group by month
+    const byMonth = {};
+    calendar.forEach(item => {
+      const d = parseDate(item.date);
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      if (!byMonth[key]) byMonth[key] = { month: d.getMonth() + 1, year: d.getFullYear(), days: [] };
+      byMonth[key].days.push(item);
+    });
+
+    let html = '<div class="space-y-8">';
+    for (const key of Object.keys(byMonth).sort()) {
+      const { month, year, days } = byMonth[key];
+      html += `<div>
+        <h3 class="text-lg font-bold text-navy mb-3 text-center">${MONTH_FULL_PL[month]} ${year}</h3>
+        <div class="flex flex-wrap gap-2 justify-center">`;
+      days.forEach(item => {
+        const d = parseDate(item.date);
+        const dow = DOW_PL[d.getDay()];
+        const dayNum = String(d.getDate()).padStart(2, '0');
+        const free = item.max - item.count;
+        const freeLabel = item.status === 'full' ? 'brak' : `${free} wol.`;
+        const colorClass = statusColor(item.status, item.isExtra);
+        const dotClass = dotColor(item.status, item.isExtra);
+        const extraBadge = item.isExtra ? '<span class="absolute -top-1 -right-1 text-xs bg-blue-500 text-white rounded-full w-4 h-4 flex items-center justify-center font-bold">+</span>' : '';
+        html += `<div class="relative flex flex-col items-center justify-center w-16 h-20 rounded-xl border-2 ${colorClass} shadow-sm cursor-default hover:scale-105 transition-transform" title="${item.date}: ${item.count}/${item.max} zarezerwowane${item.isExtra ? ' (dodatkowy dzień otwarcia)' : ''}">
+          ${extraBadge}
+          <span class="text-xs font-semibold opacity-70">${dow}</span>
+          <span class="text-2xl font-extrabold leading-tight">${dayNum}</span>
+          <span class="text-xs font-medium">${MONTH_PL[month]}</span>
+          <span class="flex items-center gap-1 mt-1"><span class="w-2 h-2 rounded-full ${dotClass} inline-block"></span><span class="text-xs">${freeLabel}</span></span>
+        </div>`;
+      });
+      html += '</div></div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  async function loadCalendar() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.ok) {
+        renderCalendar(data.calendar);
+        const updated = document.getElementById('cal-updated');
+        if (updated) {
+          const now = new Date();
+          updated.textContent = `Ostatnia aktualizacja: ${now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`;
+        }
+      }
+    } catch (e) {
+      const container = document.getElementById('cal-container');
+      container.innerHTML = '<p class="text-gray-400 text-sm">Nie można załadować kalendarza. Odśwież stronę.</p>';
+    }
+  }
+
+  // Load on page ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadCalendar);
+  } else {
+    loadCalendar();
+  }
+  // Refresh every 5 min
+  setInterval(loadCalendar, REFRESH_MS);
+})();
+</script>
 
 <!-- ===== JAK DOJECHAĆ ===== -->
 <section id="dojazd" class="py-20 bg-cream">
@@ -677,17 +811,25 @@
        style="height: 480px;">
 
     <!-- Header -->
-    <div class="bg-navy text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
-      <span class="text-2xl">🦅</span>
-      <div class="flex-1">
-        <div class="font-bold text-sm">Orzeł · Asystent AI 🤖</div>
-        <div class="text-xs text-golden/80">Powered by AI · mogę się mylić</div>
+    <div class="bg-navy text-white px-4 py-3 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <span x-text="botPaused ? '👨‍💼' : '🦅'" class="text-2xl"></span>
+        <div class="flex-1">
+          <div class="font-bold text-sm" x-text="botPaused ? 'Michał · Właściciel' : 'Orzeł · Asystent AI 🤖'"></div>
+          <div class="text-xs text-golden/80" x-text="botPaused ? 'Odpowiada właściciel parkingu 👋' : 'Powered by AI · mogę się mylić'"></div>
+        </div>
+        <button @click="open = false" class="text-gray-300 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
-      <button @click="open = false" class="text-gray-300 hover:text-white transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
+      <!-- Banner: human takeover -->
+      <div x-show="botPaused" x-transition
+           class="mt-2 bg-golden/20 border border-golden/40 rounded-lg px-3 py-1.5 text-xs text-golden flex items-center gap-2">
+        <span>👨‍💼</span>
+        <span>Właściciel przejął rozmowę — odpowiada osobiście</span>
+      </div>
     </div>
 
     <!-- Messages -->
@@ -1194,6 +1336,8 @@ function chatWidget() {
     _sub: null,
     _pollInterval: null,
     _lastPollTime: null,
+    botPaused: false,
+    _statusInterval: null,
 
     toggle() {
       this.open = !this.open;
@@ -1211,13 +1355,34 @@ function chatWidget() {
         }
         this.subscribeRealtime();
         this.startPolling();
+        this.checkBotStatus();
+        this._statusInterval = setInterval(() => this.checkBotStatus(), 30000);
         this.$nextTick(() => {
           this.$refs.chatInput?.focus();
           this.scrollToBottom();
         });
       } else {
         this.stopPolling();
+        if (this._statusInterval) { clearInterval(this._statusInterval); this._statusInterval = null; }
       }
+    },
+
+    async checkBotStatus() {
+      if (!this.sessionId) return;
+      try {
+        if (!this._sbClient) {
+          this._sbClient = window.supabase.createClient(
+            'https://qgqevlkjwinxrtdgdedy.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+          );
+        }
+        const { data } = await this._sbClient
+          .from('chat_sessions')
+          .select('bot_paused')
+          .eq('session_id', this.sessionId)
+          .maybeSingle();
+        if (data) this.botPaused = !!data.bot_paused;
+      } catch {}
     },
 
     subscribeRealtime() {
