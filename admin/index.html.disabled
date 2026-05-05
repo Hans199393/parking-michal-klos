@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pl" x-data="adminApp()" x-init="init()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admina – Parking Michał Kłos</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="../assets/images/logo2026.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#1a2d4a',
+            teal: '#4dbfbf',
+            golden: '#f5c842',
+            cream: '#f0e8d0',
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Auth
+      window.adminLogin = (email, password) =>
+        sb.auth.signInWithPassword({ email, password }).then(({ error }) => ({
+          ok: !error,
+          msg: error?.message
+        }));
+
+      window.adminLogout = () => sb.auth.signOut();
+
+      window.checkAdminSession = async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        return !!session;
+      };
+
+      // Status
+      window.setParking = async (brakMiejsc) => {
+        const value = brakMiejsc ? 'false' : 'true';
+        const { error } = await sb.from('settings')
+          .upsert({ key: 'spots_available', value }, { onConflict: 'key' });
+        window.dispatchEvent(new CustomEvent('parking-saved', {
+          detail: { ok: !error, msg: error?.message }
+        }));
+      };
+
+      // Komunikat
+      window.setKomunikat = async (kom) => {
+        const { error } = await sb.from('settings')
+          .upsert({ key: 'komunikat', value: JSON.stringify(kom) }, { onConflict: 'key' });
+        return { ok: !error, msg: error?.message };
+      };
+
+      // Initial data + realtime
+      function dispatchRow(key, value) {
+        if (key === 'spots_available') {
+          window.dispatchEvent(new CustomEvent('admin-status', {
+            detail: { brakMiejsc: value === 'false' }
+          }));
+        }
+        if (key === 'komunikat') {
+          try {
+            window.dispatchEvent(new CustomEvent('komunikat-status', {
+              detail: JSON.parse(value)
+            }));
+          } catch (_) {}
+        }
+      }
+
+      async function initAdmin() {
+        const { data } = await sb.from('settings')
+          .select('key,value')
+          .in('key', ['spots_available', 'komunikat']);
+        if (data) data.forEach(r => dispatchRow(r.key, r.value));
+
+        sb.channel('admin-settings')
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'settings' },
+            payload => { if (payload.new) dispatchRow(payload.new.key, payload.new.value); }
+          )
+          .subscribe();
+      }
+
+      initAdmin();
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+
+<body class="bg-cream min-h-screen flex items-center justify-center p-4" x-cloak>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div x-show="!loggedIn" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm">
+  <div class="text-center mb-6">
+    <img src="../assets/images/logo2026.png" alt="Logo" class="h-20 mx-auto mb-4" />
+    <h1 class="text-2xl font-extrabold text-navy">Panel Admina</h1>
+    <p class="text-gray-500 text-sm mt-1">Parking Michał Kłos</p>
+  </div>
+
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-semibold text-navy mb-1">E-mail</label>
+      <input
+        type="email"
+        x-model="email"
+        @keydown.enter="$refs.passwordInput.focus()"
+        placeholder="Adres e-mail..."
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-teal text-navy"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-semibold text-navy mb-1">Hasło</label>
+      <input
+        type="password"
+        x-model="password"
+        x-ref="passwordInput"
+        @keydown.enter="login()"
+        placeholder="Wprowadź hasło..."
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-teal text-navy"
+      />
+    </div>
+    <div x-show="loginError" class="text-red-500 text-sm text-center font-semibold" x-text="loginErrorMsg || 'Nieprawidłowe dane. Spróbuj ponownie.'">
+    </div>
+    <button
+      @click="login()"
+      :disabled="loggingIn"
+      class="w-full bg-navy text-white font-bold py-3 rounded-xl hover:bg-teal transition disabled:opacity-50">
+      <span x-text="loggingIn ? 'Logowanie...' : 'Zaloguj się'"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div x-show="loggedIn" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-3">
+      <img src="../assets/images/logo2026.png" alt="Logo" class="h-12 w-auto" />
+      <div>
+        <h1 class="text-xl font-extrabold text-navy">Panel Admina</h1>
+        <p class="text-gray-400 text-xs">Parking Michał Kłos</p>
+      </div>
+    </div>
+    <button @click="logout()" class="text-gray-400 hover:text-red-500 text-sm font-semibold transition">
+      Wyloguj
+    </button>
+  </div>
+
+  <!-- Status indicator -->
+  <div class="mb-8 p-5 rounded-2xl text-center"
+       :class="brakMiejsc ? 'bg-red-50 border-2 border-red-400' : 'bg-green-50 border-2 border-green-400'">
+    <p class="text-xs font-semibold uppercase tracking-wide mb-2"
+       :class="brakMiejsc ? 'text-red-500' : 'text-green-500'">
+      Aktualny status
+    </p>
+    <div class="text-4xl mb-2" x-text="brakMiejsc ? '🚫' : '✅'"></div>
+    <p class="text-2xl font-extrabold"
+       :class="brakMiejsc ? 'text-red-600' : 'text-green-600'"
+       x-text="brakMiejsc ? 'BRAK WOLNYCH MIEJSC' : 'MIEJSCA DOSTĘPNE'">
+    </p>
+    <p class="text-gray-400 text-xs mt-2"
+       x-text="brakMiejsc ? 'Na stronie widoczny jest baner o braku miejsc' : 'Baner jest wyłączony'">
+    </p>
+  </div>
+
+  <!-- Toggle buttons -->
+  <div class="grid grid-cols-2 gap-4">
+    <button
+      @click="setStatus(false)"
+      :disabled="!brakMiejsc"
+      class="py-4 rounded-xl font-bold text-lg transition"
+      :class="!brakMiejsc
+        ? 'bg-green-500 text-white cursor-default shadow-lg scale-105'
+        : 'bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-600'">
+      ✅ Są miejsca
+    </button>
+    <button
+      @click="setStatus(true)"
+      :disabled="brakMiejsc"
+      class="py-4 rounded-xl font-bold text-lg transition"
+      :class="brakMiejsc
+        ? 'bg-red-500 text-white cursor-default shadow-lg scale-105'
+        : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600'">
+      🚫 Brak miejsc
+    </button>
+  </div>
+
+  <!-- Info -->
+  <p class="text-gray-400 text-xs text-center mt-6">
+    Zmiana statusu jest widoczna natychmiast na stronie dla wszystkich odwiedzających.
+  </p>
+  <p x-show="saving" class="text-center text-sm text-gray-500 mt-3 font-semibold">Zapisywanie...</p>
+  <p x-show="saveMsg" x-text="saveMsg" class="text-center text-sm mt-3 font-semibold"></p>
+
+  <!-- Link to main site -->
+  <div class="mt-6 text-center">
+    <a href="../index.html" target="_blank" class="text-teal text-sm hover:underline font-semibold">
+      → Przejdź do strony głównej
+    </a>
+  </div>
+
+  <!-- KOMUNIKAT SECTION -->
+  <div class="mt-8 border-t border-gray-100 pt-8">
+    <h2 class="text-base font-extrabold text-navy mb-4">📢 Komunikat informacyjny</h2>
+
+    <!-- Current kommunikat status -->
+    <div class="mb-4 p-4 rounded-xl text-center"
+         :class="kom.aktywny ? 'bg-amber-50 border-2 border-amber-400' : 'bg-gray-50 border-2 border-gray-200'">
+      <span class="font-semibold uppercase tracking-wide text-xs"
+            :class="kom.aktywny ? 'text-amber-600' : 'text-gray-400'"
+            x-text="kom.aktywny ? '📢 Komunikat aktywny na stronie' : 'Brak aktywnego komunikatu'"></span>
+      <p x-show="kom.aktywny && kom.tytul" x-text="kom.tytul" class="font-bold text-navy mt-1 text-sm"></p>
+    </div>
+
+    <!-- Form -->
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs font-semibold text-navy mb-1">Tytuł komunikatu</label>
+        <input type="text" x-model="kom.tytul"
+               placeholder="np. Zmiana godzin otwarcia – Majówka"
+               class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-teal text-navy" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-navy mb-1">Treść</label>
+        <textarea x-model="kom.tresc" rows="3"
+                  placeholder="Treść komunikatu widocznego na stronie..."
+                  class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-teal text-navy resize-none"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-navy mb-1">Widoczny od</label>
+          <input type="datetime-local" x-model="kom.od"
+                 class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal text-navy" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-navy mb-1">Widoczny do</label>
+          <input type="datetime-local" x-model="kom.do"
+                 class="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal text-navy" />
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="kom.aktywny = !kom.aktywny"
+                class="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition border-2"
+                :class="kom.aktywny ? 'bg-amber-400 border-amber-400 text-white' : 'bg-white border-gray-200 text-gray-500 hover:border-amber-300'">
+          <span x-text="kom.aktywny ? '✅ Aktywny' : '⏸ Nieaktywny'"></span>
+        </button>
+        <button @click="saveKomunikat()"
+                class="flex-1 bg-navy text-white font-bold py-2 rounded-xl hover:bg-teal transition text-sm">
+          💾 Zapisz komunikat
+        </button>
+      </div>
+      <p x-show="komMsg" x-text="komMsg" class="text-center text-sm font-semibold mt-1"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function adminApp() {
+  return {
+    loggedIn: false,
+    email: '',
+    password: '',
+    loginError: false,
+    loginErrorMsg: '',
+    loggingIn: false,
+    brakMiejsc: false,
+    saving: false,
+    saveMsg: '',
+    kom: { tytul: '', tresc: '', od: '', do: '', aktywny: false },
+    komMsg: '',
+
+    async login() {
+      this.loggingIn = true;
+      this.loginError = false;
+      const { ok, msg } = await window.adminLogin(this.email, this.password);
+      this.loggingIn = false;
+      if (ok) {
+        this.loggedIn = true;
+        this.email = '';
+        this.password = '';
+      } else {
+        this.loginError = true;
+        this.loginErrorMsg = msg || 'Nieprawidłowe dane. Spróbuj ponownie.';
+        this.password = '';
+      }
+    },
+
+    async logout() {
+      await window.adminLogout();
+      this.loggedIn = false;
+    },
+
+    async setStatus(brakMiejsc) {
+      this.saving = true;
+      this.saveMsg = '';
+      await window.setParking(brakMiejsc);
+    },
+
+    async saveKomunikat() {
+      this.komMsg = '';
+      const result = await window.setKomunikat(this.kom);
+      this.komMsg = result.ok ? '✅ Komunikat zapisany!' : '❌ Błąd: ' + result.msg;
+      setTimeout(() => this.komMsg = '', 5000);
+    },
+
+    async init() {
+      // Rejestrujemy listenery PRZED await — eliminuje race condition
+      window.addEventListener('admin-status', (e) => {
+        this.brakMiejsc = e.detail.brakMiejsc;
+      });
+      window.addEventListener('parking-saved', (e) => {
+        this.saving = false;
+        this.saveMsg = e.detail.ok ? '✅ Zapisano!' : '❌ Błąd: ' + e.detail.msg;
+        setTimeout(() => this.saveMsg = '', 5000);
+      });
+      window.addEventListener('komunikat-status', (e) => {
+        const d = e.detail;
+        this.kom = {
+          tytul:   d.tytul   || '',
+          tresc:   d.tresc   || '',
+          od:      d.od      || '',
+          do:      d.do      || '',
+          aktywny: d.aktywny || false
+        };
+      });
+
+      this.loggedIn = await window.checkAdminSession();
+    }
+  }
+}
+</script>
+
+</body>
+</html>
