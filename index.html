@@ -84,11 +84,18 @@
     }
   </script>
 
-  <!-- Alpine.js CDN -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Alpine.js CDN — wersja przypięta, SRI zweryfikowane 21.04.2026 -->
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"
+    integrity="sha384-WPtu0YHhJ3arcykfnv1JgUffWDSKRnqnDeTpJUbOc2os2moEmLkIdaeR0trPN4be"
+    crossorigin="anonymous"></script>
 
-  <!-- Supabase JS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Supabase JS SDK — wersja przypięta, SRI zweryfikowane 21.04.2026 -->
+  <!-- Tailwind Play CDN nie obsługuje SRI (dynamiczne CSS) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.104.0/dist/umd/supabase.js"
+    integrity="sha384-UiYSxQXCTojQCBgTDHAa/f6PRkGlvY/sx+VlmFvBi/lpAaq1TzpV7LpzShoUwGbT"
+    crossorigin="anonymous"></script>
   <script>
     (function () {
       const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
@@ -108,12 +115,24 @@
             }));
           } catch (_) {}
         }
+        // Phase A — central settings dispatch (cennik / godziny / kontakt)
+        const PUBLIC_KEYS = ['rate_basic','rate_reservation','rate_after_hours','currency',
+                             'open_from','open_to','owner_phone','owner_email',
+                             'parking_address','parking_name'];
+        if (PUBLIC_KEYS.includes(key)) {
+          window.dispatchEvent(new CustomEvent('settings-update', {
+            detail: { key, value }
+          }));
+        }
       }
 
       async function init() {
         const { data } = await sb.from('settings')
           .select('key,value')
-          .in('key', ['spots_available', 'komunikat']);
+          .in('key', ['spots_available','komunikat',
+                      'rate_basic','rate_reservation','rate_after_hours','currency',
+                      'open_from','open_to','owner_phone','owner_email',
+                      'parking_address','parking_name']);
         if (data) data.forEach(r => dispatchRow(r.key, r.value));
 
         // Fetch extra open days
@@ -203,7 +222,11 @@
 
 <body class="font-sans bg-cream text-navy overflow-x-hidden" x-cloak>
 
-<!-- ===== BRAK MIEJSC BANNER ===== -->
+<!-- A11y: Skip link (widoczny tylko przy fokusie klawiaturą) -->
+<a href="#hero"
+   class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-navy focus:text-cream focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold">
+  Przejdź do treści
+</a>
 <div id="brak-miejsc-banner"
      x-show="brakMiejsc"
      x-transition
@@ -291,8 +314,12 @@
          x-text="t('rezerwuj')"></button>
 
       <!-- Hamburger mobile -->
-      <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white focus:outline-none">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="mobileMenu = !mobileMenu"
+              :aria-expanded="mobileMenu ? 'true' : 'false'"
+              aria-controls="mobile-menu"
+              aria-label="Otwórz menu"
+              class="md:hidden text-white focus:outline-none focus:ring-2 focus:ring-golden rounded">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path x-show="!mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           <path x-show="mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
@@ -301,7 +328,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div x-show="mobileMenu" x-transition class="md:hidden bg-navy/95 px-6 pb-4">
+  <div x-show="mobileMenu" x-transition id="mobile-menu" class="md:hidden bg-navy/95 px-6 pb-4">
     <ul class="flex flex-col gap-3 text-sm font-semibold">
       <li><a href="#onas" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_cennik')"></a></li>
@@ -318,7 +345,7 @@
 </nav>
 
 <!-- ===== HERO ===== -->
-<section id="hero" class="relative min-h-screen flex items-center justify-center">
+<section id="hero" class="relative min-h-screen flex items-center justify-center" role="main">
   <div class="absolute inset-0">
     <img src="assets/images/IMG_7749.jpeg" alt="Parking płatny niestrzeżony Michał Kłos – Wyspa Sobieszewska, wejście na plażę nr 10" class="w-full h-full object-cover" />
     <div class="hero-overlay absolute inset-0"></div>
@@ -411,14 +438,14 @@
       <!-- Bez rezerwacji -->
       <div class="bg-white/10 rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition">
         <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('bez_rez')"></p>
-        <p class="text-6xl font-extrabold text-white mb-1">20<span class="text-2xl">zł</span></p>
+        <p class="text-6xl font-extrabold text-white mb-1"><span x-text="cennik.rate_basic">20</span><span class="text-2xl" x-text="cennik.currency">zł</span></p>
         <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
       </div>
       <!-- Z rezerwacją -->
       <div class="bg-golden/20 rounded-2xl p-8 text-center border-2 border-golden hover:bg-golden/30 transition relative">
         <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-golden text-navy text-xs font-bold px-3 py-1 rounded-full" x-text="t('polecamy')"></span>
         <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('z_rez')"></p>
-        <p class="text-6xl font-extrabold text-white mb-1">25<span class="text-2xl">zł</span></p>
+        <p class="text-6xl font-extrabold text-white mb-1"><span x-text="cennik.rate_reservation">25</span><span class="text-2xl" x-text="cennik.currency">zł</span></p>
         <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
         <p class="text-cream/60 text-xs mt-2" x-text="t('rez_info')"></p>
       </div>
@@ -537,11 +564,12 @@
         <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
           <button
             @click="item.open = !item.open"
+            :aria-expanded="item.open ? 'true' : 'false'"
             class="w-full text-left px-6 py-4 bg-cream hover:bg-golden/20 transition flex justify-between items-center font-semibold text-navy">
             <span x-text="t(item.qKey)"></span>
-            <span x-text="item.open ? '−' : '+'" class="text-xl font-bold text-teal"></span>
+            <span x-text="item.open ? '−' : '+'" class="text-xl font-bold text-teal" aria-hidden="true"></span>
           </button>
-          <div x-show="item.open" x-transition class="px-6 py-4 text-gray-700 text-sm leading-relaxed bg-white">
+          <div x-show="item.open" x-transition class="px-6 py-4 text-gray-700 text-sm sm:text-base leading-relaxed bg-white">
             <span x-text="t(item.aKey)"></span>
           </div>
         </div>
@@ -556,12 +584,12 @@
     <h2 class="text-3xl md:text-4xl font-extrabold mb-10" x-text="t('kontakt_title')"></h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
       <a href="tel:+48784828748" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
-        <span class="text-4xl">📞</span>
+        <span class="text-4xl" aria-hidden="true">📞</span>
         <span class="font-bold text-golden">784 828 748</span>
         <span class="text-sm text-cream/70" x-text="t('zadzwon')"></span>
       </a>
       <a href="mailto:kontakt@parkingsobieszewo.pl" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
-        <span class="text-4xl">✉️</span>
+        <span class="text-4xl" aria-hidden="true">✉️</span>
         <span class="font-bold text-golden text-sm">kontakt@parkingsobieszewo.pl</span>
         <span class="text-sm text-cream/70" x-text="t('napisz')"></span>
       </a>
@@ -744,6 +772,17 @@ function app() {
     showCookie: !localStorage.getItem('cookieAccepted'),
     brakMiejsc: false,
     komunikat: { visible: false, tytul: '', tresc: '', zakres: '' },
+    // Phase A — central settings (hydrowane z Supabase, fallback do hardcoded)
+    cennik: {
+      rate_basic: '20',
+      rate_reservation: '25',
+      rate_after_hours: '50',
+      currency: 'zł',
+      open_from: '8:00',
+      open_to: '19:00',
+      owner_phone: '784 828 748',
+      owner_email: 'kontakt@parkingsobieszewo.pl',
+    },
     faq: [
       { qKey: 'faq1q', aKey: 'faq1a', open: false },
       { qKey: 'faq2q', aKey: 'faq2a', open: false },
@@ -1156,6 +1195,14 @@ function app() {
         this.brakMiejsc = e.detail.brakMiejsc;
       });
 
+      // Phase A — central settings hydration listener (cennik, godziny, kontakt)
+      window.addEventListener('settings-update', (e) => {
+        const { key, value } = e.detail || {};
+        if (key && value != null && key in this.cennik) {
+          this.cennik[key] = String(value);
+        }
+      });
+
       // Listen for komunikat updates
       window.addEventListener('komunikat-update', (e) => {
         const d = e.detail;
@@ -1239,7 +1286,8 @@ function chatWidget() {
         if (!this._sbClient) {
           this._sbClient = window.supabase.createClient(
             'https://qgqevlkjwinxrtdgdedy.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o',
+            { global: { headers: { 'x-session-id': this.sessionId || '' } } }
           );
         }
         const { data } = await this._sbClient
@@ -1256,7 +1304,8 @@ function chatWidget() {
       try {
         const sb2 = window.supabase.createClient(
           'https://qgqevlkjwinxrtdgdedy.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o',
+          { global: { headers: { 'x-session-id': this.sessionId || '' } } }
         );
         this._sbClient = sb2;
         const sid = this.sessionId;
@@ -1341,7 +1390,8 @@ function chatWidget() {
         if (!this._sbClient) {
           this._sbClient = window.supabase.createClient(
             'https://qgqevlkjwinxrtdgdedy.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o',
+            { global: { headers: { 'x-session-id': this.sessionId || '' } } }
           );
         }
         const { data } = await this._sbClient
