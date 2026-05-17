@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking.OS | Strefa techniczna</title>
+  <meta name="description" content="Ukryta strona techniczna z instalatorem Parking.OS dla Windows 64-bit." />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="theme-color" content="#10233f" />
+  <link rel="icon" type="image/png" href="/assets/images/logo2026.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#10233f',
+            ink: '#09111f',
+            teal: '#4dbfbf',
+            sunset: '#f16b3a',
+            golden: '#f5c842',
+            mist: '#e8eef7'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif']
+          },
+          boxShadow: {
+            panel: '0 24px 80px rgba(3, 10, 20, 0.28)',
+            glow: '0 0 0 1px rgba(255,255,255,0.08), 0 24px 60px rgba(77,191,191,0.18)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --ring: rgba(77, 191, 191, 0.25);
+      --panel: rgba(10, 19, 35, 0.76);
+      --line: rgba(255, 255, 255, 0.08);
+      --text-soft: rgba(232, 238, 247, 0.78);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: #f7fafc;
+      background:
+        radial-gradient(circle at top left, rgba(77, 191, 191, 0.24), transparent 32%),
+        radial-gradient(circle at 85% 12%, rgba(241, 107, 58, 0.2), transparent 24%),
+        linear-gradient(135deg, #09111f 0%, #10233f 58%, #132b4a 100%);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 88%);
+      opacity: 0.5;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+    }
+
+    .label-chip {
+      border: 1px solid rgba(245, 200, 66, 0.3);
+      background: rgba(245, 200, 66, 0.08);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+      animation: pulse 2.1s infinite;
+    }
+
+    .download-cta {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-120%);
+      animation: sweep 4s infinite;
+    }
+
+    .meta-value {
+      color: var(--text-soft);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    @keyframes sweep {
+      0% { transform: translateX(-120%); }
+      45% { transform: translateX(120%); }
+      100% { transform: translateX(120%); }
+    }
+  </style>
+</head>
+<body class="font-sans selection:bg-teal/30 selection:text-white">
+  <main class="relative mx-auto flex min-h-screen max-w-7xl items-center px-5 py-10 sm:px-8 lg:px-10">
+    <div class="grid w-full gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+      <section class="panel shadow-panel rounded-[32px] p-6 sm:p-8 lg:p-10">
+        <div class="mb-8 flex flex-wrap items-center gap-3">
+          <span class="label-chip inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-golden">
+            <span class="status-dot"></span>
+            Strefa techniczna Parking.OS
+          </span>
+          <span class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-slate-300">
+            Adres niepubliczny
+          </span>
+        </div>
+
+        <div class="mb-10 flex items-center gap-4">
+          <div class="rounded-3xl border border-white/10 bg-white/10 p-3 shadow-glow">
+            <img src="/assets/images/logo2026.png" alt="Logo Parking.OS" class="h-14 w-14 rounded-2xl object-cover" />
+          </div>
+          <div>
+            <p class="text-sm uppercase tracking-[0.35em] text-teal/80">Parking Michał Kłos</p>
+            <h1 class="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Parking.OS</h1>
+          </div>
+        </div>
+
+        <div class="max-w-3xl space-y-5">
+          <p class="font-display text-3xl font-semibold leading-tight text-mist sm:text-[3.4rem]">
+            Gotowy instalator operacyjny dla parkingu, kamer i codziennej obsługi w jednym pakiecie.
+          </p>
+          <p class="max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+            Ten link nie jest dodany do menu ani sitemap. Strona służy wyłącznie do ręcznego pobrania aktualnego instalatora Windows 64-bit, zbudowanego po synchronizacji ustawień z działającym środowiskiem developerskim.
+          </p>
+        </div>
+
+        <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+          <a
+            class="download-cta inline-flex items-center justify-center rounded-2xl bg-sunset px-6 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(241,107,58,0.28)] transition hover:-translate-y-0.5 hover:bg-[#ff7a48]"
+            href="https://raw.githubusercontent.com/Hans199393/parking-os-releases/master/downloads/Parking.OS_2026.1.0_x64-setup.exe"
+            rel="noopener"
+          >
+            Pobierz Parking.OS 2026.1.0
+          </a>
+          <a
+            class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-base font-semibold text-white transition hover:border-teal/50 hover:bg-white/10"
+            href="https://raw.githubusercontent.com/Hans199393/parking-os-releases/master/downloads/Parking.OS_2026.1.0_x64-setup.sha256.txt"
+            rel="noopener"
+          >
+            Zobacz SHA-256
+          </a>
+          <button
+            id="copy-hash"
+            type="button"
+            class="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-transparent px-6 py-4 text-base font-semibold text-slate-200 transition hover:border-golden/50 hover:text-white"
+          >
+            Skopiuj sumę kontrolną
+          </button>
+        </div>
+
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <p class="text-xs uppercase tracking-[0.22em] text-teal/70">Wersja</p>
+            <p class="mt-3 font-display text-2xl text-white">2026.1.0</p>
+            <p class="mt-2 text-sm leading-6 text-slate-300">Ten sam numer wersji co poprzednia paczka, ale z aktualnymi domyślnymi ustawieniami z deva.</p>
+          </article>
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <p class="text-xs uppercase tracking-[0.22em] text-teal/70">Platforma</p>
+            <p class="mt-3 font-display text-2xl text-white">Windows x64</p>
+            <p class="mt-2 text-sm leading-6 text-slate-300">Instalator NSIS dla stanowiska operatorskiego, bez potrzeby ręcznego dokładania środowiska.</p>
+          </article>
+          <article class="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <p class="text-xs uppercase tracking-[0.22em] text-teal/70">Pakiet</p>
+            <p class="mt-3 font-display text-2xl text-white">Node + ffmpeg</p>
+            <p class="mt-2 text-sm leading-6 text-slate-300">Budowa zgodna z desktopowym bundlem Parking.OS, razem z dołączonymi zasobami uruchomieniowymi.</p>
+          </article>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <section class="panel shadow-panel rounded-[32px] p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-[0.22em] text-golden/80">Pakiet do pobrania</p>
+              <h2 class="mt-3 font-display text-2xl font-semibold text-white">Szczegóły artefaktu</h2>
+            </div>
+            <span class="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
+              Build OK
+            </span>
+          </div>
+
+          <dl class="mt-6 space-y-5 text-sm">
+            <div>
+              <dt class="text-slate-400">Nazwa pliku</dt>
+              <dd class="mt-1 break-all text-white">Parking.OS_2026.1.0_x64-setup.exe</dd>
+            </div>
+            <div>
+              <dt class="text-slate-400">Rozmiar</dt>
+              <dd class="mt-1 text-white">84 986 500 B (około 81 MB)</dd>
+            </div>
+            <div>
+              <dt class="text-slate-400">Host</dt>
+              <dd class="meta-value mt-1">GitHub repo: Hans199393/parking-os-releases</dd>
+            </div>
+            <div>
+              <dt class="text-slate-400">SHA-256</dt>
+              <dd id="hash-value" class="mt-1 break-all font-mono text-[13px] leading-6 text-white">a46501711a0f16a98659e16b21cdfe49d72021e163b673ab24cd4fd94f012228</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel shadow-panel rounded-[32px] p-6 sm:p-8">
+          <p class="text-xs uppercase tracking-[0.22em] text-golden/80">Co jest w środku</p>
+          <div class="mt-5 space-y-4 text-sm text-slate-300">
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              Aktualne domyślne ustawienia zsynchronizowane z działającym devem, w tym naprawiona stopka mailowa oraz bieżące ROI detekcji.
+            </div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              Widoczna wersja aplikacji w interfejsie i paczka instalacyjna zbudowana po tej synchronizacji.
+            </div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              Zasoby potrzebne do działania środowiska desktopowego, w tym komponenty używane przez integrację kamerową.
+            </div>
+          </div>
+        </section>
+
+        <section class="panel shadow-panel rounded-[32px] p-6 sm:p-8">
+          <p class="text-xs uppercase tracking-[0.22em] text-teal/80">Szybki start</p>
+          <ol class="mt-5 space-y-4 text-sm leading-7 text-slate-300">
+            <li class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              1. Pobierz plik `.exe` z przycisku powyżej albo bezpośrednio z GitHub.
+            </li>
+            <li class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              2. Uruchom instalator na komputerze z Windows 64-bit i przejdź standardowy kreator NSIS.
+            </li>
+            <li class="rounded-3xl border border-white/10 bg-white/5 p-4">
+              3. Po instalacji zweryfikuj ustawienia parkingu i test kamer dokładnie na stanowisku docelowym.
+            </li>
+          </ol>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const hashValue = document.getElementById('hash-value');
+    const copyHashButton = document.getElementById('copy-hash');
+
+    copyHashButton?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(hashValue.textContent.trim());
+        copyHashButton.textContent = 'Skopiowano SHA-256';
+      } catch (_) {
+        copyHashButton.textContent = 'Kopiowanie niedostępne';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /parkingos/
 
 Sitemap: https://parkingsobieszewo.pl/sitemap.xml
