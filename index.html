@@ -96,11 +96,29 @@
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.104.0/dist/umd/supabase.js"
     integrity="sha384-UiYSxQXCTojQCBgTDHAa/f6PRkGlvY/sx+VlmFvBi/lpAaq1TzpV7LpzShoUwGbT"
     crossorigin="anonymous"></script>
+  <script src="public-config.js"></script>
   <script>
     (function () {
-      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
-      const SUPABASE_ANON_KEY = '<REDACTED_SUPABASE_ANON_KEY>';
-      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const PUBLIC_CONFIG = window.PARKING_PUBLIC_CONFIG || {};
+      const SUPABASE_URL = PUBLIC_CONFIG.supabaseUrl || 'https://xxxxxxxxxxxx.supabase.co';
+      const SUPABASE_ANON_KEY = PUBLIC_CONFIG.supabaseAnonKey || 'TWOJ_ANON_KEY';
+      const hasSupabaseConfig = Boolean(
+        window.supabase &&
+        SUPABASE_URL &&
+        !SUPABASE_URL.includes('xxxxxxxx') &&
+        SUPABASE_ANON_KEY &&
+        SUPABASE_ANON_KEY !== 'TWOJ_ANON_KEY'
+      );
+
+      function createSupabaseClient(options) {
+        if (!hasSupabaseConfig) {
+          console.warn('[Parking WWW] Missing Supabase public config. Copy public-config.example.js to public-config.js.');
+          return null;
+        }
+        return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, options);
+      }
+
+      const sb = createSupabaseClient();
 
       function dispatchRow(key, value) {
         if (key === 'spots_available') {
@@ -127,6 +145,7 @@
       }
 
       async function init() {
+        if (!sb) return;
         const { data } = await sb.from('settings')
           .select('key,value')
           .in('key', ['spots_available','komunikat',
@@ -1294,11 +1313,10 @@ function chatWidget() {
       if (!this.sessionId) return;
       try {
         if (!this._sbClient) {
-          this._sbClient = window.supabase.createClient(
-            'https://qgqevlkjwinxrtdgdedy.supabase.co',
-            '<REDACTED_SUPABASE_ANON_KEY>',
-            { global: { headers: { 'x-session-id': this.sessionId || '' } } }
-          );
+          this._sbClient = createSupabaseClient({
+            global: { headers: { 'x-session-id': this.sessionId || '' } }
+          });
+          if (!this._sbClient) return;
         }
         const { data } = await this._sbClient
           .from('chat_sessions')
@@ -1312,11 +1330,10 @@ function chatWidget() {
     subscribeRealtime() {
       if (this._sub || !this.sessionId || !window.supabase) return;
       try {
-        const sb2 = window.supabase.createClient(
-          'https://qgqevlkjwinxrtdgdedy.supabase.co',
-          '<REDACTED_SUPABASE_ANON_KEY>',
-          { global: { headers: { 'x-session-id': this.sessionId || '' } } }
-        );
+        const sb2 = createSupabaseClient({
+          global: { headers: { 'x-session-id': this.sessionId || '' } }
+        });
+        if (!sb2) return;
         this._sbClient = sb2;
         const sid = this.sessionId;
         const self = this;
@@ -1398,11 +1415,10 @@ function chatWidget() {
       if (!this.sessionId || !this._lastPollTime) return;
       try {
         if (!this._sbClient) {
-          this._sbClient = window.supabase.createClient(
-            'https://qgqevlkjwinxrtdgdedy.supabase.co',
-            '<REDACTED_SUPABASE_ANON_KEY>',
-            { global: { headers: { 'x-session-id': this.sessionId || '' } } }
-          );
+          this._sbClient = createSupabaseClient({
+            global: { headers: { 'x-session-id': this.sessionId || '' } }
+          });
+          if (!this._sbClient) return;
         }
         const { data } = await this._sbClient
           .from('chat_messages')

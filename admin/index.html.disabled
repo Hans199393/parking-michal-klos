@@ -25,28 +25,51 @@
 
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../public-config.js"></script>
   <script>
     (function () {
-      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
-      const SUPABASE_ANON_KEY = '<REDACTED_SUPABASE_ANON_KEY>';
-      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const PUBLIC_CONFIG = window.PARKING_PUBLIC_CONFIG || {};
+      const SUPABASE_URL = PUBLIC_CONFIG.supabaseUrl || 'https://xxxxxxxxxxxx.supabase.co';
+      const SUPABASE_ANON_KEY = PUBLIC_CONFIG.supabaseAnonKey || 'TWOJ_ANON_KEY';
+      const missingConfigMessage = 'Brak public-config.js. Skopiuj public-config.example.js i uzupelnij dane Supabase.';
+
+      function createSupabaseClient() {
+        if (!window.supabase || !SUPABASE_URL || SUPABASE_URL.includes('xxxxxxxx') || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'TWOJ_ANON_KEY') {
+          console.warn('[Parking WWW admin] Missing Supabase public config. Copy public-config.example.js to public-config.js.');
+          return null;
+        }
+        return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+
+      function missingConfigResult() {
+        return { ok: false, msg: missingConfigMessage };
+      }
+
+      const sb = createSupabaseClient();
 
       // Auth
       window.adminLogin = (email, password) =>
+        !sb ? Promise.resolve(missingConfigResult()) :
         sb.auth.signInWithPassword({ email, password }).then(({ error }) => ({
           ok: !error,
           msg: error?.message
         }));
 
-      window.adminLogout = () => sb.auth.signOut();
+      window.adminLogout = () => sb ? sb.auth.signOut() : Promise.resolve();
 
       window.checkAdminSession = async () => {
+        if (!sb) return false;
         const { data: { session } } = await sb.auth.getSession();
         return !!session;
       };
 
       // Status
       window.setParking = async (brakMiejsc) => {
+        if (!sb) {
+          const result = missingConfigResult();
+          window.dispatchEvent(new CustomEvent('parking-saved', { detail: result }));
+          return result;
+        }
         const value = brakMiejsc ? 'false' : 'true';
         const { error } = await sb.from('settings')
           .upsert({ key: 'spots_available', value }, { onConflict: 'key' });
@@ -57,6 +80,7 @@
 
       // Komunikat
       window.setKomunikat = async (kom) => {
+        if (!sb) return missingConfigResult();
         const { error } = await sb.from('settings')
           .upsert({ key: 'komunikat', value: JSON.stringify(kom) }, { onConflict: 'key' });
         return { ok: !error, msg: error?.message };
@@ -79,6 +103,7 @@
       }
 
       async function initAdmin() {
+        if (!sb) return;
         const { data } = await sb.from('settings')
           .select('key,value')
           .in('key', ['spots_available', 'komunikat']);

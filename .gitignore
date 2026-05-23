@@ -4,6 +4,7 @@ apps/
 .env
 .env.*
 !.env.example
+public-config.js
 .DS_Store
 Thumbs.db
 *.exe

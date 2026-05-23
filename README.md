@@ -1,5 +1,13 @@
 # Parking Michał Kłos – Instrukcja konfiguracji
 
+> Zasada nadrzedna: przed jakakolwiek praca z kluczami i konfiguracja przeczytaj `G:\parking_2026\000_NADRZEDNA_POLITYKA_SEKRETOW.md` i uruchom `npm run secrets:scan` przed pushem.
+
+## Supabase Public Config
+
+- Nie wklejaj `SUPABASE_ANON_KEY` do `index.html` ani `admin/*.html`.
+- Skopiuj `public-config.example.js` do `public-config.js` i uzupelnij `supabaseUrl` oraz `supabaseAnonKey`.
+- `public-config.js` jest celowo ignorowany przez git, zeby klucz nie wracal do repo.
+
 ## Co jest gotowe
 - Pełna strona jednostronicowa (PL/EN/UA/DE)
 - Panel admina (`/admin`) – włączanie/wyłączanie banera "Brak miejsc"
