@@ -99,6 +99,8 @@
   <script src="public-config.js"></script>
   <script>
     (function () {
+      const PUBLIC_SETTINGS_API_URL = 'https://parking-messenger-bot.vercel.app/api/public-settings';
+      const PUBLIC_SETTINGS_POLL_MS = 15000;
       const PUBLIC_CONFIG = window.PARKING_PUBLIC_CONFIG || {};
       const SUPABASE_URL = PUBLIC_CONFIG.supabaseUrl || 'https://xxxxxxxxxxxx.supabase.co';
       const SUPABASE_ANON_KEY = PUBLIC_CONFIG.supabaseAnonKey || 'TWOJ_ANON_KEY';
@@ -119,6 +121,26 @@
       }
 
       const sb = createSupabaseClient();
+
+      function dispatchPublicState(payload) {
+        const settings = payload && payload.settings ? payload.settings : {};
+        Object.keys(settings).forEach(key => dispatchRow(key, settings[key]));
+        if (payload && Array.isArray(payload.extraOpenDays)) {
+          window.dispatchEvent(new CustomEvent('extra-open-days', {
+            detail: payload.extraOpenDays
+          }));
+        }
+      }
+
+      async function fetchPublicState() {
+        const response = await fetch(PUBLIC_SETTINGS_API_URL, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        });
+        if (!response.ok) throw new Error(`public settings ${response.status}`);
+        const payload = await response.json();
+        dispatchPublicState(payload);
+      }
 
       function dispatchRow(key, value) {
         if (key === 'spots_available') {
@@ -157,7 +179,17 @@
       }
 
       async function init() {
-        if (!sb) return;
+        if (!sb) {
+          try {
+            await fetchPublicState();
+            window.setInterval(() => {
+              void fetchPublicState().catch(err => console.warn('[Parking WWW] public settings refresh failed:', err && err.message ? err.message : err));
+            }, PUBLIC_SETTINGS_POLL_MS);
+          } catch (err) {
+            console.warn('[Parking WWW] public settings bootstrap failed:', err && err.message ? err.message : err);
+          }
+          return;
+        }
         const { data } = await sb.from('settings')
           .select('key,value')
           .in('key', ['spots_available','komunikat',
