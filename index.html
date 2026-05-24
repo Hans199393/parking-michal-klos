@@ -112,6 +112,42 @@
         SUPABASE_ANON_KEY !== 'TWOJ_ANON_KEY'
       );
 
+      const bootstrapState = window.__PARKING_BOOTSTRAP_STATE || {
+        settings: {},
+        komunikat: null,
+        extraOpenDays: null,
+        parkingStatus: null,
+      };
+      window.__PARKING_BOOTSTRAP_STATE = bootstrapState;
+
+      function replayBootstrapState() {
+        if (bootstrapState.parkingStatus) {
+          window.dispatchEvent(new CustomEvent('parking-status', {
+            detail: bootstrapState.parkingStatus
+          }));
+        }
+
+        Object.entries(bootstrapState.settings).forEach(([key, value]) => {
+          window.dispatchEvent(new CustomEvent('settings-update', {
+            detail: { key, value }
+          }));
+        });
+
+        if (bootstrapState.komunikat) {
+          window.dispatchEvent(new CustomEvent('komunikat-update', {
+            detail: bootstrapState.komunikat
+          }));
+        }
+
+        if (Array.isArray(bootstrapState.extraOpenDays)) {
+          window.dispatchEvent(new CustomEvent('extra-open-days', {
+            detail: bootstrapState.extraOpenDays
+          }));
+        }
+      }
+
+      window.__PARKING_REPLAY_BOOTSTRAP_STATE = replayBootstrapState;
+
       function createSupabaseClient(options) {
         if (!hasSupabaseConfig) {
           console.warn('[Parking WWW] Missing Supabase public config. Copy public-config.example.js to public-config.js.');
@@ -126,6 +162,7 @@
         const settings = payload && payload.settings ? payload.settings : {};
         Object.keys(settings).forEach(key => dispatchRow(key, settings[key]));
         if (payload && Array.isArray(payload.extraOpenDays)) {
+          bootstrapState.extraOpenDays = payload.extraOpenDays;
           window.dispatchEvent(new CustomEvent('extra-open-days', {
             detail: payload.extraOpenDays
           }));
@@ -144,14 +181,17 @@
 
       function dispatchRow(key, value) {
         if (key === 'spots_available') {
+          bootstrapState.parkingStatus = { brakMiejsc: value === 'false' };
           window.dispatchEvent(new CustomEvent('parking-status', {
             detail: { brakMiejsc: value === 'false' }
           }));
         }
         if (key === 'komunikat') {
           try {
+            const parsed = JSON.parse(value);
+            bootstrapState.komunikat = parsed;
             window.dispatchEvent(new CustomEvent('komunikat-update', {
-              detail: JSON.parse(value)
+              detail: parsed
             }));
           } catch (_) {}
         }
@@ -160,6 +200,7 @@
                              'open_from','open_to','owner_phone','owner_email',
                              'parking_address','parking_name'];
         if (PUBLIC_KEYS.includes(key)) {
+          bootstrapState.settings[key] = value;
           window.dispatchEvent(new CustomEvent('settings-update', {
             detail: { key, value }
           }));
@@ -172,6 +213,7 @@
           .select('date')
           .eq('active', true);
         if (extraDays) {
+          bootstrapState.extraOpenDays = extraDays.map(r => r.date);
           window.dispatchEvent(new CustomEvent('extra-open-days', {
             detail: extraDays.map(r => r.date)
           }));
@@ -1285,6 +1327,10 @@ function app() {
           this.komunikat.visible = false;
         }
       });
+
+      if (typeof window.__PARKING_REPLAY_BOOTSTRAP_STATE === 'function') {
+        window.__PARKING_REPLAY_BOOTSTRAP_STATE();
+      }
 
       // Fade-in on scroll observer
       const observer = new IntersectionObserver((entries) => {
