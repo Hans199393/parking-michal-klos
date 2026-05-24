@@ -144,6 +144,18 @@
         }
       }
 
+      async function dispatchExtraOpenDays() {
+        if (!sb) return;
+        const { data: extraDays } = await sb.from('extra_open_days')
+          .select('date')
+          .eq('active', true);
+        if (extraDays) {
+          window.dispatchEvent(new CustomEvent('extra-open-days', {
+            detail: extraDays.map(r => r.date)
+          }));
+        }
+      }
+
       async function init() {
         if (!sb) return;
         const { data } = await sb.from('settings')
@@ -154,20 +166,16 @@
                       'parking_address','parking_name']);
         if (data) data.forEach(r => dispatchRow(r.key, r.value));
 
-        // Fetch extra open days
-        const { data: extraDays } = await sb.from('extra_open_days')
-          .select('date')
-          .eq('active', true);
-        if (extraDays) {
-          window.dispatchEvent(new CustomEvent('extra-open-days', {
-            detail: extraDays.map(r => r.date)
-          }));
-        }
+        await dispatchExtraOpenDays();
 
         sb.channel('settings-realtime')
           .on('postgres_changes',
             { event: '*', schema: 'public', table: 'settings' },
             payload => { if (payload.new) dispatchRow(payload.new.key, payload.new.value); }
+          )
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'extra_open_days' },
+            () => { void dispatchExtraOpenDays(); }
           )
           .subscribe();
       }
