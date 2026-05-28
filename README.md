@@ -1,6 +1,23 @@
 # Parking Michał Kłos – Instrukcja konfiguracji
 
+> **Architektura strony**: pełny opis co, jak, gdzie i po co znajdziesz w [`READMEWWW.md`](READMEWWW.md).
+
+> Uwaga 2026-05-24: ten plik zawiera tez historyczne fragmenty z wczesniejszej architektury. Dla produkcyjnego przeplywu ustawien Parking.OS -> WWW najpierw przeczytaj `G:\parking_2026\NIE_PSUĆ_WWW_USTAWIENIA_PUBLICZNE.md` i `G:\parking_2026\SESJA_PODSUMOWANIE_2026-05-24_STABILIZACJA_WWW.md`.
+
+> Produkcyjna strona nie moze polegac wylacznie na `public-config.js`; aktywna sciezka runtime dla ustawien publicznych to fallback `https://parking-messenger-bot.vercel.app/api/public-settings`.
+
 > Zasada nadrzedna: przed jakakolwiek praca z kluczami i konfiguracja przeczytaj `G:\parking_2026\000_NADRZEDNA_POLITYKA_SEKRETOW.md` i uruchom `npm run secrets:scan` przed pushem.
+
+## Komunikat banner — zachowanie przycisku zamknięcia (fix 2026-05-28)
+
+Banner ogłoszeń operacyjnych (żółty pasek u góry strony) po kliknięciu ✕ **pozostaje zamknięty** do przeładowania strony lub zmiany treści przez admina w Parking.OS.
+
+Mechanizm: system fingerprintów (`komunikatFingerprint`) — kombinacja pól `aktywny+tytul+tresc+od+do`.
+
+- Poll co 15 s **nie** otwiera ponownie bannera jeśli treść się nie zmieniła (deduplication w bootstrap IIFE).
+- Kliknięcie ✕ wywołuje `dismissKomunikat()` → zapisuje `dismissedFingerprint` w stanie Alpine.
+- Banner wraca tylko gdy admin zmieni treść/daty (nowy fingerprint ≠ `dismissedFingerprint`).
+- Commit: `626f2d8` na `origin/main`.
 
 ## Supabase Public Config
 
