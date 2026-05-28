@@ -115,10 +115,22 @@
       const bootstrapState = window.__PARKING_BOOTSTRAP_STATE || {
         settings: {},
         komunikat: null,
+        komunikatFingerprint: '',
         extraOpenDays: null,
         parkingStatus: null,
       };
       window.__PARKING_BOOTSTRAP_STATE = bootstrapState;
+
+      function buildKomunikatFingerprint(data) {
+        const payload = data && typeof data === 'object' ? data : {};
+        return [
+          payload.aktywny ? '1' : '0',
+          payload.tytul || '',
+          payload.tresc || '',
+          payload.od || '',
+          payload.do || '',
+        ].join('\u001f');
+      }
 
       function replayBootstrapState() {
         if (bootstrapState.parkingStatus) {
@@ -189,7 +201,10 @@
         if (key === 'komunikat') {
           try {
             const parsed = JSON.parse(value);
+            const fingerprint = buildKomunikatFingerprint(parsed);
+            if (bootstrapState.komunikatFingerprint === fingerprint) return;
             bootstrapState.komunikat = parsed;
+            bootstrapState.komunikatFingerprint = fingerprint;
             window.dispatchEvent(new CustomEvent('komunikat-update', {
               detail: parsed
             }));
@@ -358,7 +373,7 @@
     <p class="font-extrabold text-sm leading-snug" x-text="komunikat.tytul"></p>
     <p class="text-xs leading-snug mt-0.5" x-text="komunikat.tresc"></p>
   </div>
-  <button @click="komunikat.visible = false"
+  <button @click="dismissKomunikat()"
           class="absolute top-1/2 right-3 -translate-y-1/2 text-navy opacity-50 hover:opacity-100 font-bold text-xl leading-none">✕</button>
 </div>
 
@@ -875,7 +890,7 @@ function app() {
     mobileMenu: false,
     showCookie: !localStorage.getItem('cookieAccepted'),
     brakMiejsc: false,
-    komunikat: { visible: false, tytul: '', tresc: '', zakres: '' },
+    komunikat: { visible: false, tytul: '', tresc: '', zakres: '', currentFingerprint: '', dismissedFingerprint: '' },
     // Phase A — central settings (hydrowane z Supabase, fallback do hardcoded)
     cennik: {
       rate_basic: '20',
@@ -1283,6 +1298,22 @@ function app() {
       return `📅 ${this.t('opening_next')} ${dateStr}`;
     },
 
+    buildKomunikatFingerprint(data) {
+      const payload = data && typeof data === 'object' ? data : {};
+      return [
+        payload.aktywny ? '1' : '0',
+        payload.tytul || '',
+        payload.tresc || '',
+        payload.od || '',
+        payload.do || '',
+      ].join('\u001f');
+    },
+
+    dismissKomunikat() {
+      this.komunikat.dismissedFingerprint = this.komunikat.currentFingerprint || '';
+      this.komunikat.visible = false;
+    },
+
     init() {
       document.documentElement.lang = this.lang;
       this.openingStatus = this.computeOpeningStatus();
@@ -1309,21 +1340,30 @@ function app() {
 
       // Listen for komunikat updates
       window.addEventListener('komunikat-update', (e) => {
-        const d = e.detail;
-        if (!d.aktywny) { this.komunikat.visible = false; return; }
+        const d = e.detail || {};
+        if (!d.aktywny) {
+          this.komunikat.currentFingerprint = '';
+          this.komunikat.dismissedFingerprint = '';
+          this.komunikat.visible = false;
+          return;
+        }
         const now = new Date();
         const od  = d.od  ? new Date(d.od)  : null;
         const doo = d.do  ? new Date(d.do)  : null;
         const inRange = (!od || now >= od) && (!doo || now <= doo);
         if (inRange) {
+          const fingerprint = this.buildKomunikatFingerprint(d);
+          this.komunikat.currentFingerprint = fingerprint;
           this.komunikat.tytul = d.tytul || '';
           this.komunikat.tresc = d.tresc || '';
           const fmt = dt => dt.toLocaleString('pl-PL', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
           const odStr  = od  ? fmt(od)  : '';
           const doStr  = doo ? fmt(doo) : '';
           this.komunikat.zakres = (odStr && doStr) ? `🕐 ${odStr} – ${doStr}` : '';
-          this.komunikat.visible = true;
+          this.komunikat.visible = fingerprint !== this.komunikat.dismissedFingerprint;
         } else {
+          this.komunikat.currentFingerprint = '';
+          this.komunikat.dismissedFingerprint = '';
           this.komunikat.visible = false;
         }
       });
