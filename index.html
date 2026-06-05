@@ -1258,7 +1258,7 @@ function app() {
 
     computeOpeningStatus() {
       const now = new Date();
-      const wMs = now.getTime() + (2 * 60 - now.getTimezoneOffset()) * 60000;
+      const wMs = now.getTime() + (2 * 60 + now.getTimezoneOffset()) * 60000;
       const w = new Date(wMs);
       const m = w.getMonth() + 1;
       const dow = w.getDay();
