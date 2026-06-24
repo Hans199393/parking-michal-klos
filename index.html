@@ -1525,7 +1525,12 @@ function chatWidget() {
     startPolling() {
       this.stopPolling();
       if (!this.sessionId) return;
-      this._lastPollTime = new Date().toISOString();
+      // Przywróć ostatni znany timestamp z sessionStorage — dzięki temu catch-up
+      // złapie wiadomości właściciela wysłane gdy widget był zamknięty,
+      // a nie pobierze ponownie tych już wyświetlonych.
+      const storedTs = sessionStorage.getItem('chat_poll_ts_' + this.sessionId);
+      this._lastPollTime = storedTs || '2000-01-01T00:00:00.000Z';
+      this.pollNewMessages(); // natychmiastowy catch-up
       this._pollInterval = setInterval(() => this.pollNewMessages(), 5000);
     },
 
@@ -1556,6 +1561,7 @@ function chatWidget() {
           for (const msg of data) {
             this.messages.push({ role: 'assistant', content: msg.content });
             this._lastPollTime = msg.created_at;
+            sessionStorage.setItem('chat_poll_ts_' + this.sessionId, msg.created_at);
           }
           this.saveMessages();
           this.$nextTick(() => this.scrollToBottom());
