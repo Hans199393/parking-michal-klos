@@ -4,8 +4,8 @@ apps/
 .env
 .env.*
 !.env.example
-# public-config.js jest PUBLICZNY (zawiera tylko anon key — celowo publiczny)
-# nie gitignoruj tego pliku, musi być na GitHubie żeby strona działała
+# public-config.js jest gitignorowany — config jest teraz inlajnowany w index.html
+public-config.js
 .DS_Store
 Thumbs.db
 *.exe

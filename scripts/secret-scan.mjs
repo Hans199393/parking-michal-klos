@@ -12,6 +12,12 @@ const textExtensions = new Set([
 ]);
 
 const forbiddenTrackedPaths = [/^(?:\.env|rtsp-proxy\/\.env|public-config\.js)$/i];
+
+// Supabase anon keys są CELOWO publiczne — chronione przez RLS, nie przez ukrycie.
+// Dozwolone klucze: tylko anon (nie service_role). Klucze service_role NIGDY nie trafiają do frontendu.
+const KNOWN_PUBLIC_ANON_KEYS = [
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o',
+];
 const placeholderTokens = [
   'TWOJ_ANON_KEY',
   'TWOJE_HASLO',
@@ -56,8 +62,8 @@ function isTextFile(filePath) {
 function isPlaceholder(value) {
   const normalized = value.trim().replace(/^['"`]|['"`]$/g, '');
   if (!normalized) return true;
-  if (/^<.*>$/.test(normalized)) return true;
-  return placeholderTokens.some(token => normalized.toUpperCase().includes(token));
+  if (/^<.*>$/.test(normalized)) return true;  // Znany publiczny klucz anon Supabase — celowo w frontendzie
+  if (KNOWN_PUBLIC_ANON_KEYS.includes(normalized)) return true;  return placeholderTokens.some(token => normalized.toUpperCase().includes(token));
 }
 
 function looksSensitiveValue(value) {
