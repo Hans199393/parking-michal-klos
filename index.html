@@ -1405,6 +1405,7 @@ function chatWidget() {
     messages: JSON.parse(sessionStorage.getItem('chat_messages') || '[]'),
     API_URL: 'https://parking-messenger-bot.vercel.app/api/chat',
     _sub: null,
+    _sbClient: null,
     _pollInterval: null,
     _lastPollTime: null,
     botPaused: false,
