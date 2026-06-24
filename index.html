@@ -1427,6 +1427,11 @@ function chatWidget() {
         }
         this.subscribeRealtime();
         this.startPolling();
+        // Utwórz klienta Supabase od razu (nawet bez sessionId) — zielona kropka
+        // daje użytkownikowi znać że widget jest połączony z Supabase
+        if (!this._sbClient) this._sbClient = createSupabaseClient({
+          global: { headers: { 'x-session-id': this.sessionId || '' } }
+        });
         this.checkBotStatus();
         this._statusInterval = setInterval(() => this.checkBotStatus(), 30000);
         this.$nextTick(() => {
