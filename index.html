@@ -276,6 +276,8 @@
       }
 
       init();
+      // Eksportuj do window — chatWidget() jest w osobnym <script> tagu i nie ma dostępu do IIFE scope
+      window.createSupabaseClient = createSupabaseClient;
     })();
   </script>
 
