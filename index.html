@@ -96,7 +96,13 @@
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.104.0/dist/umd/supabase.js"
     integrity="sha384-UiYSxQXCTojQCBgTDHAa/f6PRkGlvY/sx+VlmFvBi/lpAaq1TzpV7LpzShoUwGbT"
     crossorigin="anonymous"></script>
-  <script src="public-config.js"></script>
+  <script>
+    // Konfiguracja publiczna – anon key jest celowo publiczny (chroniony przez RLS po stronie Supabase)
+    window.PARKING_PUBLIC_CONFIG = {
+      supabaseUrl: 'https://qgqevlkjwinxrtdgdedy.supabase.co',
+      supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+    };
+  </script>
   <script>
     (function () {
       const PUBLIC_SETTINGS_API_URL = 'https://parking-messenger-bot.vercel.app/api/public-settings';
@@ -1447,25 +1453,20 @@ function chatWidget() {
     },
 
     subscribeRealtime() {
-      if (this._sub || !this.sessionId || !window.supabase) {
-        console.log('[CHAT-DBG] subscribeRealtime skip: _sub=', !!this._sub, 'sid=', !!this.sessionId, 'supabase=', !!window.supabase);
-        return;
-      }
+      if (this._sub || !this.sessionId || !window.supabase) return;
       try {
         const sb2 = createSupabaseClient({
           global: { headers: { 'x-session-id': this.sessionId || '' } }
         });
-        if (!sb2) { console.log('[CHAT-DBG] createSupabaseClient returned null'); return; }
+        if (!sb2) return;
         this._sbClient = sb2;
         const sid = this.sessionId;
         const self = this;
-        console.log('[CHAT-DBG] subscribeRealtime START sid=', sid);
         this._sub = sb2.channel('chat-owner-' + sid)
           .on('postgres_changes', {
             event: 'INSERT', schema: 'public', table: 'chat_messages',
             filter: 'session_id=eq.' + sid
           }, (payload) => {
-            console.log('[CHAT-DBG] REALTIME EVENT:', payload.new);
             const msg = payload.new;
             if (msg.role === 'owner') {
               self.messages.push({ role: 'assistant', content: msg.content });
@@ -1474,10 +1475,8 @@ function chatWidget() {
               self.$nextTick(() => self.scrollToBottom());
             }
           })
-          .subscribe((status, err) => {
-            console.log('[CHAT-DBG] Realtime status:', status, err || '');
-          });
-      } catch(e) { console.log('[CHAT-DBG] subscribeRealtime ERROR:', e); }
+          .subscribe();
+      } catch(e) {}
     },
 
     async send() {
@@ -1544,7 +1543,7 @@ function chatWidget() {
           this._sbClient = createSupabaseClient({
             global: { headers: { 'x-session-id': this.sessionId || '' } }
           });
-          if (!this._sbClient) { console.log('[CHAT-DBG] poll: _sbClient null'); return; }
+          if (!this._sbClient) return;
         }
         const { data, error } = await this._sbClient
           .from('chat_messages')
@@ -1553,7 +1552,6 @@ function chatWidget() {
           .eq('role', 'owner')
           .gt('created_at', this._lastPollTime)
           .order('created_at', { ascending: true });
-        console.log('[CHAT-DBG] poll result: rows=', data?.length ?? 'null', 'error=', error?.message ?? 'ok');
         if (data && data.length > 0) {
           for (const msg of data) {
             this.messages.push({ role: 'assistant', content: msg.content });
@@ -1562,7 +1560,7 @@ function chatWidget() {
           this.saveMessages();
           this.$nextTick(() => this.scrollToBottom());
         }
-      } catch(e) { console.log('[CHAT-DBG] poll ERROR:', e); }
+      } catch(e) {}
     }
   }
 }
