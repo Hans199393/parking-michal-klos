@@ -84,200 +84,57 @@
     }
   </script>
 
-  <!-- Alpine.js CDN — wersja przypięta, SRI zweryfikowane 21.04.2026 -->
-  <script defer
-    src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.11/dist/cdn.min.js"
-    integrity="sha384-WPtu0YHhJ3arcykfnv1JgUffWDSKRnqnDeTpJUbOc2os2moEmLkIdaeR0trPN4be"
-    crossorigin="anonymous"></script>
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- Supabase JS SDK — wersja przypięta, SRI zweryfikowane 21.04.2026 -->
-  <!-- Tailwind Play CDN nie obsługuje SRI (dynamiczne CSS) -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.104.0/dist/umd/supabase.js"
-    integrity="sha384-UiYSxQXCTojQCBgTDHAa/f6PRkGlvY/sx+VlmFvBi/lpAaq1TzpV7LpzShoUwGbT"
-    crossorigin="anonymous"></script>
-  <script>
-    // Konfiguracja publiczna – anon key jest celowo publiczny (chroniony przez RLS po stronie Supabase)
-    window.PARKING_PUBLIC_CONFIG = {
-      supabaseUrl: 'https://qgqevlkjwinxrtdgdedy.supabase.co',
-      supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
-    };
-  </script>
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
     (function () {
-      const PUBLIC_SETTINGS_API_URL = 'https://parking-messenger-bot.vercel.app/api/public-settings';
-      const PUBLIC_SETTINGS_POLL_MS = 15000;
-      const PUBLIC_CONFIG = window.PARKING_PUBLIC_CONFIG || {};
-      const SUPABASE_URL = PUBLIC_CONFIG.supabaseUrl || 'https://xxxxxxxxxxxx.supabase.co';
-      const SUPABASE_ANON_KEY = PUBLIC_CONFIG.supabaseAnonKey || 'TWOJ_ANON_KEY';
-      const hasSupabaseConfig = Boolean(
-        window.supabase &&
-        SUPABASE_URL &&
-        !SUPABASE_URL.includes('xxxxxxxx') &&
-        SUPABASE_ANON_KEY &&
-        SUPABASE_ANON_KEY !== 'TWOJ_ANON_KEY'
-      );
-
-      const bootstrapState = window.__PARKING_BOOTSTRAP_STATE || {
-        settings: {},
-        komunikat: null,
-        komunikatFingerprint: '',
-        extraOpenDays: null,
-        parkingStatus: null,
-      };
-      window.__PARKING_BOOTSTRAP_STATE = bootstrapState;
-
-      function buildKomunikatFingerprint(data) {
-        const payload = data && typeof data === 'object' ? data : {};
-        return [
-          payload.aktywny ? '1' : '0',
-          payload.tytul || '',
-          payload.tresc || '',
-          payload.od || '',
-          payload.do || '',
-        ].join('\u001f');
-      }
-
-      function replayBootstrapState() {
-        if (bootstrapState.parkingStatus) {
-          window.dispatchEvent(new CustomEvent('parking-status', {
-            detail: bootstrapState.parkingStatus
-          }));
-        }
-
-        Object.entries(bootstrapState.settings).forEach(([key, value]) => {
-          window.dispatchEvent(new CustomEvent('settings-update', {
-            detail: { key, value }
-          }));
-        });
-
-        if (bootstrapState.komunikat) {
-          window.dispatchEvent(new CustomEvent('komunikat-update', {
-            detail: bootstrapState.komunikat
-          }));
-        }
-
-        if (Array.isArray(bootstrapState.extraOpenDays)) {
-          window.dispatchEvent(new CustomEvent('extra-open-days', {
-            detail: bootstrapState.extraOpenDays
-          }));
-        }
-      }
-
-      window.__PARKING_REPLAY_BOOTSTRAP_STATE = replayBootstrapState;
-
-      function createSupabaseClient(options) {
-        if (!hasSupabaseConfig) {
-          console.warn('[Parking WWW] Missing Supabase public config. Copy public-config.example.js to public-config.js.');
-          return null;
-        }
-        return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, options);
-      }
-
-      const sb = createSupabaseClient();
-
-      function dispatchPublicState(payload) {
-        const settings = payload && payload.settings ? payload.settings : {};
-        Object.keys(settings).forEach(key => dispatchRow(key, settings[key]));
-        if (payload && Array.isArray(payload.extraOpenDays)) {
-          bootstrapState.extraOpenDays = payload.extraOpenDays;
-          window.dispatchEvent(new CustomEvent('extra-open-days', {
-            detail: payload.extraOpenDays
-          }));
-        }
-      }
-
-      async function fetchPublicState() {
-        const response = await fetch(PUBLIC_SETTINGS_API_URL, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-        });
-        if (!response.ok) throw new Error(`public settings ${response.status}`);
-        const payload = await response.json();
-        dispatchPublicState(payload);
-      }
+      const SUPABASE_URL = 'https://qgqevlkjwinxrtdgdedy.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       function dispatchRow(key, value) {
         if (key === 'spots_available') {
-          bootstrapState.parkingStatus = { brakMiejsc: value === 'false' };
           window.dispatchEvent(new CustomEvent('parking-status', {
             detail: { brakMiejsc: value === 'false' }
           }));
         }
         if (key === 'komunikat') {
           try {
-            const parsed = JSON.parse(value);
-            const fingerprint = buildKomunikatFingerprint(parsed);
-            if (bootstrapState.komunikatFingerprint === fingerprint) return;
-            bootstrapState.komunikat = parsed;
-            bootstrapState.komunikatFingerprint = fingerprint;
             window.dispatchEvent(new CustomEvent('komunikat-update', {
-              detail: parsed
+              detail: JSON.parse(value)
             }));
           } catch (_) {}
-        }
-        // Phase A — central settings dispatch (cennik / godziny / kontakt)
-        const PUBLIC_KEYS = ['rate_basic','rate_reservation','rate_after_hours','currency',
-                             'open_from','open_to','owner_phone','owner_email',
-                             'parking_address','parking_name'];
-        if (PUBLIC_KEYS.includes(key)) {
-          bootstrapState.settings[key] = value;
-          window.dispatchEvent(new CustomEvent('settings-update', {
-            detail: { key, value }
-          }));
-        }
-      }
-
-      async function dispatchExtraOpenDays() {
-        if (!sb) return;
-        const { data: extraDays } = await sb.from('extra_open_days')
-          .select('date')
-          .eq('active', true);
-        if (extraDays) {
-          bootstrapState.extraOpenDays = extraDays.map(r => r.date);
-          window.dispatchEvent(new CustomEvent('extra-open-days', {
-            detail: extraDays.map(r => r.date)
-          }));
         }
       }
 
       async function init() {
-        if (!sb) {
-          try {
-            await fetchPublicState();
-            window.setInterval(() => {
-              void fetchPublicState().catch(err => console.warn('[Parking WWW] public settings refresh failed:', err && err.message ? err.message : err));
-            }, PUBLIC_SETTINGS_POLL_MS);
-          } catch (err) {
-            console.warn('[Parking WWW] public settings bootstrap failed:', err && err.message ? err.message : err);
-          }
-          return;
-        }
         const { data } = await sb.from('settings')
           .select('key,value')
-          .in('key', ['spots_available','komunikat',
-                      'rate_basic','rate_reservation','rate_after_hours','currency',
-                      'open_from','open_to','owner_phone','owner_email',
-                      'parking_address','parking_name']);
+          .in('key', ['spots_available', 'komunikat']);
         if (data) data.forEach(r => dispatchRow(r.key, r.value));
 
-        await dispatchExtraOpenDays();
+        // Fetch extra open days
+        const { data: extraDays } = await sb.from('extra_open_days')
+          .select('date')
+          .eq('active', true);
+        if (extraDays) {
+          window.dispatchEvent(new CustomEvent('extra-open-days', {
+            detail: extraDays.map(r => r.date)
+          }));
+        }
 
         sb.channel('settings-realtime')
           .on('postgres_changes',
             { event: '*', schema: 'public', table: 'settings' },
             payload => { if (payload.new) dispatchRow(payload.new.key, payload.new.value); }
           )
-          .on('postgres_changes',
-            { event: '*', schema: 'public', table: 'extra_open_days' },
-            () => { void dispatchExtraOpenDays(); }
-          )
           .subscribe();
       }
 
       init();
-      // Eksportuj do window — chatWidget() jest w osobnym <script> tagu i nie ma dostępu do IIFE scope
-      window.createSupabaseClient = createSupabaseClient;
     })();
   </script>
 
@@ -316,9 +173,6 @@
     /* Hero overlay */
     .hero-overlay { background: linear-gradient(to bottom, rgba(26,45,74,0.55) 0%, rgba(26,45,74,0.75) 100%); }
 
-    /* CSS variable for dynamic banner height (updated by Alpine ResizeObserver) */
-    :root { --banner-h: 0px; }
-
     /* Navbar blur */
     .navbar-blur { backdrop-filter: blur(12px); background: rgba(26,45,74,0.92); }
 
@@ -349,11 +203,7 @@
 
 <body class="font-sans bg-cream text-navy overflow-x-hidden" x-cloak>
 
-<!-- A11y: Skip link (widoczny tylko przy fokusie klawiaturą) -->
-<a href="#hero"
-   class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-navy focus:text-cream focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold">
-  Przejdź do treści
-</a>
+<!-- ===== BRAK MIEJSC BANNER ===== -->
 <div id="brak-miejsc-banner"
      x-show="brakMiejsc"
      x-transition
@@ -364,25 +214,25 @@
 </div>
 
 <!-- ===== KOMUNIKAT BANNER ===== -->
-<div :style="komunikat.visible ? 'display:block;z-index:45' : 'display:none;z-index:45'"
-     x-ref="bannerKomunikat"
-     x-init="
-       const ro = new ResizeObserver(() => {
-         const h = $el.offsetHeight;
-         document.documentElement.style.setProperty('--banner-h', komunikat.visible ? h + 'px' : '0px');
-       });
-       ro.observe($el);
-       $watch('komunikat.visible', v => {
-         document.documentElement.style.setProperty('--banner-h', v ? $el.offsetHeight + 'px' : '0px');
-       });
-     "
+<div x-show="komunikat.visible"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 -translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     style="z-index:45"
      class="fixed top-0 left-0 right-0 bg-amber-400 text-navy shadow-lg">
-  <div class="max-w-3xl mx-auto px-4 py-2.5 pr-10 text-center">
-    <p class="font-extrabold text-sm leading-snug" x-text="komunikat.tytul"></p>
-    <p class="text-xs leading-snug mt-0.5" x-text="komunikat.tresc"></p>
+  <div class="max-w-5xl mx-auto px-4 py-2 flex items-center gap-3">
+    <div class="flex-1 min-w-0">
+      <span class="font-extrabold text-sm" x-text="komunikat.tytul"></span>
+      <span class="text-sm ml-2 hidden sm:inline" x-text="komunikat.tresc"></span>
+      <p class="text-xs sm:hidden leading-snug mt-0.5" x-text="komunikat.tresc"></p>
+
+    </div>
+    <button @click="komunikat.visible = false"
+            class="text-navy opacity-50 hover:opacity-100 font-bold text-xl shrink-0 ml-2 leading-none">✕</button>
   </div>
-  <button @click="dismissKomunikat()"
-          class="absolute top-1/2 right-3 -translate-y-1/2 text-navy opacity-50 hover:opacity-100 font-bold text-xl leading-none">✕</button>
 </div>
 
 <!-- ===== COOKIE BANNER ===== -->
@@ -408,7 +258,7 @@
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar-blur fixed left-0 right-0 z-30 text-white shadow-lg transition-all duration-300"
-     :style="komunikat.visible ? 'top:var(--banner-h,64px)' : 'top:0'">
+     :style="komunikat.visible ? 'top:48px' : 'top:0'">
   <div class="max-w-6xl mx-auto px-4 py-1 flex items-center justify-between">
     <!-- Logo -->
     <a href="/" @click.prevent="window.scrollTo({ top: 0, behavior: 'smooth' })" class="flex items-center gap-2">
@@ -420,6 +270,7 @@
     <ul class="hidden md:flex gap-6 text-sm font-semibold whitespace-nowrap">
       <li><a href="#onas" class="hover:text-golden transition" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" class="hover:text-golden transition" x-text="t('nav_cennik')"></a></li>
+      <li><a href="#dojazd" class="hover:text-golden transition" x-text="t('nav_dojazd')"></a></li>
       <li><a href="#galeria" class="hover:text-golden transition" x-text="t('nav_galeria')"></a></li>
       <li><a href="#faq" class="hover:text-golden transition">FAQ</a></li>
       <li><a href="#kontakt" class="hover:text-golden transition" x-text="t('nav_kontakt')"></a></li>
@@ -441,12 +292,8 @@
          x-text="t('rezerwuj')"></button>
 
       <!-- Hamburger mobile -->
-      <button @click="mobileMenu = !mobileMenu"
-              :aria-expanded="mobileMenu ? 'true' : 'false'"
-              aria-controls="mobile-menu"
-              aria-label="Otwórz menu"
-              class="md:hidden text-white focus:outline-none focus:ring-2 focus:ring-golden rounded">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <button @click="mobileMenu = !mobileMenu" class="md:hidden text-white focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path x-show="!mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           <path x-show="mobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
@@ -455,10 +302,11 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div x-show="mobileMenu" x-transition id="mobile-menu" class="md:hidden bg-navy/95 px-6 pb-4">
+  <div x-show="mobileMenu" x-transition class="md:hidden bg-navy/95 px-6 pb-4">
     <ul class="flex flex-col gap-3 text-sm font-semibold">
       <li><a href="#onas" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_onas')"></a></li>
       <li><a href="#cennik" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_cennik')"></a></li>
+      <li><a href="#dojazd" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_dojazd')"></a></li>
       <li><a href="#galeria" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_galeria')"></a></li>
       <li><a href="#faq" @click="mobileMenu=false" class="block py-1 hover:text-golden">FAQ</a></li>
       <li><a href="#kontakt" @click="mobileMenu=false" class="block py-1 hover:text-golden" x-text="t('nav_kontakt')"></a></li>
@@ -472,7 +320,7 @@
 </nav>
 
 <!-- ===== HERO ===== -->
-<section id="hero" class="relative min-h-screen flex items-center justify-center" role="main">
+<section id="hero" class="relative min-h-screen flex items-center justify-center">
   <div class="absolute inset-0">
     <img src="assets/images/IMG_7749.jpeg" alt="Parking płatny niestrzeżony Michał Kłos – Wyspa Sobieszewska, wejście na plażę nr 10" class="w-full h-full object-cover" />
     <div class="hero-overlay absolute inset-0"></div>
@@ -501,7 +349,6 @@
         <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge1')"></span>
         <span class="bg-golden/90 text-navy font-extrabold text-sm px-4 py-2 rounded-full" x-text="t('hero_badge2')"></span>
         <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge3')"></span>
-        <span class="bg-white/15 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full border border-white/30" x-text="t('hero_badge4')"></span>
       </div>
     </div>
   </div>
@@ -566,14 +413,14 @@
       <!-- Bez rezerwacji -->
       <div class="bg-white/10 rounded-2xl p-8 text-center border border-white/20 hover:bg-white/20 transition">
         <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('bez_rez')"></p>
-        <p class="text-6xl font-extrabold text-white mb-1"><span x-text="cennik.rate_basic">20</span><span class="text-2xl" x-text="cennik.currency">zł</span></p>
+        <p class="text-6xl font-extrabold text-white mb-1">20<span class="text-2xl">zł</span></p>
         <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
       </div>
       <!-- Z rezerwacją -->
       <div class="bg-golden/20 rounded-2xl p-8 text-center border-2 border-golden hover:bg-golden/30 transition relative">
         <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-golden text-navy text-xs font-bold px-3 py-1 rounded-full" x-text="t('polecamy')"></span>
         <p class="text-golden text-sm font-semibold uppercase tracking-wide mb-3" x-text="t('z_rez')"></p>
-        <p class="text-6xl font-extrabold text-white mb-1"><span x-text="cennik.rate_reservation">25</span><span class="text-2xl" x-text="cennik.currency">zł</span></p>
+        <p class="text-6xl font-extrabold text-white mb-1">25<span class="text-2xl">zł</span></p>
         <p class="text-cream/70 text-sm" x-text="t('za_dobe')"></p>
         <p class="text-cream/60 text-xs mt-2" x-text="t('rez_info')"></p>
       </div>
@@ -644,8 +491,6 @@
   </div>
 </section>
 
-
-
 <!-- ===== JAK DOJECHAĆ ===== -->
 <section id="dojazd" class="py-20 bg-cream">
   <div class="max-w-4xl mx-auto px-6 fade-in">
@@ -692,12 +537,11 @@
         <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
           <button
             @click="item.open = !item.open"
-            :aria-expanded="item.open ? 'true' : 'false'"
             class="w-full text-left px-6 py-4 bg-cream hover:bg-golden/20 transition flex justify-between items-center font-semibold text-navy">
             <span x-text="t(item.qKey)"></span>
-            <span x-text="item.open ? '−' : '+'" class="text-xl font-bold text-teal" aria-hidden="true"></span>
+            <span x-text="item.open ? '−' : '+'" class="text-xl font-bold text-teal"></span>
           </button>
-          <div x-show="item.open" x-transition class="px-6 py-4 text-gray-700 text-sm sm:text-base leading-relaxed bg-white">
+          <div x-show="item.open" x-transition class="px-6 py-4 text-gray-700 text-sm leading-relaxed bg-white">
             <span x-text="t(item.aKey)"></span>
           </div>
         </div>
@@ -712,12 +556,12 @@
     <h2 class="text-3xl md:text-4xl font-extrabold mb-10" x-text="t('kontakt_title')"></h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
       <a href="tel:+48784828748" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
-        <span class="text-4xl" aria-hidden="true">📞</span>
+        <span class="text-4xl">📞</span>
         <span class="font-bold text-golden">784 828 748</span>
         <span class="text-sm text-cream/70" x-text="t('zadzwon')"></span>
       </a>
       <a href="mailto:kontakt@parkingsobieszewo.pl" class="bg-white/10 hover:bg-white/20 transition rounded-2xl p-6 flex flex-col items-center gap-3 border border-white/20">
-        <span class="text-4xl" aria-hidden="true">✉️</span>
+        <span class="text-4xl">✉️</span>
         <span class="font-bold text-golden text-sm">kontakt@parkingsobieszewo.pl</span>
         <span class="text-sm text-cream/70" x-text="t('napisz')"></span>
       </a>
@@ -779,7 +623,7 @@
     <!-- Separator — pełna szerokość siatki -->
     <div class="md:col-span-3 border-t border-white/10"></div>
 
-    <!-- Dokumenty prawne — te same 3 kolumny, gwarantowane wyrównanie -->
+    <!-- Dokumenty prawne — te same columny co reszta, lub span -->
     <a href="/polityka-prywatnosci" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-1 text-cream/70 text-xs rounded-lg hover:bg-white/5">
       <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
       <span x-text="t('privacy')"></span>
@@ -788,7 +632,11 @@
       <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
       <span x-text="t('regulamin')"></span>
     </a>
-    <a href="/regulamin-chatbota" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-1 text-cream/70 text-xs rounded-lg hover:bg-white/5">
+    <a href="/regulamin-promocji" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-1 text-cream/70 text-xs rounded-lg hover:bg-white/5">
+      <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span x-text="lang === 'pl' ? 'Regulamin Promocji' : 'Promo Rules'"></span>
+    </a>
+    <a href="/regulamin-chatbota" class="hover:text-golden transition inline-flex items-center justify-center gap-1.5 py-1 text-cream/70 text-xs rounded-lg hover:bg-white/5 md:col-span-3">
       <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"/></svg>
       <span x-text="t('regulamin_bot')"></span>
     </a>
@@ -833,29 +681,17 @@
        style="height: 480px;">
 
     <!-- Header -->
-    <div class="bg-navy text-white px-4 py-3 flex-shrink-0">
-      <div class="flex items-center gap-3">
-        <span x-text="botPaused ? '👨‍💼' : '🦅'" class="text-2xl"></span>
-        <div class="flex-1">
-          <div class="font-bold text-sm" x-text="botPaused ? 'Michał · Właściciel' : 'Orzeł · Asystent AI 🤖'"></div>
-          <div class="text-xs text-golden/80 flex items-center gap-1.5">
-            <span x-show="_sbClient" class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" title="Połączony z Supabase"></span>
-            <span x-show="!_sbClient" class="w-1.5 h-1.5 rounded-full bg-gray-500 inline-block" title="Brak połączenia Supabase"></span>
-            <span x-text="botPaused ? 'Odpowiada właściciel parkingu 👋' : 'Powered by AI · mogę się mylić'"></span>
-          </div>
-        </div>
-        <button @click="open = false" class="text-gray-300 hover:text-white transition">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+    <div class="bg-navy text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
+      <span class="text-2xl">🦅</span>
+      <div class="flex-1">
+        <div class="font-bold text-sm">Orzeł · Asystent AI 🤖</div>
+        <div class="text-xs text-golden/80">Powered by AI · mogę się mylić</div>
       </div>
-      <!-- Banner: human takeover -->
-      <div x-show="botPaused" x-transition
-           class="mt-2 bg-golden/20 border border-golden/40 rounded-lg px-3 py-1.5 text-xs text-golden flex items-center gap-2">
-        <span>👨‍💼</span>
-        <span>Właściciel przejął rozmowę — odpowiada osobiście</span>
-      </div>
+      <button @click="open = false" class="text-gray-300 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
 
     <!-- Messages -->
@@ -903,18 +739,7 @@ function app() {
     mobileMenu: false,
     showCookie: !localStorage.getItem('cookieAccepted'),
     brakMiejsc: false,
-    komunikat: { visible: false, tytul: '', tresc: '', zakres: '', currentFingerprint: '', dismissedFingerprint: '' },
-    // Phase A — central settings (hydrowane z Supabase, fallback do hardcoded)
-    cennik: {
-      rate_basic: '20',
-      rate_reservation: '25',
-      rate_after_hours: '50',
-      currency: 'zł',
-      open_from: '8:00',
-      open_to: '19:00',
-      owner_phone: '784 828 748',
-      owner_email: 'kontakt@parkingsobieszewo.pl',
-    },
+    komunikat: { visible: false, tytul: '', tresc: '', zakres: '' },
     faq: [
       { qKey: 'faq1q', aKey: 'faq1a', open: false },
       { qKey: 'faq2q', aKey: 'faq2a', open: false },
@@ -923,7 +748,6 @@ function app() {
       { qKey: 'faq5q', aKey: 'faq5a', open: false },
       { qKey: 'faq6q', aKey: 'faq6a', open: false },
       { qKey: 'faq7q', aKey: 'faq7a', open: false },
-      { qKey: 'faq8q', aKey: 'faq8a', open: false },
     ],
 
     openingStatus: null,
@@ -942,7 +766,6 @@ function app() {
         hero_badge1: '🏖️ 600 m od plaży',
         hero_badge2: '💰 od 20 zł / wjazd',
         hero_badge3: '👷 Obsługa na miejscu',
-        hero_badge4: '🚗 Parking dla samochodów osobowych',
         onas_title: 'O nas',
         onas_tag: 'Kim jesteśmy',
         onas_text: 'Wyspa Sobieszewska to jeden z ostatnich dzikich zakątków polskiego wybrzeża — gdzie sosnowy las przechodzi w szeroką, piaszczystą plażę Bałtyku. Nasz parking leży zaledwie ~600 metrów od morza w linii prostej. Kiedy wyruszasz na spacer, słyszysz fale zanim je zobaczysz. Wejście na plażę nr 10 w ~15 minut pieszo — i jesteś tam, gdzie chciałeś być. A po plaży możesz ruszyć leśną ścieżką na Górę Orlą, najwyższy punkt Wyspy — szlak zaczyna się tuż obok.',
@@ -984,8 +807,6 @@ function app() {
         faq6a: 'Parking znajduje się przy ul. Turystycznej 69 na Wyspie Sobieszewskiej w Gdańsku, około 600 metrów od wejścia na plażę nr 10.',
         faq7q: 'Co warto zobaczyć w okolicy?',
         faq7a: 'Parking leży w bezpośrednim sąsiedztwie szlaku na Górę Orlą — najwyższy punkt Wyspy Sobieszewskiej. Zalesiony szczyt i leśna ścieżka to świetna opcja na spacer po plaży.',
-        faq8q: 'Czy na parkingu mogą stanąć tylko samochody osobowe?',
-        faq8a: 'Parking jest przeznaczony przede wszystkim dla samochodów osobowych. W przypadku innych pojazdów (np. bus, kamper, przyczepa, pojazd dostawczy) prosimy o kontakt telefoniczny z obsługą przed przyjazdem — ustalimy możliwość wjazdu.',
         kontakt_title: 'Kontakt',
         zadzwon: 'Zadzwoń do nas',
         napisz: 'Napisz do nas',
@@ -1019,7 +840,6 @@ function app() {
         hero_badge1: '🏖️ 600 m from beach',
         hero_badge2: '💰 from 20 PLN / visit',
         hero_badge3: '👷 Attendant on site',
-        hero_badge4: '🚗 Parking for passenger cars',
 
         onas_title: 'About us',
         onas_tag: 'Who we are',
@@ -1062,8 +882,6 @@ function app() {
         faq6a: 'The parking is located at ul. Turystyczna 69 on Sobieszewska Island in Gdańsk, approximately 600 meters from beach entrance no. 10.',
         faq7q: 'What is there to see nearby?',
         faq7a: 'The parking is right next to the trail leading to Góra Orla (Eagle Hill) — the highest point on Sobieszewska Island. The forested peak and woodland path make a great walk after a day at the beach.',
-        faq8q: 'Is the car park only for passenger cars?',
-        faq8a: 'The car park is intended primarily for passenger cars. For other vehicles (e.g. van, campervan, trailer, delivery vehicle), please call our staff before arrival — we will check if entry is possible.',
         kontakt_title: 'Contact',
         zadzwon: 'Call us',
         napisz: 'Email us',
@@ -1095,7 +913,6 @@ function app() {
         hero_badge1: '🏖️ 600 м від пляжу',
         hero_badge2: '💰 від 20 зл / вʼїзд',
         hero_badge3: '👷 Персонал на місці',
-        hero_badge4: '🚗 Паркінг для легкових автомобілів',
         onas_title: 'Про нас',
         onas_tag: 'Хто ми',
         onas_text: 'Острів Собєшевська — один з останніх диких куточків польського узбережжя, де соснові ліси переходять у широкий, піщаний пляж Балтійського моря. Наш паркінг розташований лише ~600 метрів по прямій від моря. Вирушивши на прогулянку, ви почуєте шум хвиль ще до того, як їх побачите. Вхід на пляж № 10 — приблизно 15 хвилин пішки, і ви там, де хотіли бути. А після пляжу можна вирушити лісовою стежкою на Гору Орлу, найвищу точку острова — шлях починається тут же, поруч.',
@@ -1137,8 +954,6 @@ function app() {
         faq6a: 'Паркінг знаходиться за адресою вул. Туристична 69 на острові Собєшевська у Гданську, приблизно 600 метрів від входу на пляж № 10.',
         faq7q: 'Що цікавого поблизу?',
         faq7a: 'Паркінг розташований безпосередньо біля стежки на Гору Орлу — найвищу точку острова Собєшевська. Заліснена вершина та лісова стежка — чудовий варіант для прогулянки після пляжу.',
-        faq8q: 'Чи парковка призначена лише для легкових автомобілів?',
-        faq8a: 'Парковка призначена перш за все для легкових автомобілів. Для інших транспортних засобів (напр. мікроавтобус, кемпер, причіп, вантажний автомобіль) просимо зателефонувати нашому персоналу перед приїздом — ми перевіримо можливість вʼїзду.',
         kontakt_title: 'Контакт',
         zadzwon: 'Зателефонуйте нам',
         napisz: 'Напишіть нам',
@@ -1172,7 +987,6 @@ function app() {
         hero_badge1: '🏖️ 600 m zum Strand',
         hero_badge2: '💰 ab 20 PLN / Einfahrt',
         hero_badge3: '👷 Betreuer vor Ort',
-        hero_badge4: '🚗 Parkplatz für PKW',
 
         onas_title: 'Über uns',
         onas_tag: 'Wer wir sind',
@@ -1215,8 +1029,6 @@ function app() {
         faq6a: 'Der Parkplatz befindet sich in der ul. Turystyczna 69 auf der Insel Sobieszewo in Danzig, ca. 600 Meter vom Strandeingang Nr. 10 entfernt.',
         faq7q: 'Was gibt es in der Nähe zu sehen?',
         faq7a: 'Der Parkplatz liegt direkt am Wanderweg zum Góra Orla (Adlerberg) — dem höchsten Punkt der Insel Sobieszewo. Der bewaldete Gipfel und der Waldweg sind eine tolle Option nach einem Strandtag.',
-        faq8q: 'Ist der Parkplatz nur für PKW?',
-        faq8a: 'Der Parkplatz ist in erster Linie für Personenkraftwagen (PKW) vorgesehen. Für andere Fahrzeuge (z. B. Van, Wohnmobil, Anhänger, Lieferfahrzeug) rufen Sie bitte vor der Ankunft unser Personal an — wir prüfen die Einfahrtsmöglichkeit.',
         kontakt_title: 'Kontakt',
         zadzwon: 'Rufen Sie uns an',
         napisz: 'Schreiben Sie uns',
@@ -1284,7 +1096,7 @@ function app() {
 
     computeOpeningStatus() {
       const now = new Date();
-      const wMs = now.getTime() + (2 * 60 + now.getTimezoneOffset()) * 60000;
+      const wMs = now.getTime() + (2 * 60 - now.getTimezoneOffset()) * 60000;
       const w = new Date(wMs);
       const m = w.getMonth() + 1;
       const dow = w.getDay();
@@ -1324,22 +1136,6 @@ function app() {
       return `📅 ${this.t('opening_next')} ${dateStr}`;
     },
 
-    buildKomunikatFingerprint(data) {
-      const payload = data && typeof data === 'object' ? data : {};
-      return [
-        payload.aktywny ? '1' : '0',
-        payload.tytul || '',
-        payload.tresc || '',
-        payload.od || '',
-        payload.do || '',
-      ].join('\u001f');
-    },
-
-    dismissKomunikat() {
-      this.komunikat.dismissedFingerprint = this.komunikat.currentFingerprint || '';
-      this.komunikat.visible = false;
-    },
-
     init() {
       document.documentElement.lang = this.lang;
       this.openingStatus = this.computeOpeningStatus();
@@ -1356,47 +1152,26 @@ function app() {
         this.brakMiejsc = e.detail.brakMiejsc;
       });
 
-      // Phase A — central settings hydration listener (cennik, godziny, kontakt)
-      window.addEventListener('settings-update', (e) => {
-        const { key, value } = e.detail || {};
-        if (key && value != null && key in this.cennik) {
-          this.cennik[key] = String(value);
-        }
-      });
-
       // Listen for komunikat updates
       window.addEventListener('komunikat-update', (e) => {
-        const d = e.detail || {};
-        if (!d.aktywny) {
-          this.komunikat.currentFingerprint = '';
-          this.komunikat.dismissedFingerprint = '';
-          this.komunikat.visible = false;
-          return;
-        }
+        const d = e.detail;
+        if (!d.aktywny) { this.komunikat.visible = false; return; }
         const now = new Date();
         const od  = d.od  ? new Date(d.od)  : null;
         const doo = d.do  ? new Date(d.do)  : null;
         const inRange = (!od || now >= od) && (!doo || now <= doo);
         if (inRange) {
-          const fingerprint = this.buildKomunikatFingerprint(d);
-          this.komunikat.currentFingerprint = fingerprint;
           this.komunikat.tytul = d.tytul || '';
           this.komunikat.tresc = d.tresc || '';
           const fmt = dt => dt.toLocaleString('pl-PL', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
           const odStr  = od  ? fmt(od)  : '';
           const doStr  = doo ? fmt(doo) : '';
           this.komunikat.zakres = (odStr && doStr) ? `🕐 ${odStr} – ${doStr}` : '';
-          this.komunikat.visible = fingerprint !== this.komunikat.dismissedFingerprint;
+          this.komunikat.visible = true;
         } else {
-          this.komunikat.currentFingerprint = '';
-          this.komunikat.dismissedFingerprint = '';
           this.komunikat.visible = false;
         }
       });
-
-      if (typeof window.__PARKING_REPLAY_BOOTSTRAP_STATE === 'function') {
-        window.__PARKING_REPLAY_BOOTSTRAP_STATE();
-      }
 
       // Fade-in on scroll observer
       const observer = new IntersectionObserver((entries) => {
@@ -1421,11 +1196,8 @@ function chatWidget() {
     messages: JSON.parse(sessionStorage.getItem('chat_messages') || '[]'),
     API_URL: 'https://parking-messenger-bot.vercel.app/api/chat',
     _sub: null,
-    _sbClient: null,
     _pollInterval: null,
     _lastPollTime: null,
-    botPaused: false,
-    _statusInterval: null,
 
     toggle() {
       this.open = !this.open;
@@ -1443,48 +1215,22 @@ function chatWidget() {
         }
         this.subscribeRealtime();
         this.startPolling();
-        // Utwórz klienta Supabase od razu (nawet bez sessionId) — zielona kropka
-        // daje użytkownikowi znać że widget jest połączony z Supabase
-        if (!this._sbClient) this._sbClient = createSupabaseClient({
-          global: { headers: { 'x-session-id': this.sessionId || '' } }
-        });
-        this.checkBotStatus();
-        this._statusInterval = setInterval(() => this.checkBotStatus(), 30000);
         this.$nextTick(() => {
           this.$refs.chatInput?.focus();
           this.scrollToBottom();
         });
       } else {
         this.stopPolling();
-        if (this._statusInterval) { clearInterval(this._statusInterval); this._statusInterval = null; }
       }
-    },
-
-    async checkBotStatus() {
-      if (!this.sessionId) return;
-      try {
-        if (!this._sbClient) {
-          this._sbClient = createSupabaseClient({
-            global: { headers: { 'x-session-id': this.sessionId || '' } }
-          });
-          if (!this._sbClient) return;
-        }
-        const { data } = await this._sbClient
-          .from('chat_sessions')
-          .select('bot_paused')
-          .eq('session_id', this.sessionId)
-          .maybeSingle();
-        if (data) this.botPaused = !!data.bot_paused;
-      } catch {}
     },
 
     subscribeRealtime() {
       if (this._sub || !this.sessionId || !window.supabase) return;
       try {
-        const sb2 = createSupabaseClient({
-          global: { headers: { 'x-session-id': this.sessionId || '' } }
-        });
-        if (!sb2) return;
+        const sb2 = window.supabase.createClient(
+          'https://qgqevlkjwinxrtdgdedy.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+        );
         this._sbClient = sb2;
         const sid = this.sessionId;
         const self = this;
@@ -1502,7 +1248,7 @@ function chatWidget() {
             }
           })
           .subscribe();
-      } catch(e) {}
+      } catch {}
     },
 
     async send() {
@@ -1551,12 +1297,7 @@ function chatWidget() {
     startPolling() {
       this.stopPolling();
       if (!this.sessionId) return;
-      // Przywróć ostatni znany timestamp z sessionStorage — dzięki temu catch-up
-      // złapie wiadomości właściciela wysłane gdy widget był zamknięty,
-      // a nie pobierze ponownie tych już wyświetlonych.
-      const storedTs = sessionStorage.getItem('chat_poll_ts_' + this.sessionId);
-      this._lastPollTime = storedTs || '2000-01-01T00:00:00.000Z';
-      this.pollNewMessages(); // natychmiastowy catch-up
+      this._lastPollTime = new Date().toISOString();
       this._pollInterval = setInterval(() => this.pollNewMessages(), 5000);
     },
 
@@ -1571,12 +1312,12 @@ function chatWidget() {
       if (!this.sessionId || !this._lastPollTime) return;
       try {
         if (!this._sbClient) {
-          this._sbClient = createSupabaseClient({
-            global: { headers: { 'x-session-id': this.sessionId || '' } }
-          });
-          if (!this._sbClient) return;
+          this._sbClient = window.supabase.createClient(
+            'https://qgqevlkjwinxrtdgdedy.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFncWV2bGtqd2lueHJ0ZGdkZWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMjY3NzgsImV4cCI6MjA5MDcwMjc3OH0.ddsUj9cMrudq3Xy5m3O55H24DjJTTfmesj_QguVKs9o'
+          );
         }
-        const { data, error } = await this._sbClient
+        const { data } = await this._sbClient
           .from('chat_messages')
           .select('role, content, created_at')
           .eq('session_id', this.sessionId)
@@ -1587,12 +1328,11 @@ function chatWidget() {
           for (const msg of data) {
             this.messages.push({ role: 'assistant', content: msg.content });
             this._lastPollTime = msg.created_at;
-            sessionStorage.setItem('chat_poll_ts_' + this.sessionId, msg.created_at);
           }
           this.saveMessages();
           this.$nextTick(() => this.scrollToBottom());
         }
-      } catch(e) {}
+      } catch {}
     }
   }
 }

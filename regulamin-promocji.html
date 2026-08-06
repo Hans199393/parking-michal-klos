@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl" x-data="app()" :lang="langAttr()">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title x-text="titles[lang]">Regulamin promocji – Parking Micha³ K³os</title>
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://parkingsobieszewo.pl/regulamin-promocji" />
+  <link rel="icon" type="image/png" href="assets/images/logo2026.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { navy: '#1a2d4a', teal: '#4dbfbf', sunset: '#e8622a', golden: '#f5c842', cream: '#f0e8d0' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>[x-cloak]{display:none!important}</style>
+</head>
+<body class="bg-gray-50 text-navy font-sans min-h-screen flex flex-col">
+
+  <nav class="sticky top-0 z-50 bg-navy/95 backdrop-blur-sm shadow-md">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <a href="/" class="flex items-center gap-2 text-cream hover:text-golden transition text-sm font-semibold whitespace-nowrap">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="text-white text-sm font-bold truncate hidden sm:block" x-text="titles[lang]"></span>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button @click="setLang('pl')" :class="lang==='pl' ? 'text-golden font-bold' : 'text-cream/50 hover:text-golden'"
+          class="flex items-center gap-1 px-2 py-1 rounded transition-all text-sm">
+          <span class="text-base leading-none">????</span><span>PL</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-gradient-to-r from-navy to-[#2a4d7a] text-cream pt-12 pb-16 px-4 shrink-0 text-center">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-4" x-text="titles[lang]"></h1>
+      <p class="text-cream/80 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+        Zasady korzystania z rabatu ulotkowego.
+      </p>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8 -mt-8 relative z-10">
+    <article class="bg-white rounded-2xl shadow-xl p-6 md:p-10 mb-8 border border-gray-100">
+      
+      <!-- Wersja PL -->
+      <div x-show="lang === 'pl'" x-cloak class="space-y-8">
+        <section>
+          <h2 class="text-xl font-bold text-navy mb-4 flex items-center gap-2">
+            Regulamin Promocji „Z ulotk¹ 2 z³ taniej”
+          </h2>
+          <ol class="text-sm text-gray-700 space-y-4 list-decimal list-inside leading-relaxed">
+            <li><strong>Organizatorem</strong> promocji jest parking zlokalizowany przy ul. Turystycznej 69 na Wyspie Sobieszewskiej („Parking.OS”).</li>
+            <li><strong>Mechanizm zni¿ki:</strong> Ka¿dy klient, który przed dokonaniem op³aty przeka¿e obs³udze parkingu fizyczn¹ ulotkê promocyjn¹ (zawieraj¹c¹ informacjê o rabacie 2 z³), uprawniony jest do obni¿enia op³aty postojowej o 2 PLN.</li>
+            <li><strong>Zasady korzystania:</strong>
+              <ul class="list-disc list-inside ml-6 mt-2 space-y-2">
+                <li>Rabat dotyczy zarówno klientów wje¿d¿aj¹cych bezpoœrednio z ulicy (20 z³ -> 18 z³), jak i klientów z dokonan¹ rezerwacj¹ (25 z³ -> 23 z³).</li>
+                <li>Jedna ulotka uprawnia do zni¿ki dla jednego pojazdu w trakcie jednego dnia postojowego.</li>
+                <li>Promocje i zni¿ki nie ³¹cz¹ siê (nie mo¿na przekazaæ dwóch ulotek, by uzyskaæ 4 z³ rabatu na ten sam wjazd).</li>
+                <li>Po naliczeniu rabatu ulotka jest zatrzymywana przez obs³ugê parkingu.</li>
+              </ul>
+            </li>
+            <li>Promocja trwa do odwo³ania lub do wyczerpania zapasu ulotek promocyjnych.</li>
+          </ol>
+        </section>
+      </div>
+
+    </article>
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <a href="/regulamin" class="inline-flex items-center gap-2 bg-navy text-cream px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-teal hover:text-navy transition">Regulamin Parkingu</a>
+        <a href="/polityka-prywatnosci" class="inline-flex items-center gap-2 bg-white border border-navy/20 text-navy px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-navy hover:text-cream transition">Polityka Prywatnoœci</a>
+      </div>
+  </main>
+
+  <footer class="bg-navy text-cream/60 text-center text-xs py-4">
+    &copy; <span x-text="new Date().getFullYear()"></span> Parking Micha³ K³os &middot; NIP: 583-318-56-70 &middot; ul. Turystyczna 69, Wyspa Sobieszewska, Gdañsk
+  </footer>
+
+  <script>
+    function app() {
+      return {
+        lang: localStorage.getItem('lang') || 'pl',
+        titles: {
+          pl: 'Regulamin Promocji – Parking Micha³ K³os'
+        },
+        setLang(l) {
+          this.lang = 'pl'; // forced to Polish for this page as translation is not provided
+          localStorage.setItem('lang', 'pl');
+        },
+        langAttr() {
+          return 'pl';
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
